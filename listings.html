@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Properties — Lumina Luxury Real Estate</title>
+  <meta name="description" content="Browse demo preview luxury property leads in Abdoun, Dabouq, Dair Ghbar and more for Lumina workflow testing." />
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    /* ---- PAGE HEADER ---- */
+    .page-header {
+      background: var(--navy);
+      padding: 160px 0 80px;
+      position: relative;
+      overflow: hidden;
+    }
+    .page-header::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--gold), transparent);
+    }
+    .page-header-inner { position: relative; z-index: 1; }
+    .page-header h1 { color: var(--white); font-size: clamp(2rem, 4vw, 3.2rem); }
+    .page-header p { color: rgba(255,255,255,0.5); margin-top: 12px; font-size: 1rem; }
+
+    /* ---- FILTER BAR ---- */
+    .filter-bar {
+      background: var(--white);
+      border-bottom: 1px solid var(--off-white);
+      padding: 28px 0;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.06);
+    }
+    .filter-inner {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .filter-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gray);
+      margin-right: 8px;
+      flex-shrink: 0;
+    }
+    .filter-select {
+      padding: 10px 36px 10px 14px;
+      border: 1px solid var(--gray-light);
+      background: var(--white);
+      font-family: var(--font-sans);
+      font-size: 0.82rem;
+      color: var(--black);
+      outline: none;
+      appearance: none;
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%239A9590' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      transition: var(--transition);
+      min-width: 160px;
+    }
+    .filter-select:focus { border-color: var(--gold); }
+    .filter-select.active { border-color: var(--gold); color: var(--navy); }
+    .filter-count {
+      margin-left: auto;
+      font-size: 0.78rem;
+      color: var(--gray);
+      flex-shrink: 0;
+    }
+    .filter-count span { font-weight: 600; color: var(--navy); }
+
+    /* ---- TYPE PILLS ---- */
+    .type-pills {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .type-pill {
+      padding: 8px 20px;
+      border: 1px solid var(--gray-light);
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--gray);
+      cursor: pointer;
+      transition: var(--transition);
+      background: transparent;
+    }
+    .type-pill:hover,
+    .type-pill.active {
+      border-color: var(--gold);
+      color: var(--navy);
+      background: rgba(201,168,76,0.07);
+    }
+    .type-pill.active { background: var(--gold); color: var(--navy); border-color: var(--gold); }
+
+    /* ---- LISTINGS SECTION ---- */
+    .listings-section {
+      background: var(--off-white);
+      padding: 60px 0 100px;
+    }
+    .listings-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+    }
+
+    /* ---- PROPERTY CARD (extended for listings page) ---- */
+    .property-card { background: var(--white); }
+    .card-img { aspect-ratio: 16/11; }
+    .card-body { padding: 22px 22px 24px; }
+    .card-price { font-size: 1.4rem; margin-bottom: 4px; }
+    .card-title { font-size: 0.92rem; font-weight: 600; margin-bottom: 3px; }
+    .card-location {
+      font-size: 0.78rem;
+      color: var(--gray);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-bottom: 16px;
+    }
+    .card-specs {
+      display: flex;
+      gap: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--off-white);
+      margin-bottom: 16px;
+    }
+    .card-link {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gold);
+      transition: var(--transition);
+    }
+    .card-link:hover { gap: 10px; }
+    .card-link-arrow {
+      width: 24px;
+      height: 1px;
+      background: var(--gold);
+      position: relative;
+      transition: width var(--transition);
+    }
+    .card-link:hover .card-link-arrow { width: 32px; }
+
+    /* ---- FEATURED LARGE CARD ---- */
+    .card-featured {
+      grid-column: span 2;
+    }
+    .card-featured .card-img { aspect-ratio: 16/9; }
+    .card-featured .card-price { font-size: 1.8rem; }
+    .card-featured .card-title { font-size: 1.1rem; }
+
+    /* ---- NO RESULTS ---- */
+    .no-results {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 80px 0;
+    }
+    .no-results h3 { color: var(--navy); margin-bottom: 12px; }
+
+    /* ---- LOAD MORE ---- */
+    .load-more-wrap { text-align: center; margin-top: 56px; }
+
+    @media (max-width: 1024px) {
+      .listings-grid { grid-template-columns: repeat(2, 1fr); }
+      .card-featured { grid-column: span 1; }
+    }
+    @media (max-width: 680px) {
+      .listings-grid { grid-template-columns: 1fr; }
+      .filter-inner { flex-direction: column; align-items: stretch; }
+      .type-pills { order: -1; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav scrolled" id="nav">
+  <a href="index.html" class="nav-logo">Lumina<span>.</span></a>
+  <div class="nav-links">
+    <a href="listings.html" style="color:var(--gold);">Properties</a>
+    <a href="index.html#locations">Locations</a>
+    <a href="index.html#why">About</a>
+    <a href="index.html#contact" class="nav-cta btn">Inquire Now</a>
+  </div>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="container page-header-inner">
+    <p class="label">Demo Preview Listings</p>
+    <span class="gold-line" style="margin:16px 0;"></span>
+    <h1>Properties</h1>
+    <p>Curated luxury homes in Amman's most prestigious neighborhoods.</p>
+  </div>
+</div>
+
+<!-- FILTER BAR -->
+<div class="filter-bar">
+  <div class="container">
+    <div class="filter-inner">
+      <span class="filter-label">Filter:</span>
+
+      <!-- Type pills -->
+      <div class="type-pills">
+        <button class="type-pill active" data-type="all">All</button>
+        <button class="type-pill" data-type="apartment">Apartment</button>
+        <button class="type-pill" data-type="villa">Villa</button>
+        <button class="type-pill" data-type="penthouse">Penthouse</button>
+        <button class="type-pill" data-type="investment">Investment</button>
+      </div>
+
+      <!-- Location select -->
+      <select class="filter-select" id="filter-location">
+        <option value="">All Locations</option>
+        <option>Abdoun</option>
+        <option>Dabouq</option>
+        <option>Dair Ghbar</option>
+        <option>Um Uthaina</option>
+        <option>Abdali</option>
+      </select>
+
+      <!-- Budget select -->
+      <select class="filter-select" id="filter-budget">
+        <option value="">Any Budget</option>
+        <option>Under JOD 400K</option>
+        <option>JOD 400K – 800K</option>
+        <option>JOD 800K – 1.5M</option>
+        <option>JOD 1.5M+</option>
+      </select>
+
+      <div class="filter-count">Showing <span>8</span> demo leads</div>
+    </div>
+  </div>
+</div>
+
+<!-- LISTINGS GRID -->
+<section class="listings-section">
+  <div class="container">
+    <p class="demo-disclaimer demo-disclaimer-wide">Demo preview listings for workflow testing. Availability, pricing, and media require verification before public launch.</p>
+    <div class="listings-grid">
+
+      <!-- Featured Demo Card (span 2) -->
+      <div class="property-card card-featured demo-card">
+        <div class="card-img" style="background:var(--navy-light);">
+          <img src="assets/images/demo-dabouq-villa-01.jpg" alt="Demo luxurious mansion in Dabouq" />
+          <span class="card-badge">Demo Lead</span>
+        </div>
+        <div class="card-body">
+          <div class="card-kicker">Workflow Test · Source: Bayut Jordan</div>
+          <div class="card-price">JOD 4,460,000</div>
+          <div class="card-title">Luxurious Mansion For Sale In Dabouq</div>
+          <div class="card-location">📍 Dabouq, Amman</div>
+          <div class="card-specs">
+            <div class="card-spec">🛏 <span>10+</span> Beds</div>
+            <div class="card-spec">🚿 <span>4</span> Baths</div>
+            <div class="card-spec">📐 <span>2,160</span> m²</div>
+            <div class="card-spec">🌿 <span>Garden</span></div>
+          </div>
+          <a href="property-details.html" class="card-link">
+            View Demo Detail <div class="card-link-arrow"></div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Demo Card 2 -->
+      <div class="property-card demo-card">
+        <div class="card-img" style="background:var(--navy-light);">
+          <img src="assets/images/demo-abdoun-penthouse-01.jpg" alt="Demo luxury apartment in Abdoun" />
+          <span class="card-badge">Demo Preview</span>
+        </div>
+        <div class="card-body">
+          <div class="card-kicker">Demo Lead · Abdoun</div>
+          <div class="card-price">JOD 315,000</div>
+          <div class="card-title">Luxury Apartment For Sale In Abdoun</div>
+          <div class="card-location">📍 Abdoun, Amman</div>
+          <div class="card-specs">
+            <div class="card-spec">🛏 <span>4</span> Beds</div>
+            <div class="card-spec">🚿 <span>4</span> Baths</div>
+            <div class="card-spec">📐 <span>318</span> m²</div>
+          </div>
+          <a href="property-details.html" class="card-link">
+            View Property <div class="card-link-arrow"></div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Demo Card 3 -->
+      <div class="property-card demo-card">
+        <div class="card-img" style="background:var(--navy-light);">
+          <img src="assets/images/demo-dair-ghbar-apartment-01.jpg" alt="Demo apartment in Dair Ghbar" />
+          <span class="card-badge">Private Viewing</span>
+        </div>
+        <div class="card-body">
+          <div class="card-kicker">Demo Lead · Dair Ghbar</div>
+          <div class="card-price">JOD 300,000</div>
+          <div class="card-title">4 Bedroom Apartment For Sale In Dair Ghbar</div>
+          <div class="card-location">📍 Dair Ghbar, Amman</div>
+          <div class="card-specs">
+            <div class="card-spec">🛏 <span>4</span> Beds</div>
+            <div class="card-spec">🚿 <span>5</span> Baths</div>
+            <div class="card-spec">📐 <span>250</span> m²</div>
+          </div>
+          <a href="property-details.html" class="card-link">
+            View Property <div class="card-link-arrow"></div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Demo Card 4 -->
+      <div class="property-card demo-card">
+        <div class="card-img" style="background:var(--navy-light);">
+          <img src="assets/images/demo-luxury-living-01.jpg" alt="Demo investment residence in Dair Ghbar" />
+          <span class="card-badge">Curated Residence</span>
+        </div>
+        <div class="card-body">
+          <div class="card-kicker">Demo Lead · Dair Ghbar</div>
+          <div class="card-price">JOD 270,000</div>
+          <div class="card-title">3 Bedroom Apartment For Sale In Dair Ghbar</div>
+          <div class="card-location">📍 Dair Ghbar, Amman</div>
+          <div class="card-specs">
+            <div class="card-spec">🛏 <span>3</span> Beds</div>
+            <div class="card-spec">🚿 <span>5</span> Baths</div>
+            <div class="card-spec">📐 <span>265</span> m²</div>
+          </div>
+          <a href="property-details.html" class="card-link">
+            View Property <div class="card-link-arrow"></div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Demo Card 5 -->
+      <div class="property-card demo-card">
+        <div class="card-img" style="background:var(--navy-light);">
+          <img src="assets/images/demo-abdali-residence-01.jpg" alt="Demo Abdali duplex residence" />
+          <span class="card-badge">Demo Lead</span>
+        </div>
+        <div class="card-body">
+          <div class="card-kicker">Demo Lead · Abdali</div>
+          <div class="card-price">JOD 730,000</div>
+          <div class="card-title">Duplex Furnished Apartment In Abdali Boulevard</div>
+          <div class="card-location">📍 Abdali Boulevard, Amman</div>
+          <div class="card-specs">
+            <div class="card-spec">🛏 <span>3</span> Beds</div>
+            <div class="card-spec">🚿 <span>4</span> Baths</div>
+            <div class="card-spec">📐 <span>227</span> m² total</div>
+          </div>
+          <a href="property-details.html" class="card-link">
+            View Property <div class="card-link-arrow"></div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Demo Card 6 -->
+      <div class="property-card demo-card">
+        <div class="card-img" style="background:var(--navy-light);">
+          <img src="assets/images/demo-um-uthaina-apartment-01.jpg" alt="Demo apartment in Um Uthaina" />
+          <span class="card-badge">Test Listing</span>
+        </div>
+        <div class="card-body">
+          <div class="card-kicker">Demo Lead · Um Uthaina</div>
+          <div class="card-price">JOD 340,000</div>
+          <div class="card-title">3 Bedroom Apartment For Sale In Um Uthaina</div>
+          <div class="card-location">📍 Um Uthaina, Amman</div>
+          <div class="card-specs">
+            <div class="card-spec">🛏 <span>3</span> Beds</div>
+            <div class="card-spec">🚿 <span>4</span> Baths</div>
+            <div class="card-spec">📐 <span>248</span> m²</div>
+          </div>
+          <a href="property-details.html" class="card-link">
+            View Property <div class="card-link-arrow"></div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Demo Card 7 -->
+      <div class="property-card demo-card">
+        <div class="card-img" style="background:var(--navy-light);">
+          <img src="assets/images/demo-city-view-01.jpg" alt="Demo Abdoun residence with city view" />
+          <span class="card-badge">Demo Preview</span>
+        </div>
+        <div class="card-body">
+          <div class="card-kicker">Demo Lead · Abdoun</div>
+          <div class="card-price">JOD 380,000</div>
+          <div class="card-title">Luxury Apartment For Sale In Abdoun</div>
+          <div class="card-location">📍 Abdoun, Amman</div>
+          <div class="card-specs">
+            <div class="card-spec">🛏 <span>4</span> Beds</div>
+            <div class="card-spec">🚿 <span>6</span> Baths</div>
+            <div class="card-spec">📐 <span>300</span> m²</div>
+          </div>
+          <a href="property-details.html" class="card-link">
+            View Property <div class="card-link-arrow"></div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Demo Card 8 -->
+      <div class="property-card demo-card">
+        <div class="card-img" style="background:var(--navy-light);">
+          <img src="assets/images/demo-villa-terrace-01.jpg" alt="Demo villa estate terrace" />
+          <span class="card-badge">Villa Estate</span>
+        </div>
+        <div class="card-body">
+          <div class="card-kicker">Demo Lead · Airport Road</div>
+          <div class="card-price">JOD 6,830,000</div>
+          <div class="card-title">Luxury Furnished Palace On Airport Road</div>
+          <div class="card-location">📍 Airport Road, Amman</div>
+          <div class="card-specs">
+            <div class="card-spec">🛏 <span>4</span> Beds</div>
+            <div class="card-spec">🚿 <span>6</span> Baths</div>
+            <div class="card-spec">📐 <span>2,500</span> m²</div>
+          </div>
+          <a href="property-details.html" class="card-link">
+            View Property <div class="card-link-arrow"></div>
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="load-more-wrap">
+      <a href="index.html#contact" class="btn btn-outline-gold">Request Off-Market Listings</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo">Lumina<span>.</span></div>
+        <p class="footer-desc">Luxury real estate in Amman's most prestigious addresses. Exceptional properties, presented with discretion.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Properties</h4>
+        <ul>
+          <li><a href="#">Apartments</a></li>
+          <li><a href="#">Villas</a></li>
+          <li><a href="#">Penthouses</a></li>
+          <li><a href="#">Investment</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Locations</h4>
+        <ul>
+          <li><a href="#">Abdoun</a></li>
+          <li><a href="#">Dabouq</a></li>
+          <li><a href="#">Dair Ghbar</a></li>
+          <li><a href="#">Um Uthaina</a></li>
+          <li><a href="#">Abdali</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="https://wa.me/9627XXXXXXXX">WhatsApp</a></li>
+          <li><a href="mailto:lumina@qutaifan.com">Email</a></li>
+          <li><a href="#">+962 7X XXX XXXX</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Lumina Luxury Real Estate. All rights reserved.</span>
+      <span>Amman, Jordan</span>
+    </div>
+  </div>
+</footer>
+
+<!-- WHATSAPP FLOAT -->
+<a href="https://wa.me/9627XXXXXXXX" class="whatsapp-float" target="_blank" aria-label="WhatsApp">
+  <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</a>
+
+<script src="js/site.js"></script>
+<script>
+  // Filter pill interaction
+  document.querySelectorAll('.type-pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      document.querySelectorAll('.type-pill').forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>

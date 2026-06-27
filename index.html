@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lumina — Luxury Real Estate in Amman</title>
+  <meta name="description" content="Lumina presents exclusive luxury apartments, villas, and penthouses in Amman's most prestigious addresses — Abdoun, Dabouq, Dair Ghbar, and Abdali." />
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    /* ---- HERO ---- */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      background: var(--navy);
+      overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background: url('assets/images/hero-luxury-villa.jpg') center/cover no-repeat;
+      opacity: 0.48;
+      transform: scale(1.04);
+      transition: opacity 1s;
+    }
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        135deg,
+        rgba(13,27,42,0.78) 0%,
+        rgba(13,27,42,0.28) 58%,
+        rgba(13,27,42,0.58) 100%
+      );
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 720px;
+      padding-top: 36px;
+    }
+    .hero-content .label { margin-bottom: 34px; }
+    .hero-content h1 {
+      color: var(--white);
+      margin-bottom: 26px;
+      letter-spacing: 0.035em;
+      line-height: 1.12;
+    }
+    .hero-content h1 em {
+      font-style: normal;
+      color: var(--gold);
+    }
+    .hero-divider {
+      display: block;
+      width: 96px;
+      height: 1px;
+      background: linear-gradient(90deg, var(--gold), rgba(201,168,76,0.08));
+      margin: 0 0 30px;
+    }
+    .hero-content p {
+      color: rgba(255,255,255,0.72);
+      font-size: 0.98rem;
+      max-width: 470px;
+      margin-bottom: 52px;
+    }
+    .hero-actions { display: flex; gap: 16px; flex-wrap: wrap; }
+    .hero-scroll {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: rgba(255,255,255,0.4);
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+    .hero-scroll-line {
+      width: 1px;
+      height: 50px;
+      background: linear-gradient(to bottom, var(--gold), transparent);
+      animation: scrollLine 1.8s ease-in-out infinite;
+    }
+    @keyframes scrollLine {
+      0%   { opacity: 0; transform: scaleY(0); transform-origin: top; }
+      50%  { opacity: 1; transform: scaleY(1); transform-origin: top; }
+      100% { opacity: 0; transform: scaleY(1); transform-origin: bottom; }
+    }
+
+    /* ---- STATS BAR ---- */
+    .stats-bar {
+      background: var(--navy);
+      padding: 0;
+    }
+    .stats-inner {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border-top: 1px solid rgba(201,168,76,0.25);
+    }
+    .stat-item {
+      padding: 36px 40px;
+      border-right: 1px solid rgba(201,168,76,0.15);
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-number {
+      font-family: var(--font-serif);
+      font-size: 2.6rem;
+      color: var(--gold);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .stat-label {
+      font-size: 0.72rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.45);
+    }
+
+    /* ---- SEARCH ---- */
+    .search-section {
+      background: var(--off-white);
+      padding: 70px 0;
+    }
+    .search-box {
+      background: var(--white);
+      padding: 40px;
+      box-shadow: 0 4px 40px rgba(0,0,0,0.07);
+    }
+    .search-box h3 {
+      margin-bottom: 30px;
+      font-size: 1.4rem;
+    }
+    .search-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr auto;
+      gap: 16px;
+      align-items: end;
+    }
+    .search-grid select,
+    .search-grid input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1px solid var(--gray-light);
+      background: var(--white);
+      font-family: var(--font-sans);
+      font-size: 0.9rem;
+      color: var(--black);
+      outline: none;
+      appearance: none;
+      transition: var(--transition);
+    }
+    .search-grid select:focus,
+    .search-grid input:focus { border-color: var(--gold); }
+    .search-grid .search-label {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gray);
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    /* ---- FEATURED PROPERTIES ---- */
+    .featured { background: var(--white); }
+    .properties-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 36px;
+    }
+
+    /* ---- LOCATIONS ---- */
+    .locations { background: var(--navy); }
+    .locations .section-header h2 { color: var(--white); }
+    .locations .section-header p { color: rgba(255,255,255,0.5); }
+    .locations-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2px;
+    }
+    .location-card {
+      position: relative;
+      overflow: hidden;
+      height: 380px;
+      cursor: pointer;
+    }
+    .location-card-bg {
+      position: absolute;
+      inset: 0;
+      background: var(--navy-mid) center/cover no-repeat;
+      transition: transform 0.85s cubic-bezier(.2,.7,.2,1), filter 0.85s ease;
+    }
+    .location-card:hover .location-card-bg { transform: scale(1.065); filter: saturate(1.08) contrast(1.04); }
+    .location-card-overlay {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(to top, rgba(13,27,42,0.94) 0%, rgba(13,27,42,0.42) 48%, rgba(13,27,42,0.08) 100%),
+        linear-gradient(135deg, rgba(201,168,76,0.16), transparent 42%);
+      transition: background 0.65s ease;
+    }
+    .location-card:hover .location-card-overlay {
+      background:
+        linear-gradient(to top, rgba(13,27,42,0.92) 0%, rgba(13,27,42,0.30) 52%, rgba(13,27,42,0.04) 100%),
+        linear-gradient(135deg, rgba(201,168,76,0.24), transparent 38%);
+    }
+    .location-card-content {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 32px 28px;
+    }
+    .location-name {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      color: var(--white);
+      margin-bottom: 6px;
+    }
+    .location-count {
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+    .location-card-line {
+      width: 0;
+      height: 1px;
+      background: var(--gold);
+      margin-bottom: 12px;
+      transition: width 0.55s ease;
+    }
+    .location-card:hover .location-card-line { width: 52px; }
+
+    /* ---- WHY LUMINA ---- */
+    .why { background: var(--off-white); }
+    .why-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+    .why-image {
+      aspect-ratio: 4/5;
+      background: var(--navy-light);
+      position: relative;
+      overflow: hidden;
+    }
+    .why-image img { width: 100%; height: 100%; object-fit: cover; }
+    .why-image-accent {
+      position: absolute;
+      bottom: -1px; right: -1px;
+      width: 60%;
+      height: 40%;
+      border: 2px solid var(--gold);
+      pointer-events: none;
+    }
+    .why-points { margin-top: 40px; }
+    .why-point {
+      display: flex;
+      gap: 24px;
+      padding: 28px 0;
+      border-bottom: 1px solid rgba(13,27,42,0.08);
+    }
+    .why-point:last-child { border-bottom: none; }
+    .why-point-number {
+      font-family: var(--font-serif);
+      font-size: 2rem;
+      color: var(--gold);
+      opacity: 0.5;
+      line-height: 1;
+      flex-shrink: 0;
+      width: 40px;
+    }
+    .why-point h4 { color: var(--navy); margin-bottom: 6px; font-size: 1rem; }
+    .why-point p { font-size: 0.88rem; }
+
+    /* ---- CTA SECTION ---- */
+    .cta-section {
+      background: var(--navy);
+      text-align: center;
+      padding: 110px 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      top: -80px; left: 50%;
+      transform: translateX(-50%);
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(201,168,76,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cta-section h2 { color: var(--white); margin-bottom: 20px; }
+    .cta-section p { color: rgba(255,255,255,0.55); margin-bottom: 44px; font-size: 1.05rem; }
+    .cta-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+    /* fade-up animation */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.95s cubic-bezier(.2,.7,.2,1), transform 0.95s cubic-bezier(.2,.7,.2,1);
+    }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 1024px) {
+      .properties-grid { grid-template-columns: repeat(2, 1fr); }
+      .locations-grid { grid-template-columns: repeat(2, 1fr); }
+      .why-grid { grid-template-columns: 1fr; gap: 40px; }
+      .stats-inner { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .search-grid { grid-template-columns: 1fr 1fr; }
+      .properties-grid { grid-template-columns: 1fr; }
+      .locations-grid { grid-template-columns: 1fr 1fr; }
+      .stats-inner { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 480px) {
+      .locations-grid { grid-template-columns: 1fr; }
+      .search-grid { grid-template-columns: 1fr; }
+      .stats-inner { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav" id="nav">
+  <a href="index.html" class="nav-logo">Lumina<span>.</span></a>
+  <div class="nav-links">
+    <a href="listings.html">Properties</a>
+    <a href="#locations">Locations</a>
+    <a href="#why">About</a>
+    <a href="#contact" class="nav-cta btn">Inquire Now</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="container">
+    <div class="hero-content">
+      <p class="label">Private Real Estate — Amman</p>
+      <h1>Exceptional Homes.<br>Exclusively Presented.</h1>
+      <span class="hero-divider"></span>
+      <p>Curated residences in Amman's most coveted addresses — presented with discretion and precision.</p>
+      <div class="hero-actions">
+        <a href="listings.html" class="btn btn-gold">View Properties</a>
+        <a href="#contact" class="btn btn-outline-white">Private Consultation</a>
+      </div>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <div class="hero-scroll-line"></div>
+    <span>Explore</span>
+  </div>
+</section>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stats-inner">
+    <div class="stat-item">
+      <div class="stat-number">5+</div>
+      <div class="stat-label">Prime Locations</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">JOD 200K+</div>
+      <div class="stat-label">Starting Price</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">100%</div>
+      <div class="stat-label">Curated Review Process</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">Private</div>
+      <div class="stat-label">Viewings by Appointment</div>
+    </div>
+  </div>
+</div>
+
+<!-- PROPERTY SEARCH -->
+<section class="search-section">
+  <div class="container">
+    <div class="search-box fade-up">
+      <h3 class="serif">Define Your Search</h3>
+      <span class="gold-line"></span>
+      <div class="search-grid">
+        <div>
+          <label class="search-label">Property Type</label>
+          <select>
+            <option value="">All Types</option>
+            <option>Apartment</option>
+            <option>Villa</option>
+            <option>Penthouse</option>
+            <option>Investment</option>
+          </select>
+        </div>
+        <div>
+          <label class="search-label">Location</label>
+          <select>
+            <option value="">All Locations</option>
+            <option>Abdoun</option>
+            <option>Dabouq</option>
+            <option>Dair Ghbar</option>
+            <option>Um Uthaina</option>
+            <option>Abdali</option>
+          </select>
+        </div>
+        <div>
+          <label class="search-label">Budget (JOD)</label>
+          <select>
+            <option value="">Any Budget</option>
+            <option>200,000 – 400,000</option>
+            <option>400,000 – 700,000</option>
+            <option>700,000 – 1,200,000</option>
+            <option>1,200,000+</option>
+          </select>
+        </div>
+        <div>
+          <label class="search-label">Bedrooms</label>
+          <select>
+            <option value="">Any</option>
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4+</option>
+          </select>
+        </div>
+        <div>
+          <a href="listings.html" class="btn btn-gold" style="white-space:nowrap; height:49px;">Search</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURED PROPERTIES -->
+<section class="featured">
+  <div class="container">
+    <div class="section-header fade-up">
+      <p class="label">Featured Properties</p>
+      <span class="gold-line"></span>
+      <h2>Residences of<br>Distinction</h2>
+    </div>
+    <div class="properties-grid">
+
+      <!-- Demo Card 1 -->
+      <div class="property-card fade-up demo-card">
+        <div class="card-img">
+          <img src="assets/images/demo-abdoun-penthouse-01.jpg" alt="Demo luxury apartment in Abdoun" loading="lazy" />
+          <span class="card-badge">Demo Preview</span>
+        </div>
+        <div class="card-body">
+          <div class="card-kicker">Demo Lead · Abdoun</div>
+          <div class="card-price">JOD 315,000</div>
+          <div class="card-title">Luxury Apartment For Sale In Abdoun</div>
+          <div class="card-location">Abdoun, Amman</div>
+          <div class="card-specs">
+            <div class="card-spec">🛏 <span>4</span> Beds</div>
+            <div class="card-spec">🚿 <span>4</span> Baths</div>
+            <div class="card-spec">📐 <span>318</span> m²</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Demo Card 2 -->
+      <div class="property-card fade-up demo-card">
+        <div class="card-img">
+          <img src="assets/images/demo-dabouq-villa-01.jpg" alt="Demo luxury mansion in Dabouq" loading="lazy" />
+          <span class="card-badge">Curated Residence</span>
+        </div>
+        <div class="card-body">
+          <div class="card-kicker">Demo Lead · Dabouq</div>
+          <div class="card-price">JOD 4,460,000</div>
+          <div class="card-title">Luxurious Mansion For Sale In Dabouq</div>
+          <div class="card-location">Dabouq, Amman</div>
+          <div class="card-specs">
+            <div class="card-spec">🛏 <span>10+</span> Beds</div>
+            <div class="card-spec">🚿 <span>4</span> Baths</div>
+            <div class="card-spec">📐 <span>2,160</span> m²</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Demo Card 3 -->
+      <div class="property-card fade-up demo-card">
+        <div class="card-img">
+          <img src="assets/images/demo-abdali-residence-01.jpg" alt="Demo duplex residence in Abdali" loading="lazy" />
+          <span class="card-badge">Test Listing</span>
+        </div>
+        <div class="card-body">
+          <div class="card-kicker">Demo Lead · Abdali</div>
+          <div class="card-price">JOD 730,000</div>
+          <div class="card-title">Duplex Furnished Apartment In Abdali Boulevard</div>
+          <div class="card-location">Abdali Boulevard, Amman</div>
+          <div class="card-specs">
+            <div class="card-spec">🛏 <span>3</span> Beds</div>
+            <div class="card-spec">🚿 <span>4</span> Baths</div>
+            <div class="card-spec">📐 <span>227</span> m² total</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <p class="demo-disclaimer fade-up">Demo preview listings for workflow testing. Availability, pricing, and media require verification before public launch.</p>
+    <div style="text-align:center; margin-top:56px;" class="fade-up">
+      <a href="listings.html" class="btn btn-outline-gold">View All Properties</a>
+    </div>
+  </div>
+</section>
+
+<!-- PRIME LOCATIONS -->
+<section class="locations" id="locations">
+  <div class="container">
+    <div class="section-header centered fade-up">
+      <p class="label">Prime Locations</p>
+      <span class="gold-line gold-line-center"></span>
+      <h2 class="text-white">Addresses Reserved<br>for the Few</h2>
+    </div>
+  </div>
+  <div class="locations-grid">
+    <div class="location-card">
+      <div class="location-card-bg" style="background-image: url('assets/images/location-abdoun.jpg');"></div>
+      <div class="location-card-overlay"></div>
+      <div class="location-card-content">
+        <div class="location-card-line"></div>
+        <div class="location-name">Abdoun</div>
+        <div class="location-count">Premium Apartments &amp; Penthouses</div>
+      </div>
+    </div>
+    <div class="location-card">
+      <div class="location-card-bg" style="background-image: url('assets/images/location-dabouq.jpg');"></div>
+      <div class="location-card-overlay"></div>
+      <div class="location-card-content">
+        <div class="location-card-line"></div>
+        <div class="location-name">Dabouq</div>
+        <div class="location-count">Private Villas &amp; Estates</div>
+      </div>
+    </div>
+    <div class="location-card">
+      <div class="location-card-bg" style="background-image: url('assets/images/location-dair-ghbar.jpg');"></div>
+      <div class="location-card-overlay"></div>
+      <div class="location-card-content">
+        <div class="location-card-line"></div>
+        <div class="location-name">Dair Ghbar</div>
+        <div class="location-count">Luxury Residences &amp; Villas</div>
+      </div>
+    </div>
+    <div class="location-card">
+      <div class="location-card-bg" style="background-image: url('assets/images/location-um-uthaina.jpg');"></div>
+      <div class="location-card-overlay"></div>
+      <div class="location-card-content">
+        <div class="location-card-line"></div>
+        <div class="location-name">Um Uthaina</div>
+        <div class="location-count">Premium Apartments</div>
+      </div>
+    </div>
+    <div class="location-card">
+      <div class="location-card-bg" style="background-image: url('assets/images/location-abdali.jpg');"></div>
+      <div class="location-card-overlay"></div>
+      <div class="location-card-content">
+        <div class="location-card-line"></div>
+        <div class="location-name">Abdali</div>
+        <div class="location-count">Investment Opportunities</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY LUMINA -->
+<section class="why" id="why">
+  <div class="container">
+    <div class="why-grid">
+      <div class="why-image fade-up">
+        <img src="assets/images/why-lumina-interior.jpg" alt="Lumina service" />
+        <div class="why-image-accent"></div>
+      </div>
+      <div class="fade-up">
+        <p class="label">Why Lumina</p>
+        <span class="gold-line"></span>
+        <h2>A Standard Equal<br>to the Address</h2>
+        <div class="why-points">
+          <div class="why-point">
+            <div class="why-point-number">01</div>
+            <div>
+              <h4>Curated Selection</h4>
+              <p>Only properties that meet our standard are presented.</p>
+            </div>
+          </div>
+          <div class="why-point">
+            <div class="why-point-number">02</div>
+            <div>
+              <h4>Complete Discretion</h4>
+              <p>Your search, budget, and timeline remain confidential.</p>
+            </div>
+          </div>
+          <div class="why-point">
+            <div class="why-point-number">03</div>
+            <div>
+              <h4>Expert Local Knowledge</h4>
+              <p>We study the buildings, neighborhoods, and market dynamics before presenting options.</p>
+            </div>
+          </div>
+          <div class="why-point">
+            <div class="why-point-number">04</div>
+            <div>
+              <h4>End-to-End Support</h4>
+              <p>Negotiation, legal coordination, and transfer are handled with precision.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INQUIRY CTA -->
+<section class="cta-section" id="contact">
+  <div class="container">
+    <div class="fade-up">
+      <p class="label" style="color:var(--gold);">Private Consultation</p>
+      <span class="gold-line gold-line-center" style="margin:20px auto 32px;"></span>
+      <h2>Private Consultation</h2>
+      <p>Share your requirements. We will present discreetly curated options.</p>
+      <div class="cta-actions">
+        <a href="https://wa.me/9627XXXXXXXX?text=Hello%2C%20I%27m%20interested%20in%20a%20property%20consultation%20with%20Lumina."
+           class="btn btn-gold" target="_blank">
+          WhatsApp Us
+        </a>
+        <a href="mailto:lumina@qutaifan.com" class="btn btn-outline-white">Email Us</a>
+      </div>
+      <p style="margin-top:40px; font-size:0.8rem; color:rgba(255,255,255,0.3);">Or call us directly: +962 7X XXX XXXX</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo">Lumina<span>.</span></div>
+        <p class="footer-desc">Private real estate advisory for Amman's most considered addresses.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Properties</h4>
+        <ul>
+          <li><a href="listings.html?type=apartment">Apartments</a></li>
+          <li><a href="listings.html?type=villa">Villas</a></li>
+          <li><a href="listings.html?type=penthouse">Penthouses</a></li>
+          <li><a href="listings.html?type=investment">Investment</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Locations</h4>
+        <ul>
+          <li><a href="#">Abdoun</a></li>
+          <li><a href="#">Dabouq</a></li>
+          <li><a href="#">Dair Ghbar</a></li>
+          <li><a href="#">Um Uthaina</a></li>
+          <li><a href="#">Abdali</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="https://wa.me/9627XXXXXXXX">WhatsApp</a></li>
+          <li><a href="mailto:lumina@qutaifan.com">Email</a></li>
+          <li><a href="#">+962 7X XXX XXXX</a></li>
+          <li><a href="#">Amman, Jordan</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Lumina Luxury Real Estate. All rights reserved.</span>
+      <span>Amman, Jordan</span>
+    </div>
+  </div>
+</footer>
+
+<!-- WHATSAPP FLOAT -->
+<a href="https://wa.me/9627XXXXXXXX?text=Hello%2C%20I%27m%20interested%20in%20a%20property."
+   class="whatsapp-float" target="_blank" aria-label="WhatsApp">
+  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+  </svg>
+</a>
+
+<script src="js/site.js"></script>
+</body>
+</html>
