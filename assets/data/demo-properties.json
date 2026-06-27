@@ -13,7 +13,13 @@
     "bedrooms": "4",
     "bathrooms": "4",
     "sizeSqm": "318",
-    "features": ["Panoramic view", "Outdoor area", "Garden", "Balcony", "Prime Abdoun location"],
+    "features": [
+      "Panoramic view",
+      "Outdoor area",
+      "Garden",
+      "Balcony",
+      "Prime Abdoun location"
+    ],
     "image": "assets/images/demo-abdoun-penthouse-01.jpg",
     "status": "Demo Lead",
     "disclaimer": "Demo price includes a test margin for workflow simulation only. Final pricing requires owner approval and live market verification."
@@ -32,7 +38,14 @@
     "bedrooms": "10+",
     "bathrooms": "4",
     "sizeSqm": "2160",
-    "features": ["Large land plot", "Terraces", "Garden", "Elevator", "Central air conditioning", "Private garage"],
+    "features": [
+      "Large land plot",
+      "Terraces",
+      "Garden",
+      "Elevator",
+      "Central air conditioning",
+      "Private garage"
+    ],
     "image": "assets/images/demo-dabouq-villa-01.jpg",
     "status": "Demo Lead",
     "disclaimer": "Demo price includes a test margin for workflow simulation only. Final pricing requires owner approval and live market verification."
@@ -51,7 +64,13 @@
     "bedrooms": "4",
     "bathrooms": "5",
     "sizeSqm": "250",
-    "features": ["Balcony or terrace", "Central A/C and heating", "Covered parking", "Security staff", "Family-friendly neighborhood"],
+    "features": [
+      "Balcony or terrace",
+      "Central A/C and heating",
+      "Covered parking",
+      "Security staff",
+      "Family-friendly neighborhood"
+    ],
     "image": "assets/images/demo-dair-ghbar-apartment-01.jpg",
     "status": "Demo Lead",
     "disclaimer": "Demo price includes a test margin for workflow simulation only. Final pricing requires owner approval and live market verification."
@@ -70,7 +89,13 @@
     "bedrooms": "3",
     "bathrooms": "5",
     "sizeSqm": "265",
-    "features": ["Balcony or terrace", "Central A/C and heating", "Covered parking", "Maid room", "Security staff"],
+    "features": [
+      "Balcony or terrace",
+      "Central A/C and heating",
+      "Covered parking",
+      "Maid room",
+      "Security staff"
+    ],
     "image": "assets/images/demo-luxury-living-01.jpg",
     "status": "Demo Lead",
     "disclaimer": "Demo price includes a test margin for workflow simulation only. Final pricing requires owner approval and live market verification."
@@ -89,10 +114,19 @@
     "bedrooms": "3",
     "bathrooms": "4",
     "sizeSqm": "173 built / 227 total",
-    "features": ["Furnished duplex", "External area", "Shared swimming pool", "Central air conditioning", "Two garages", "Abdali Boulevard address"],
+    "features": [
+      "Furnished duplex",
+      "External area",
+      "Shared swimming pool",
+      "Central air conditioning",
+      "Two garages",
+      "Abdali Boulevard address"
+    ],
     "image": "assets/images/demo-abdali-residence-01.jpg",
     "status": "Demo Lead",
-    "disclaimer": "Demo price includes a test margin for workflow simulation only. Final pricing requires owner approval and live market verification."
+    "disclaimer": "Demo price includes a test margin for workflow simulation only. Final pricing requires owner approval and live market verification.",
+    "publicDisplayLocation": "Abdali, Amman",
+    "privacyNote": "Public display normalized to area-level location for privacy."
   },
   {
     "id": "LUM-DEMO-006",
@@ -108,7 +142,12 @@
     "bedrooms": "3",
     "bathrooms": "4",
     "sizeSqm": "248",
-    "features": ["Premium district", "Large apartment plan", "Family residence", "Public listing data only"],
+    "features": [
+      "Premium district",
+      "Large apartment plan",
+      "Family residence",
+      "Public listing data only"
+    ],
     "image": "assets/images/demo-um-uthaina-apartment-01.jpg",
     "status": "Demo Lead",
     "disclaimer": "Demo price includes a test margin for workflow simulation only. Final pricing requires owner approval and live market verification."
@@ -127,7 +166,12 @@
     "bedrooms": "4",
     "bathrooms": "6",
     "sizeSqm": "300",
-    "features": ["Luxury Abdoun apartment", "Public listing snippet", "Private viewing suitable", "Premium residential address"],
+    "features": [
+      "Luxury Abdoun apartment",
+      "Public listing snippet",
+      "Private viewing suitable",
+      "Premium residential address"
+    ],
     "image": "assets/images/demo-city-view-01.jpg",
     "status": "Demo Lead",
     "disclaimer": "Demo price includes a test margin for workflow simulation only. Final pricing requires owner approval and live market verification."
@@ -146,7 +190,12 @@
     "bedrooms": "4",
     "bathrooms": "6",
     "sizeSqm": "2500",
-    "features": ["Luxury furnished palace", "Large villa scale", "Airport Road address", "Public listing snippet only"],
+    "features": [
+      "Luxury furnished palace",
+      "Large villa scale",
+      "Airport Road address",
+      "Public listing snippet only"
+    ],
     "image": "assets/images/demo-villa-terrace-01.jpg",
     "status": "Demo Lead",
     "disclaimer": "Demo price includes a test margin for workflow simulation only. Final pricing requires owner approval and live market verification."

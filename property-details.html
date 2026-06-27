@@ -9,8 +9,8 @@
   <style>
     /* ---- GALLERY ---- */
     .gallery-section {
-      background: var(--navy);
-      padding-top: 80px;
+      background: var(--navy-deep);
+      padding-top: 96px;
     }
     .gallery-main {
       position: relative;
@@ -20,23 +20,28 @@
       background: var(--navy-light);
       cursor: zoom-in;
     }
-    .gallery-main img { width: 100%; height: 100%; object-fit: cover; }
+    .gallery-main img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.4s var(--ease); }
+    .gallery-main:hover img { transform: scale(1.03); }
     .gallery-main-badge {
       position: absolute;
       top: 28px; left: 28px;
-      background: var(--gold);
-      color: var(--navy);
-      font-size: 0.65rem;
-      font-weight: 700;
-      letter-spacing: 0.12em;
+      background: rgba(9,21,34,0.55);
+      -webkit-backdrop-filter: blur(8px);
+      backdrop-filter: blur(8px);
+      color: var(--gold-light);
+      border: 1px solid rgba(194,163,90,0.5);
+      font-size: 0.6rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
       text-transform: uppercase;
-      padding: 8px 18px;
+      padding: 8px 16px;
+      white-space: nowrap;
     }
     .gallery-thumbs {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 4px;
-      margin-top: 4px;
+      gap: 6px;
+      margin-top: 6px;
     }
     .gallery-thumb {
       aspect-ratio: 4/3;
@@ -45,18 +50,19 @@
       cursor: pointer;
       position: relative;
     }
-    .gallery-thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; }
-    .gallery-thumb:hover img { transform: scale(1.05); }
+    .gallery-thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.7s var(--ease); }
+    .gallery-thumb:hover img { transform: scale(1.06); }
     .gallery-thumb-more {
       position: absolute;
       inset: 0;
-      background: rgba(13,27,42,0.65);
+      background: rgba(9,21,34,0.6);
       display: flex;
       align-items: center;
       justify-content: center;
       font-family: var(--font-serif);
-      font-size: 1.4rem;
-      color: var(--white);
+      font-size: 1.3rem;
+      letter-spacing: 0.08em;
+      color: var(--gold-light);
     }
 
     /* ---- BREADCRUMB ---- */
@@ -78,11 +84,11 @@
     .breadcrumb-current { color: var(--black); font-weight: 500; }
 
     /* ---- MAIN CONTENT ---- */
-    .detail-section { background: var(--white); padding: 70px 0 100px; }
+    .detail-section { background: var(--white); padding: 84px 0 110px; }
     .detail-grid {
       display: grid;
       grid-template-columns: 1fr 400px;
-      gap: 80px;
+      gap: 90px;
       align-items: start;
     }
 
@@ -90,31 +96,39 @@
     .detail-price-row {
       display: flex;
       align-items: baseline;
-      gap: 20px;
+      gap: 22px;
       margin-bottom: 8px;
+      flex-wrap: wrap;
     }
     .detail-price {
       font-family: var(--font-serif);
-      font-size: 2.6rem;
+      font-size: 2.8rem;
+      font-weight: 400;
       color: var(--navy);
-      line-height: 1;
+      line-height: 1.05;
+      white-space: nowrap;
+      flex-shrink: 0;
     }
     .detail-price-sqm {
-      font-size: 0.82rem;
+      font-size: 0.76rem;
+      letter-spacing: 0.04em;
       color: var(--gray);
     }
     .detail-title {
       font-family: var(--font-serif);
-      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      font-size: clamp(1.8rem, 3vw, 2.7rem);
+      font-weight: 400;
       color: var(--navy);
-      margin: 12px 0 6px;
-      line-height: 1.2;
+      margin: 14px 0 8px;
+      line-height: 1.15;
     }
     .detail-location {
       display: flex;
       align-items: center;
-      gap: 6px;
-      font-size: 0.88rem;
+      gap: 8px;
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
       color: var(--gray);
       margin-bottom: 36px;
     }
@@ -124,108 +138,142 @@
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 1px;
-      background: var(--off-white);
-      margin: 36px 0;
-      border: 1px solid var(--off-white);
+      background: var(--stone-line);
+      margin: 38px 0;
+      border: 1px solid var(--stone-line);
     }
     .spec-item {
-      background: var(--white);
-      padding: 22px 16px;
+      background: var(--ivory);
+      padding: 28px 16px;
       text-align: center;
     }
-    .spec-icon { font-size: 1.4rem; margin-bottom: 6px; }
+    .spec-icon { display: none; }
     .spec-value {
       font-family: var(--font-serif);
-      font-size: 1.5rem;
+      font-size: 1.7rem;
+      font-weight: 400;
       color: var(--navy);
       line-height: 1;
-      margin-bottom: 4px;
+      margin-bottom: 8px;
     }
     .spec-label {
-      font-size: 0.68rem;
-      font-weight: 600;
-      letter-spacing: 0.1em;
+      font-size: 0.62rem;
+      font-weight: 500;
+      letter-spacing: 0.16em;
       text-transform: uppercase;
       color: var(--gray);
     }
 
     /* Description */
     .detail-desc h3 {
-      font-size: 1.2rem;
+      font-size: 1.35rem;
+      font-weight: 400;
       color: var(--navy);
-      margin-bottom: 16px;
+      margin-bottom: 18px;
     }
-    .detail-desc p { margin-bottom: 16px; font-size: 0.95rem; }
+    .detail-desc p { margin-bottom: 18px; font-size: 0.97rem; line-height: 1.9; }
 
     /* Highlights */
-    .highlights { margin-top: 40px; }
-    .highlights h3 { font-size: 1.2rem; color: var(--navy); margin-bottom: 20px; }
+    .highlights { margin-top: 48px; }
+    .highlights h3 { font-size: 1.35rem; font-weight: 400; color: var(--navy); margin-bottom: 22px; }
     .highlights-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
+      gap: 1px;
+      background: var(--stone-line);
+      border: 1px solid var(--stone-line);
     }
     .highlight-item {
       display: flex;
       align-items: center;
-      gap: 12px;
-      padding: 14px 16px;
-      background: var(--off-white);
-      font-size: 0.88rem;
-      color: var(--black);
+      gap: 14px;
+      padding: 18px 20px;
+      background: var(--white);
+      font-size: 0.86rem;
+      color: var(--ink-soft);
     }
     .highlight-dot {
-      width: 6px; height: 6px;
+      width: 5px; height: 5px;
       background: var(--gold);
       border-radius: 50%;
       flex-shrink: 0;
     }
 
     /* Location map area */
-    .location-block { margin-top: 50px; }
-    .location-block h3 { font-size: 1.2rem; color: var(--navy); margin-bottom: 16px; }
+    .location-block { margin-top: 56px; }
+    .location-block h3 { font-size: 1.35rem; font-weight: 400; color: var(--navy); margin-bottom: 18px; }
     .map-placeholder {
       width: 100%;
-      height: 280px;
-      background: var(--navy-light);
+      height: 320px;
+      background:
+        linear-gradient(rgba(9,21,34,0.35), rgba(9,21,34,0.55)),
+        url('assets/images/demo-city-view-01.jpg') center/cover no-repeat;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      color: rgba(255,255,255,0.3);
-      font-size: 0.8rem;
-      letter-spacing: 0.1em;
+      gap: 10px;
+      color: rgba(255,255,255,0.85);
+      position: relative;
+    }
+    .map-area-pill {
+      font-size: 0.66rem;
+      letter-spacing: 0.2em;
       text-transform: uppercase;
+      color: var(--gold-light);
+      border: 1px solid rgba(194,163,90,0.5);
+      padding: 8px 18px;
+      background: rgba(9,21,34,0.4);
+      -webkit-backdrop-filter: blur(6px);
+      backdrop-filter: blur(6px);
+    }
+    .map-area-name { font-family: var(--font-serif); font-size: 1.5rem; color: var(--white); }
+    .map-disclaimer {
+      margin-top: 16px;
+      padding: 16px 20px;
+      border-left: 2px solid var(--gold);
+      background: var(--ivory);
+      font-size: 0.8rem;
+      line-height: 1.7;
+      color: var(--ink-soft);
     }
     .location-notes {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
+      gap: 1px;
       margin-top: 16px;
+      background: var(--stone-line);
+      border: 1px solid var(--stone-line);
     }
     .location-note {
-      padding: 16px;
-      background: var(--off-white);
+      padding: 20px;
+      background: var(--white);
       font-size: 0.82rem;
+      line-height: 1.7;
+      color: var(--ink-soft);
     }
-    .location-note strong { display: block; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold); margin-bottom: 4px; }
+    .location-note strong { display: block; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.16em; color: var(--gold-dim); margin-bottom: 8px; }
 
     /* ---- RIGHT COLUMN — INQUIRY FORM ---- */
     .inquiry-panel {
       position: sticky;
-      top: 80px;
-      background: var(--navy);
-      padding: 40px 36px;
+      top: 96px;
+      background: var(--navy-deep);
+      padding: 44px 40px;
+      border-top: 2px solid var(--gold);
     }
     .inquiry-panel h3 {
       font-family: var(--font-serif);
-      font-size: 1.4rem;
+      font-size: 1.6rem;
+      font-weight: 400;
       color: var(--white);
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
     .inquiry-panel .inquiry-sub {
       font-size: 0.82rem;
-      color: rgba(255,255,255,0.45);
-      margin-bottom: 30px;
+      line-height: 1.7;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 28px;
     }
     .inquiry-panel .btn { width: 100%; justify-content: center; margin-top: 6px; }
     .inquiry-divider {
@@ -376,30 +424,30 @@
         <h1 class="detail-title">Luxurious Mansion<br>Dabouq</h1>
 
         <div class="detail-location">
-          <span>📍</span> Dabouq, Amman
+          <span></span> Dabouq, Amman
         </div>
 
-        <p class="demo-disclaimer detail-demo-note">Demo listing for workflow testing. Final details require owner approval and live verification.</p>
+        <p class="demo-disclaimer detail-demo-note">This is a demo test run, not final live inventory. Demo price includes a test margin for workflow simulation only. Final pricing requires owner approval and live market verification.</p>
 
         <!-- Specs Strip -->
         <div class="specs-strip">
           <div class="spec-item">
-            <div class="spec-icon">🛏</div>
+            <div class="spec-icon"></div>
             <div class="spec-value">10+</div>
             <div class="spec-label">Bedrooms</div>
           </div>
           <div class="spec-item">
-            <div class="spec-icon">🚿</div>
+            <div class="spec-icon"></div>
             <div class="spec-value">4</div>
             <div class="spec-label">Bathrooms</div>
           </div>
           <div class="spec-item">
-            <div class="spec-icon">📐</div>
+            <div class="spec-icon"></div>
             <div class="spec-value">2,160</div>
             <div class="spec-label">m² Built Area</div>
           </div>
           <div class="spec-item">
-            <div class="spec-icon">🌿</div>
+            <div class="spec-icon"></div>
             <div class="spec-value">2,000</div>
             <div class="spec-label">m² Land Area</div>
           </div>
@@ -433,7 +481,11 @@
         <!-- Location -->
         <div class="location-block">
           <h3>Location</h3>
-          <div class="map-placeholder">[ Demo Map — Dabouq, Amman ]</div>
+          <div class="map-placeholder">
+            <span class="map-area-pill">General Area · Demo</span>
+            <span class="map-area-name">Dabouq, Amman</span>
+          </div>
+          <p class="map-disclaimer">Map shows the general area only. Exact property location is shared privately after buyer qualification and viewing approval.</p>
           <div class="location-notes">
             <div class="location-note">
               <strong>Neighborhood</strong>
@@ -517,10 +569,10 @@
           <div class="card-kicker">Demo Lead · Abdoun</div>
           <div class="card-price">JOD 315,000</div>
           <div class="card-title">Luxury Apartment For Sale In Abdoun</div>
-          <div class="card-location">📍 Abdoun, Amman</div>
+          <div class="card-location">Abdoun, Amman</div>
           <div class="card-specs">
-            <div class="card-spec">🛏 <span>4</span> Beds</div>
-            <div class="card-spec">📐 <span>318</span> m²</div>
+            <div class="card-spec"><span>4</span> Beds</div>
+            <div class="card-spec"><span>318</span> m²</div>
           </div>
           <a href="property-details.html" class="card-link">View Property <div class="card-link-arrow"></div></a>
         </div>
@@ -530,11 +582,11 @@
         <div class="card-body">
           <div class="card-kicker">Demo Lead · Abdali</div>
           <div class="card-price">JOD 730,000</div>
-          <div class="card-title">Duplex Furnished Apartment In Abdali Boulevard</div>
-          <div class="card-location">📍 Abdali Boulevard, Amman</div>
+          <div class="card-title">Duplex Furnished Apartment In Abdali</div>
+          <div class="card-location">Abdali, Amman</div>
           <div class="card-specs">
-            <div class="card-spec">🛏 <span>3</span> Beds</div>
-            <div class="card-spec">📐 <span>227</span> m² total</div>
+            <div class="card-spec"><span>3</span> Beds</div>
+            <div class="card-spec"><span>227</span> m² total</div>
           </div>
           <a href="property-details.html" class="card-link">View Property <div class="card-link-arrow"></div></a>
         </div>
@@ -545,10 +597,10 @@
           <div class="card-kicker">Demo Lead · Dair Ghbar</div>
           <div class="card-price">JOD 300,000</div>
           <div class="card-title">4 Bedroom Apartment For Sale In Dair Ghbar</div>
-          <div class="card-location">📍 Dair Ghbar, Amman</div>
+          <div class="card-location">Dair Ghbar, Amman</div>
           <div class="card-specs">
-            <div class="card-spec">🛏 <span>4</span> Beds</div>
-            <div class="card-spec">📐 <span>250</span> m²</div>
+            <div class="card-spec"><span>4</span> Beds</div>
+            <div class="card-spec"><span>250</span> m²</div>
           </div>
           <a href="property-details.html" class="card-link">View Property <div class="card-link-arrow"></div></a>
         </div>

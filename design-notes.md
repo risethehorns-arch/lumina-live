@@ -120,6 +120,11 @@ Image sizes:
 
 ## Demo Test Run Notes
 
+### Demo Pricing Rule
+
+Lumina demo pricing uses 5% test margin. Rounding uses commercial half-up rounding: under 500,000 JOD round to nearest 5,000; 500,000 JOD and above round to nearest 10,000. Halfway values round upward.
+
+
 Current demo listing data lives in:
 - assets/data/demo-properties.json
 - assets/data/demo-leads.csv
