@@ -3,638 +3,69 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Luxury Villa in Dabouq, Amman — Lumina Real Estate</title>
-  <meta name="description" content="A distinguished private villa in Dabouq, Amman — one of the capital's most sought-after addresses. Presented exclusively by Lumina. Private viewing by appointment." />
-  <meta name="robots" content="index, follow" />
+  <title>Lumina Demo Property Details</title>
+  <meta name="description" content="Lumina demo property details. Demo listing only; verification required before public use." />
+  <meta name="robots" content="noindex, follow" />
   <meta name="author" content="Lumina Real Estate" />
-  <meta name="theme-color" content="#0D1B2A" />
+  <meta name="theme-color" content="#0B0B0B" />
   <link rel="canonical" href="https://lumina.qutaifan.com/property-details.html" />
 
-  <!-- Open Graph -->
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://lumina.qutaifan.com/property-details.html" />
-  <meta property="og:site_name" content="Lumina Real Estate" />
-  <meta property="og:title" content="Luxury Villa in Dabouq, Amman — Lumina Real Estate" />
-  <meta property="og:description" content="A distinguished private villa in Dabouq, Amman — one of the capital's most sought-after addresses. Presented exclusively by Lumina." />
-  <meta property="og:image" content="https://lumina.qutaifan.com/assets/images/prop-dabouq-villa.jpg" />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
-  <meta property="og:locale" content="en_JO" />
-
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Luxury Villa in Dabouq, Amman — Lumina Real Estate" />
-  <meta name="twitter:description" content="A distinguished private villa in Dabouq, one of Amman's most prestigious addresses. Private viewing by appointment." />
-  <meta name="twitter:image" content="https://lumina.qutaifan.com/assets/images/prop-dabouq-villa.jpg" />
-
-  <!-- Favicon -->
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%230D1B2A'/><text x='50%25' y='54%25' font-family='serif' font-size='20' fill='%23C9A84C' text-anchor='middle' dominant-baseline='middle'>L</text></svg>" />
-
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%230B0B0B'/><text x='50%25' y='54%25' font-family='serif' font-size='20' fill='%23C6A76E' text-anchor='middle' dominant-baseline='middle'>L</text></svg>" />
   <link rel="stylesheet" href="css/style.css" />
+
   <style>
-    /* ---- GALLERY ---- */
-    .gallery-section {
-      background: var(--navy-deep);
-      padding-top: 96px;
-    }
-    .gallery-main {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 16/8;
-      overflow: hidden;
-      background: var(--navy-light);
-      cursor: zoom-in;
-    }
-    .gallery-main img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.4s var(--ease); }
-    .gallery-main:hover img { transform: scale(1.03); }
-    .gallery-main-badge {
-      position: absolute;
-      top: 28px; left: 28px;
-      background: rgba(9,21,34,0.55);
-      -webkit-backdrop-filter: blur(8px);
-      backdrop-filter: blur(8px);
-      color: var(--gold-light);
-      border: 1px solid rgba(194,163,90,0.5);
-      font-size: 0.6rem;
-      font-weight: 500;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      padding: 8px 16px;
-      white-space: nowrap;
-    }
-    .gallery-thumbs {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 6px;
-      margin-top: 6px;
-    }
-    .gallery-thumb {
-      aspect-ratio: 4/3;
-      overflow: hidden;
-      background: var(--navy-light);
-      cursor: pointer;
-      position: relative;
-    }
-    .gallery-thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.7s var(--ease); }
-    .gallery-thumb:hover img { transform: scale(1.06); }
-    .gallery-thumb-more {
-      position: absolute;
-      inset: 0;
-      background: rgba(9,21,34,0.6);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: var(--font-serif);
-      font-size: 1.3rem;
-      letter-spacing: 0.08em;
-      color: var(--gold-light);
-    }
-
-    /* ---- BREADCRUMB ---- */
-    .breadcrumb {
-      background: var(--off-white);
-      padding: 16px 0;
-      border-bottom: 1px solid rgba(0,0,0,0.06);
-    }
-    .breadcrumb-inner {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 0.76rem;
-      color: var(--gray);
-    }
-    .breadcrumb-inner a { color: var(--gray); transition: var(--transition); }
-    .breadcrumb-inner a:hover { color: var(--gold); }
-    .breadcrumb-sep { color: var(--gray-light); }
-    .breadcrumb-current { color: var(--black); font-weight: 500; }
-
-    /* ---- MAIN CONTENT ---- */
-    .detail-section { background: var(--white); padding: 84px 0 110px; }
-    .detail-grid {
-      display: grid;
-      grid-template-columns: 1fr 400px;
-      gap: 90px;
-      align-items: start;
-    }
-
-    /* Left column */
-    .detail-price-row {
-      display: flex;
-      align-items: baseline;
-      gap: 22px;
-      margin-bottom: 8px;
-      flex-wrap: wrap;
-    }
-    .detail-price {
-      font-family: var(--font-serif);
-      font-size: 2.8rem;
-      font-weight: 400;
-      color: var(--navy);
-      line-height: 1.05;
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-    .detail-price-sqm {
-      font-size: 0.76rem;
-      letter-spacing: 0.04em;
-      color: var(--gray);
-    }
-    .detail-title {
-      font-family: var(--font-serif);
-      font-size: clamp(1.8rem, 3vw, 2.7rem);
-      font-weight: 400;
-      color: var(--navy);
-      margin: 14px 0 8px;
-      line-height: 1.15;
-    }
-    .detail-location {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.8rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--gray);
-      margin-bottom: 36px;
-    }
-
-    /* Specs strip */
-    .specs-strip {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1px;
-      background: var(--stone-line);
-      margin: 38px 0;
-      border: 1px solid var(--stone-line);
-    }
-    .spec-item {
-      background: var(--ivory);
-      padding: 28px 16px;
-      text-align: center;
-    }
-    .spec-icon { display: none; }
-    .spec-value {
-      font-family: var(--font-serif);
-      font-size: 1.7rem;
-      font-weight: 400;
-      color: var(--navy);
-      line-height: 1;
-      margin-bottom: 8px;
-    }
-    .spec-label {
-      font-size: 0.62rem;
-      font-weight: 500;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: var(--gray);
-    }
-
-    /* Description */
-    .detail-desc h3 {
-      font-size: 1.35rem;
-      font-weight: 400;
-      color: var(--navy);
-      margin-bottom: 18px;
-    }
-    .detail-desc p { margin-bottom: 18px; font-size: 0.97rem; line-height: 1.9; }
-
-    /* Highlights */
-    .highlights { margin-top: 48px; }
-    .highlights h3 { font-size: 1.35rem; font-weight: 400; color: var(--navy); margin-bottom: 22px; }
-    .highlights-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1px;
-      background: var(--stone-line);
-      border: 1px solid var(--stone-line);
-    }
-    .highlight-item {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 18px 20px;
-      background: var(--white);
-      font-size: 0.86rem;
-      color: var(--ink-soft);
-    }
-    .highlight-dot {
-      width: 5px; height: 5px;
-      background: var(--gold);
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-
-    /* Location map area */
-    .location-block { margin-top: 56px; }
-    .location-block h3 { font-size: 1.35rem; font-weight: 400; color: var(--navy); margin-bottom: 18px; }
-    .map-placeholder {
-      width: 100%;
-      height: 320px;
-      background:
-        linear-gradient(rgba(9,21,34,0.35), rgba(9,21,34,0.55)),
-        url('assets/images/demo-city-view-01.jpg') center/cover no-repeat;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      color: rgba(255,255,255,0.85);
-      position: relative;
-    }
-    .map-area-pill {
-      font-size: 0.66rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--gold-light);
-      border: 1px solid rgba(194,163,90,0.5);
-      padding: 8px 18px;
-      background: rgba(9,21,34,0.4);
-      -webkit-backdrop-filter: blur(6px);
-      backdrop-filter: blur(6px);
-    }
-    .map-area-name { font-family: var(--font-serif); font-size: 1.5rem; color: var(--white); }
-    .map-disclaimer {
-      margin-top: 16px;
-      padding: 16px 20px;
-      border-left: 2px solid var(--gold);
-      background: var(--ivory);
-      font-size: 0.8rem;
-      line-height: 1.7;
-      color: var(--ink-soft);
-    }
-    .location-notes {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1px;
-      margin-top: 16px;
-      background: var(--stone-line);
-      border: 1px solid var(--stone-line);
-    }
-    .location-note {
-      padding: 20px;
-      background: var(--white);
-      font-size: 0.82rem;
-      line-height: 1.7;
-      color: var(--ink-soft);
-    }
-    .location-note strong { display: block; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.16em; color: var(--gold-dim); margin-bottom: 8px; }
-
-    /* ---- RIGHT COLUMN — INQUIRY FORM ---- */
-    .inquiry-panel {
-      position: sticky;
-      top: 96px;
-      background: var(--navy-deep);
-      padding: 44px 40px;
-      border-top: 2px solid var(--gold);
-    }
-    .inquiry-panel h3 {
-      font-family: var(--font-serif);
-      font-size: 1.6rem;
-      font-weight: 400;
-      color: var(--white);
-      margin-bottom: 8px;
-    }
-    .inquiry-panel .inquiry-sub {
-      font-size: 0.82rem;
-      line-height: 1.7;
-      color: rgba(255,255,255,0.5);
-      margin-bottom: 28px;
-    }
-    .inquiry-panel .btn { width: 100%; justify-content: center; margin-top: 6px; }
-    .inquiry-divider {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin: 20px 0;
-      color: rgba(255,255,255,0.2);
-      font-size: 0.72rem;
-      letter-spacing: 0.1em;
-    }
-    .inquiry-divider::before,
-    .inquiry-divider::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: rgba(255,255,255,0.1);
-    }
-    .inquiry-wa {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      width: 100%;
-      padding: 15px;
-      background: #25D366;
-      color: white;
-      font-size: 0.78rem;
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      transition: var(--transition);
-    }
-    .inquiry-wa:hover { background: #1fb055; }
-    .inquiry-wa svg { width: 18px; height: 18px; fill: white; flex-shrink: 0; }
-    .inquiry-note {
-      margin-top: 20px;
-      font-size: 0.72rem;
-      color: rgba(255,255,255,0.25);
-      text-align: center;
-      line-height: 1.7;
-    }
-    .inquiry-agent {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      margin-top: 28px;
-      padding-top: 28px;
-      border-top: 1px solid rgba(255,255,255,0.1);
-    }
-    .inquiry-agent-avatar {
-      width: 44px; height: 44px;
-      background: var(--gold);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: var(--font-serif);
-      font-size: 1.1rem;
-      color: var(--navy);
-      font-weight: 600;
-      flex-shrink: 0;
-    }
-    .inquiry-agent-name { font-size: 0.85rem; color: var(--white); font-weight: 500; }
-    .inquiry-agent-role { font-size: 0.72rem; color: var(--gold); margin-top: 2px; }
-
-    /* ---- SIMILAR PROPERTIES ---- */
-    .similar { background: var(--off-white); }
-    .similar .section-header { margin-bottom: 48px; }
-    .similar-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
-
-    @media (max-width: 1024px) {
-      .detail-grid { grid-template-columns: 1fr; }
-      .inquiry-panel { position: static; }
-      .similar-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-    @media (max-width: 680px) {
-      .gallery-thumbs { grid-template-columns: repeat(3, 1fr); }
-      .specs-strip { grid-template-columns: repeat(2, 1fr); }
-      .highlights-grid { grid-template-columns: 1fr; }
-      .location-notes { grid-template-columns: 1fr; }
-      .similar-grid { grid-template-columns: 1fr; }
-    }
+    body { background: #0B0B0B; color: #FFFFFF; }
+    .nav-links .active-link { color: #C6A76E; }
+    .detail-shell { background: #0B0B0B; min-height: 100vh; padding-top: 92px; }
+    .detail-hero { position: relative; min-height: 52vh; background: #111111; overflow: hidden; }
+    .detail-hero img { width: 100%; height: 100%; min-height: 52vh; object-fit: cover; opacity: 0.72; }
+    .detail-hero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(11,11,11,0.1), rgba(11,11,11,0.92)); }
+    .detail-badge { position: absolute; left: 48px; bottom: 44px; z-index: 2; border: 1px solid rgba(198,167,110,0.55); color: #C6A76E; background: rgba(11,11,11,0.5); padding: 9px 16px; font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; }
+    .detail-wrap { padding: 72px 0 110px; }
+    .detail-grid-dynamic { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 64px; align-items: start; }
+    .detail-kicker { color: #C6A76E; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 18px; }
+    .dynamic-title { color: #FFFFFF; font-family: var(--font-serif); font-size: clamp(2.2rem, 5vw, 4.5rem); line-height: 1.08; font-weight: 400; margin-bottom: 18px; }
+    .dynamic-location { color: #A0A0A0; font-size: 0.78rem; letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: 28px; }
+    .dynamic-price { color: #C6A76E; font-family: var(--font-sans); font-size: clamp(1.8rem, 3vw, 2.8rem); font-weight: 600; line-height: 1.15; margin-bottom: 8px; }
+    .source-price { color: #A0A0A0; font-size: 0.85rem; margin-bottom: 34px; }
+    .demo-note { border: 1px solid rgba(198,167,110,0.24); background: #111111; color: #A0A0A0; padding: 18px 22px; font-size: 0.86rem; line-height: 1.8; margin: 32px 0; }
+    .spec-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.08); margin: 36px 0; }
+    .spec-box { background: #111111; padding: 24px 20px; }
+    .spec-value { color: #FFFFFF; font-size: 1.35rem; font-weight: 600; line-height: 1.2; margin-bottom: 8px; }
+    .spec-label { color: #A0A0A0; font-size: 0.65rem; letter-spacing: 0.16em; text-transform: uppercase; }
+    .detail-description h2 { color: #FFFFFF; font-size: 1.55rem; margin-bottom: 16px; }
+    .detail-description p { color: #A0A0A0; font-size: 1rem; line-height: 1.9; max-width: 760px; }
+    .side-panel { position: sticky; top: 96px; background: #111111; border: 1px solid rgba(198,167,110,0.22); border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); padding: 28px; }
+    .side-panel h2 { color: #FFFFFF; font-size: 1.45rem; margin-bottom: 10px; }
+    .side-panel p { color: #A0A0A0; font-size: 0.85rem; line-height: 1.75; margin-bottom: 22px; }
+    .detail-actions { display: grid; gap: 12px; }
+    .detail-btn { display: inline-flex; align-items: center; justify-content: center; min-height: 46px; padding: 13px 18px; border-radius: 999px; border: 1px solid #C6A76E; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; transition: all 0.2s ease; text-align: center; }
+    .detail-btn-primary { background: #C6A76E; color: #0B0B0B; }
+    .detail-btn-primary:hover { background: #FFFFFF; border-color: #FFFFFF; color: #0B0B0B; }
+    .detail-btn-outline { background: transparent; color: #C6A76E; }
+    .detail-btn-outline:hover { background: #C6A76E; color: #0B0B0B; }
+    .not-found { min-height: 70vh; display: grid; place-items: center; text-align: center; background: #0B0B0B; padding: 120px 24px; }
+    .not-found h1 { color: #FFFFFF; margin-bottom: 18px; }
+    .not-found a { color: #C6A76E; }
+    .map-safety { margin-top: 36px; padding: 18px 22px; border-left: 2px solid #C6A76E; background: #111111; color: #A0A0A0; font-size: 0.85rem; line-height: 1.8; }
+    @media (max-width: 980px) { .detail-grid-dynamic { grid-template-columns: 1fr; } .side-panel { position: static; } }
+    @media (max-width: 640px) { .detail-badge { left: 24px; bottom: 28px; } .detail-wrap { padding: 48px 0 88px; } .spec-grid { grid-template-columns: repeat(2, 1fr); } }
   </style>
 </head>
 <body>
 
-<!-- NAV -->
 <nav class="nav scrolled" id="nav">
   <a href="index.html" class="nav-logo">Lumina<span>.</span></a>
   <div class="nav-links">
-    <a href="listings.html" style="color:var(--gold);">Properties</a>
+    <a href="listings.html" class="active-link">Properties</a>
     <a href="index.html#locations">Locations</a>
     <a href="index.html#why">About</a>
-    <a href="#inquiry" class="nav-cta btn">Request Viewing</a>
+    <a href="index.html#contact" class="nav-cta btn">Inquire Now</a>
   </div>
 </nav>
 
-<!-- GALLERY -->
-<div class="gallery-section">
-  <div class="gallery-main">
-    <img src="assets/images/demo-dabouq-villa-01.jpg" alt="Private villa residence in Dabouq, Amman" />
-    <div class="gallery-main-badge">Demo Lead</div>
-  </div>
-  <div class="container" style="padding:0 0;">
-    <div class="gallery-thumbs">
-      <div class="gallery-thumb"><img src="assets/images/demo-luxury-living-01.jpg" alt="Curated residential living room interior" /></div>
-      <div class="gallery-thumb"><img src="assets/images/demo-master-bedroom-01.jpg" alt="Curated residential bedroom interior" /></div>
-      <div class="gallery-thumb"><img src="assets/images/demo-kitchen-01.jpg" alt="Curated residential kitchen interior" /></div>
-      <div class="gallery-thumb">
-        <img src="assets/images/demo-villa-terrace-01.jpg" alt="Private villa terrace in Amman" />
-        <div class="gallery-thumb-more">Demo</div>
-      </div>
-    </div>
-  </div>
-</div>
+<main id="property-root" class="detail-shell" aria-live="polite"></main>
 
-<!-- BREADCRUMB -->
-<div class="breadcrumb">
-  <div class="container">
-    <div class="breadcrumb-inner">
-      <a href="index.html">Home</a>
-      <span class="breadcrumb-sep">/</span>
-      <a href="listings.html">Properties</a>
-      <span class="breadcrumb-sep">/</span>
-      <a href="listings.html?location=Dabouq">Dabouq</a>
-      <span class="breadcrumb-sep">/</span>
-      <span class="breadcrumb-current">Demo Mansion</span>
-    </div>
-  </div>
-</div>
-
-<!-- MAIN DETAIL -->
-<section class="detail-section">
-  <div class="container">
-    <div class="detail-grid">
-
-      <!-- LEFT: Property Info -->
-      <div>
-        <p class="label">Private Villa · Demo Lead</p>
-        <span class="gold-line" style="margin:14px 0;"></span>
-
-        <div class="detail-price-row">
-          <div class="detail-price">JOD 4,460,000</div>
-          <div class="detail-price-sqm">Demo price · 5% test margin included</div>
-        </div>
-
-        <h1 class="detail-title">Luxurious Mansion<br>Dabouq</h1>
-
-        <div class="detail-location">
-          <span></span> Dabouq, Amman
-        </div>
-
-        <p class="demo-disclaimer detail-demo-note">This is a demo test run, not final live inventory. Demo price includes a test margin for workflow simulation only. Final pricing requires owner approval and live market verification.</p>
-
-        <!-- Specs Strip -->
-        <div class="specs-strip">
-          <div class="spec-item">
-            <div class="spec-icon"></div>
-            <div class="spec-value">10+</div>
-            <div class="spec-label">Bedrooms</div>
-          </div>
-          <div class="spec-item">
-            <div class="spec-icon"></div>
-            <div class="spec-value">4</div>
-            <div class="spec-label">Bathrooms</div>
-          </div>
-          <div class="spec-item">
-            <div class="spec-icon"></div>
-            <div class="spec-value">2,160</div>
-            <div class="spec-label">m² Built Area</div>
-          </div>
-          <div class="spec-item">
-            <div class="spec-icon"></div>
-            <div class="spec-value">2,000</div>
-            <div class="spec-label">m² Land Area</div>
-          </div>
-        </div>
-
-        <!-- Description -->
-        <div class="detail-desc">
-          <h3>About This Property</h3>
-          <p>This page is using one publicly visible luxury property lead as a demo workflow test. The source listing describes a substantial Dabouq mansion with large built area, terraces, garden setting, private garage capacity, central systems, and high-end finish details.</p>
-          <p>Lumina's displayed price includes a temporary 5% test margin for simulation only. The public source asking price, owner approval, availability, legal details, media rights, and live market position must all be verified before any public launch or client presentation.</p>
-          <p>The imagery shown here is licensed/free demo stock imagery selected to match the property type visually. It is not presented as the original listing photography.</p>
-        </div>
-
-        <!-- Highlights -->
-        <div class="highlights">
-          <h3>Property Highlights</h3>
-          <div class="highlights-grid">
-            <div class="highlight-item"><span class="highlight-dot"></span>Publicly visible demo lead from Bayut Jordan</div>
-            <div class="highlight-item"><span class="highlight-dot"></span>2,160 m² listed built area</div>
-            <div class="highlight-item"><span class="highlight-dot"></span>2,000 m² listed land area</div>
-            <div class="highlight-item"><span class="highlight-dot"></span>Terraces and garden noted by source</div>
-            <div class="highlight-item"><span class="highlight-dot"></span>Private garage capacity noted by source</div>
-            <div class="highlight-item"><span class="highlight-dot"></span>Central A/C and underfloor heating noted by source</div>
-            <div class="highlight-item"><span class="highlight-dot"></span>Elevator and maid/laundry/storage rooms noted by source</div>
-            <div class="highlight-item"><span class="highlight-dot"></span>Media shown is demo stock, not source media</div>
-            <div class="highlight-item"><span class="highlight-dot"></span>Availability and final pricing require verification</div>
-            <div class="highlight-item"><span class="highlight-dot"></span>No exclusivity or inventory claim is made</div>
-          </div>
-        </div>
-
-        <!-- Location -->
-        <div class="location-block">
-          <h3>Location</h3>
-          <div class="map-placeholder">
-            <span class="map-area-pill">General Area · Demo</span>
-            <span class="map-area-name">Dabouq, Amman</span>
-          </div>
-          <p class="map-disclaimer">Map shows the general area only. Exact property location is shared privately after buyer qualification and viewing approval.</p>
-          <div class="location-notes">
-            <div class="location-note">
-              <strong>Neighborhood</strong>
-              Dabouq — private villa and estate district in West Amman
-            </div>
-            <div class="location-note">
-              <strong>Nearby</strong>
-              Private residential context with access to West Amman amenities
-            </div>
-            <div class="location-note">
-              <strong>Schools &amp; Amenities</strong>
-              Verification required before public buyer presentation
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- RIGHT: Inquiry Panel -->
-      <div id="inquiry">
-        <div class="inquiry-panel">
-          <h3>Request a Viewing</h3>
-          <p class="inquiry-sub">Demo workflow inquiry. Verification required before viewing.</p>
-          <span class="gold-line" style="margin-bottom:24px;"></span>
-
-          <form class="form-dark" onsubmit="return false;">
-            <div class="form-group">
-              <label>Full Name</label>
-              <input type="text" placeholder="Your name" />
-            </div>
-            <div class="form-group">
-              <label>WhatsApp / Phone</label>
-              <input type="tel" placeholder="+962 7X XXX XXXX" />
-            </div>
-            <div class="form-group">
-              <label>Email (optional)</label>
-              <input type="email" placeholder="your@email.com" />
-            </div>
-            <div class="form-group">
-              <label>Message</label>
-              <textarea placeholder="I am interested in this demo listing. Please contact me to discuss verification and viewing workflow."></textarea>
-            </div>
-            <button type="submit" class="btn btn-gold">Submit Inquiry</button>
-          </form>
-
-          <div class="inquiry-divider">or</div>
-
-          <a href="https://wa.me/9627XXXXXXXX?text=I'm%20interested%20in%20the%20demo%20Dabouq%20mansion%20lead%20%E2%80%94%20can%20we%20discuss%20verification%3F"
-             class="inquiry-wa" target="_blank">
-            <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-            WhatsApp Directly
-          </a>
-
-          <div class="inquiry-agent">
-            <div class="inquiry-agent-avatar">A</div>
-            <div>
-              <div class="inquiry-agent-name">Lumina</div>
-              <div class="inquiry-agent-role">Private Advisory Desk</div>
-            </div>
-          </div>
-
-          <p class="inquiry-note">Demo listing for workflow testing. Final details require owner approval and live verification.</p>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-<!-- SIMILAR PROPERTIES -->
-<section class="similar">
-  <div class="container">
-    <div class="section-header fade-up">
-      <p class="label">Additional Demo Leads</p>
-      <span class="gold-line"></span>
-      <h2>Other Workflow Test Listings</h2>
-    </div>
-    <div class="similar-grid">
-      <div class="property-card fade-up">
-        <div class="card-img" style="background:var(--navy-light);"><img src="assets/images/demo-abdoun-penthouse-01.jpg" alt="Luxury apartment in Abdoun, Amman" loading="lazy" /></div>
-        <div class="card-body">
-          <div class="card-kicker">Demo Lead · Abdoun</div>
-          <div class="card-price">JOD 315,000</div>
-          <div class="card-title">Luxury Apartment For Sale In Abdoun</div>
-          <div class="card-location">Abdoun, Amman</div>
-          <div class="card-specs">
-            <div class="card-spec"><span>4</span> Beds</div>
-            <div class="card-spec"><span>318</span> m²</div>
-          </div>
-          <a href="property-details.html" class="card-link">View Property <div class="card-link-arrow"></div></a>
-        </div>
-      </div>
-      <div class="property-card fade-up">
-        <div class="card-img" style="background:var(--navy-mid);"><img src="assets/images/demo-abdali-residence-01.jpg" alt="Urban residence in Abdali, Amman" loading="lazy" /></div>
-        <div class="card-body">
-          <div class="card-kicker">Demo Lead · Abdali</div>
-          <div class="card-price">JOD 730,000</div>
-          <div class="card-title">Duplex Furnished Apartment In Abdali</div>
-          <div class="card-location">Abdali, Amman</div>
-          <div class="card-specs">
-            <div class="card-spec"><span>3</span> Beds</div>
-            <div class="card-spec"><span>227</span> m² total</div>
-          </div>
-          <a href="property-details.html" class="card-link">View Property <div class="card-link-arrow"></div></a>
-        </div>
-      </div>
-      <div class="property-card fade-up">
-        <div class="card-img" style="background:var(--navy-light);"><img src="assets/images/demo-dair-ghbar-apartment-01.jpg" alt="Premium apartment residence in Dair Ghbar, Amman" loading="lazy" /></div>
-        <div class="card-body">
-          <div class="card-kicker">Demo Lead · Dair Ghbar</div>
-          <div class="card-price">JOD 300,000</div>
-          <div class="card-title">4 Bedroom Apartment For Sale In Dair Ghbar</div>
-          <div class="card-location">Dair Ghbar, Amman</div>
-          <div class="card-specs">
-            <div class="card-spec"><span>4</span> Beds</div>
-            <div class="card-spec"><span>250</span> m²</div>
-          </div>
-          <a href="property-details.html" class="card-link">View Property <div class="card-link-arrow"></div></a>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- FOOTER -->
 <footer class="footer">
   <div class="container">
     <div class="footer-grid">
@@ -646,7 +77,6 @@
         <h4>Properties</h4>
         <ul>
           <li><a href="listings.html">All Listings</a></li>
-          <li><a href="listings.html?type=apartment">Apartments</a></li>
           <li><a href="listings.html?type=villa">Villas</a></li>
           <li><a href="listings.html?type=penthouse">Penthouses</a></li>
         </ul>
@@ -656,17 +86,14 @@
         <ul>
           <li><a href="listings.html?location=abdoun">Abdoun</a></li>
           <li><a href="listings.html?location=dabouq">Dabouq</a></li>
-          <li><a href="listings.html?location=dair-ghbar">Dair Ghbar</a></li>
-          <li><a href="listings.html?location=um-uthaina">Um Uthaina</a></li>
           <li><a href="listings.html?location=abdali">Abdali</a></li>
         </ul>
       </div>
       <div class="footer-col">
         <h4>Contact</h4>
         <ul>
-          <li><a href="https://wa.me/9627XXXXXXXX">WhatsApp</a></li>
+          <li><a href="https://wa.me/962000000000">WhatsApp</a></li>
           <li><a href="mailto:lumina@qutaifan.com">Email</a></li>
-          <li><span>+962 7X XXX XXXX</span></li>
         </ul>
       </div>
     </div>
@@ -677,59 +104,157 @@
   </div>
 </footer>
 
-<!-- WHATSAPP FLOAT -->
-<a href="https://wa.me/9627XXXXXXXX" class="whatsapp-float" target="_blank" aria-label="WhatsApp">
-  <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-</a>
-
 <script src="js/site.js"></script>
+<script>
+  (function () {
+    'use strict';
 
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "WebPage",
-      "@id": "https://lumina.qutaifan.com/property-details.html#webpage",
-      "url": "https://lumina.qutaifan.com/property-details.html",
-      "name": "Luxury Villa in Dabouq, Amman — Lumina Real Estate",
-      "description": "A distinguished private villa in Dabouq, one of Amman's most prestigious addresses. Private viewing by appointment.",
-      "isPartOf": { "@id": "https://lumina.qutaifan.com/#website" },
-      "inLanguage": "en",
-      "breadcrumb": {
-        "@type": "BreadcrumbList",
-        "itemListElement": [
-          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://lumina.qutaifan.com/" },
-          { "@type": "ListItem", "position": 2, "name": "Properties", "item": "https://lumina.qutaifan.com/listings.html" },
-          { "@type": "ListItem", "position": 3, "name": "Luxury Villa in Dabouq", "item": "https://lumina.qutaifan.com/property-details.html" }
-        ]
-      }
-    },
-    {
-      "@type": "Residence",
-      "@id": "https://lumina.qutaifan.com/property-details.html#property",
-      "name": "Luxury Villa in Dabouq",
-      "description": "A distinguished private villa in Dabouq, one of Amman's most sought-after residential addresses. Presented exclusively by Lumina.",
-      "url": "https://lumina.qutaifan.com/property-details.html",
-      "image": "https://lumina.qutaifan.com/assets/images/prop-dabouq-villa.jpg",
-      "address": {
-        "@type": "PostalAddress",
-        "addressLocality": "Dabouq",
-        "addressRegion": "Amman",
-        "addressCountry": "JO"
-      },
-      "offers": {
-        "@type": "Offer",
-        "priceCurrency": "JOD",
-        "seller": {
-          "@type": "RealEstateAgent",
-          "name": "Lumina Real Estate",
-          "url": "https://lumina.qutaifan.com/"
-        }
-      }
+    const root = document.getElementById('property-root');
+    const placeholderImage = '/assets/images/hero-luxury-villa.jpg';
+    const whatsappNumber = '962000000000';
+
+    const safeText = value => (value === null || value === undefined) ? '' : String(value);
+    const formatPrice = value => {
+      const amount = Number(value);
+      return Number.isFinite(amount) ? `${amount.toLocaleString('en-US')} JOD` : 'Price on request';
+    };
+    const imagePath = value => safeText(value).trim() || placeholderImage;
+    const sourceUrl = value => {
+      const url = safeText(value).trim();
+      return /^https:\/\/jo\.opensooq\.com\/search\/\d+$/.test(url) ? url : '#';
+    };
+    const whatsappUrl = listing => {
+      const message = [
+        'Hello, I am interested in this Lumina demo listing:',
+        '',
+        safeText(listing.title),
+        safeText(listing.location_area),
+        `Price: ${formatPrice(listing.price_jod_test_margin)}`,
+        '',
+        'Please share more details.'
+      ].join('\n');
+      return `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+    };
+
+    const appendText = (parent, tag, className, text) => {
+      const el = document.createElement(tag);
+      if (className) el.className = className;
+      el.textContent = text;
+      parent.appendChild(el);
+      return el;
+    };
+
+    const addSpec = (grid, label, value) => {
+      if (value === null || value === undefined || value === '') return;
+      const box = document.createElement('div');
+      box.className = 'spec-box';
+      appendText(box, 'div', 'spec-value', value);
+      appendText(box, 'div', 'spec-label', label);
+      grid.appendChild(box);
+    };
+
+    const showNotFound = () => {
+      root.className = 'not-found';
+      root.replaceChildren();
+      const wrap = document.createElement('div');
+      appendText(wrap, 'h1', '', 'Listing not found.');
+      const link = document.createElement('a');
+      link.href = 'listings.html';
+      link.textContent = 'Back to Listings';
+      wrap.appendChild(link);
+      root.appendChild(wrap);
+    };
+
+    const renderListing = listing => {
+      document.title = `${safeText(listing.title)} — Lumina Demo Listing`;
+      root.className = 'detail-shell';
+      root.replaceChildren();
+
+      const hero = document.createElement('section');
+      hero.className = 'detail-hero';
+      const heroImg = document.createElement('img');
+      heroImg.src = imagePath(listing.image_url);
+      heroImg.alt = `${safeText(listing.title)} — ${safeText(listing.location_area)}`;
+      heroImg.addEventListener('error', () => { heroImg.src = placeholderImage; }, { once: true });
+      appendText(hero, 'div', 'detail-badge', 'Demo Listing — Verification Required');
+      hero.prepend(heroImg);
+
+      const wrap = document.createElement('section');
+      wrap.className = 'detail-wrap';
+      const container = document.createElement('div');
+      container.className = 'container detail-grid-dynamic';
+
+      const main = document.createElement('div');
+      appendText(main, 'p', 'detail-kicker', safeText(listing.property_type));
+      appendText(main, 'h1', 'dynamic-title', safeText(listing.title));
+      appendText(main, 'div', 'dynamic-location', safeText(listing.location_area));
+      appendText(main, 'div', 'dynamic-price', formatPrice(listing.price_jod_test_margin));
+      appendText(main, 'div', 'source-price', `Original source price: ${formatPrice(listing.price_jod_raw)}`);
+      appendText(main, 'div', 'demo-note', 'This listing is part of a workflow test. Availability, media, pricing, and ownership must be verified before public use.');
+
+      const specs = document.createElement('div');
+      specs.className = 'spec-grid';
+      addSpec(specs, 'Property Type', safeText(listing.property_type));
+      addSpec(specs, 'Size', listing.size_sqm ? `${Number(listing.size_sqm).toLocaleString('en-US')} sqm` : '');
+      addSpec(specs, 'Land Area', listing.land_area_sqm ? `${Number(listing.land_area_sqm).toLocaleString('en-US')} sqm` : '');
+      addSpec(specs, 'Bedrooms', safeText(listing.bedrooms));
+      addSpec(specs, 'Bathrooms', safeText(listing.bathrooms));
+      addSpec(specs, 'Quality Score', `${listing.quality_score}/5`);
+      addSpec(specs, 'Status', safeText(listing.verification_status));
+      main.appendChild(specs);
+
+      const desc = document.createElement('div');
+      desc.className = 'detail-description';
+      appendText(desc, 'h2', '', 'About This Demo Listing');
+      appendText(desc, 'p', '', safeText(listing.description));
+      main.appendChild(desc);
+      appendText(main, 'p', 'map-safety', 'Map shows the general area only. Exact property location is shared privately after buyer qualification and viewing approval.');
+
+      const aside = document.createElement('aside');
+      aside.className = 'side-panel';
+      appendText(aside, 'h2', '', 'Private Inquiry');
+      appendText(aside, 'p', '', 'Demo workflow inquiry. Verification is required before viewing, publication, or client presentation.');
+      const actions = document.createElement('div');
+      actions.className = 'detail-actions';
+      const request = document.createElement('a');
+      request.href = whatsappUrl(listing);
+      request.className = 'detail-btn detail-btn-primary';
+      request.target = '_blank';
+      request.rel = 'noopener noreferrer';
+      request.textContent = 'Request Details';
+      const source = document.createElement('a');
+      source.href = sourceUrl(listing.source_url);
+      source.className = 'detail-btn detail-btn-outline';
+      source.target = '_blank';
+      source.rel = 'noopener noreferrer';
+      source.textContent = 'View Source';
+      const back = document.createElement('a');
+      back.href = 'listings.html';
+      back.className = 'detail-btn detail-btn-outline';
+      back.textContent = 'Back to Listings';
+      actions.append(request, source, back);
+      aside.appendChild(actions);
+
+      container.append(main, aside);
+      wrap.appendChild(container);
+      root.append(hero, wrap);
+    };
+
+    const id = new URLSearchParams(window.location.search).get('id');
+    if (!id) {
+      showNotFound();
+      return;
     }
-  ]
-}
+
+    fetch('/data/lumina-demo-leads.json')
+      .then(response => response.ok ? response.json() : Promise.reject(new Error('Listing data unavailable')))
+      .then(data => {
+        const listing = Array.isArray(data) ? data.find(item => item.id === id) : null;
+        if (listing) renderListing(listing);
+        else showNotFound();
+      })
+      .catch(showNotFound);
+  })();
 </script>
 </body>
 </html>

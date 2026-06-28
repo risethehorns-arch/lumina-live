@@ -665,11 +665,17 @@
       link.rel = 'noopener noreferrer';
       link.textContent = 'View Source';
 
+      const propertyLink = document.createElement('a');
+      propertyLink.href = `property-details.html?id=${encodeURIComponent(safeText(listing.id))}`;
+      propertyLink.className = 'listing-whatsapp listing-whatsapp-secondary';
+      propertyLink.textContent = 'View Property';
+
       const actions = document.createElement('div');
       actions.className = 'listing-actions';
       actions.append(
         createWhatsAppButton(listing, 'Request Details', listingMessage(listing), 'listing-whatsapp-primary'),
         createWhatsAppButton(listing, 'Schedule Viewing', viewingMessage(listing), 'listing-whatsapp-secondary'),
+        propertyLink,
         link
       );
 
