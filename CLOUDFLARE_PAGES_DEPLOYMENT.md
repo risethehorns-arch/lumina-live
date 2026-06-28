@@ -8,23 +8,27 @@ This deployment is for preview/testing only. It is not the final public business
 
 ## Deployment method
 
-Manual Cloudflare Dashboard upload only.
+GitHub-connected Cloudflare Pages deployment.
+
+Cloudflare Pages should deploy from the GitHub repository `Qutaifan/lumina-website` whenever changes are pushed to the `main` branch.
 
 Do not use Wrangler.
-Do not use API keys.
+Do not use Cloudflare API keys.
 Do not request or store Cloudflare secrets.
 
-Manual path:
+Cloudflare path:
 
-Cloudflare Dashboard → Workers & Pages → Pages → Upload assets
+Cloudflare Dashboard → Workers & Pages → Pages → Create project → Connect to Git → GitHub → Select `lumina-website`
 
 ## Project settings
 
+- GitHub repo: `Qutaifan/lumina-website`
 - Cloudflare Pages project name: `lumina`
-- Custom domain: `lumina.qutaifan.com`
-- Deployment folder: `Q:\world\Projects\Lumina\website`
+- Production branch: `main`
+- Framework preset: None
 - Build command: none
 - Output directory: `/`
+- Custom domain: `lumina.qutaifan.com`
 
 ## Preview notes
 
@@ -38,9 +42,7 @@ Cloudflare Dashboard → Workers & Pages → Pages → Upload assets
 
 ## Static site structure
 
-Upload the contents of:
-
-`Q:\world\Projects\Lumina\website`
+Repository root contains the static website files directly.
 
 Required files/folders:
 
@@ -50,26 +52,29 @@ Required files/folders:
 - `css/style.css`
 - `js/site.js`
 - `assets/images/`
+- `assets/data/`
 - `copy/`
 - `sitemap.md`
 - `design-notes.md`
 - `CLOUDFLARE_PAGES_DEPLOYMENT.md`
 
-## Manual upload checklist
+## GitHub deployment checklist
 
 1. Open Cloudflare Dashboard.
 2. Go to Workers & Pages.
 3. Open Pages.
 4. Create/select project: `lumina`.
-5. Choose Upload assets.
-6. Upload the folder contents from `Q:\world\Projects\Lumina\website`.
-7. Set build command to none.
-8. Set output directory to `/`.
-9. Deploy.
-10. Add custom domain: `lumina.qutaifan.com`.
-11. Confirm DNS/custom domain status is active in Cloudflare.
-12. Share only as TEST PREVIEW.
-13. Replace placeholder contact number before final public launch.
+5. Choose Connect to Git.
+6. Select GitHub repository: `Qutaifan/lumina-website`.
+7. Set production branch: `main`.
+8. Set framework preset: None.
+9. Set build command to none / blank.
+10. Set output directory to `/`.
+11. Deploy.
+12. Add custom domain: `lumina.qutaifan.com`.
+13. Confirm DNS/custom domain status is active in Cloudflare.
+14. Share only as TEST PREVIEW.
+15. Replace placeholder contact number before final public launch.
 
 ## Post-deploy test URLs
 
@@ -81,7 +86,7 @@ Check these after deployment:
 - `https://lumina.qutaifan.com/property-details.html`
 - `https://lumina.qutaifan.com/css/style.css`
 - `https://lumina.qutaifan.com/js/site.js`
-- `https://lumina.qutaifan.com/assets/images/hero-luxury-villa.jpg`
+- `https://lumina.qutaifan.com/assets/images/demo-dabouq-villa-01.jpg`
 
 ## Test-preview contact configuration
 
@@ -93,8 +98,6 @@ Placeholders are intentionally allowed during TEST PREVIEW:
 
 ## Security note
 
-Any Cloudflare Global API Key pasted during testing should be rotated immediately.
+Do not commit or store Cloudflare API keys, GitHub tokens, owner private contact details, or `.env` files.
 
-Future CLI deployments, if ever needed, should use scoped Cloudflare API Tokens only — not Global API Keys.
-
-For this test preview deployment, use manual Cloudflare Dashboard upload only.
+For this test-preview deployment, use Cloudflare's GitHub integration only.

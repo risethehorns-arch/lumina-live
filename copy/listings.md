@@ -2,7 +2,7 @@
 
 ## Page Header
 
-LABEL: Exclusive Listings
+LABEL: Demo Preview Listings
 H1: Properties
 BODY: Curated luxury homes in Amman's most prestigious neighborhoods.
 
@@ -13,7 +13,7 @@ BODY: Curated luxury homes in Amman's most prestigious neighborhoods.
 Type Pills: All | Apartment | Villa | Penthouse | Investment
 Location Select: All Locations | Abdoun | Dabouq | Dair Ghbar | Um Uthaina | Abdali
 Budget Select: Any | Under 400K | 400K–800K | 800K–1.5M | 1.5M+
-Count: Showing X properties
+Count: Showing X demo leads
 
 ---
 
@@ -21,18 +21,18 @@ Count: Showing X properties
 
 FEATURED (wide):
   JOD 1,200,000
-  Sky Penthouse — Abdoun
-  Abdoun Circle, Amman
+  Demo Preview Residence — Abdoun
+  Abdoun, Amman
   4 Beds | 4 Baths | 380 m² | 2 Parking
-  Badge: EXCLUSIVE
+  Badge: Demo Preview
   Link: View Property →
 
 Card 2:
   JOD 850,000
   Private Villa — Dabouq
-  North Dabouq, Amman
+  Dabouq, Amman
   5 Beds | 5 Baths | 520 m²
-  Badge: NEW LISTING
+  Badge: Demo Lead
 
 Card 3:
   JOD 420,000
@@ -49,14 +49,14 @@ Card 4:
 Card 5:
   JOD 550,000
   Investment Suite — Abdali
-  Abdali Boulevard, Amman
+  Abdali, Amman
   3 Beds | 3 Baths | 240 m²
   Badge: INVESTMENT
 
 Card 6:
   JOD 1,450,000
   Modern Villa — Dair Ghbar
-  Dair Ghbar Heights, Amman
+  Dair Ghbar, Amman
   6 Beds | 6 Baths | 680 m²
 
 Card 7:
@@ -64,7 +64,7 @@ Card 7:
   Corner Penthouse — Abdoun
   Abdoun, Amman
   3 Beds | 4 Baths | 320 m²
-  Badge: EXCLUSIVE
+  Badge: Demo Preview
 
 ---
 
@@ -72,5 +72,4 @@ Card 7:
 
 Button: Request Off-Market Listings → #contact
 
-NOTE: Some of our best properties are never listed publicly.
-If you do not see what you are looking for, contact us directly.
+NOTE: This is a demo test run, not final live inventory. Owner verification and live availability checks are required before any client presentation.

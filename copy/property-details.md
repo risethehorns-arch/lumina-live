@@ -1,97 +1,102 @@
 # Property Details Page Copy — Lumina
 
-## Template: Sky Penthouse, Abdoun
+## Template: Demo Mansion, Dabouq
 
 ---
 
 ### Gallery
 - 1 large hero image (full width)
 - 4 thumbnail images
-- +6 indicator for more
+- Demo-safe licensed/free stock imagery only
 
-BADGE: EXCLUSIVE LISTING
+BADGE: DEMO LEAD
 
 ---
 
 ### Breadcrumb
-Home / Properties / Abdoun / Sky Penthouse
+Home / Properties / Dabouq / Demo Mansion
 
 ---
 
 ### Price & Title
 
-JOD 1,200,000
-JOD 3,158 / m²
+JOD 4,460,000
+Demo price · 5% test margin included
 
-[PENTHOUSE · EXCLUSIVE LISTING]
+[PRIVATE VILLA · DEMO LEAD]
 
-Sky Penthouse
-Abdoun Circle
+Luxurious Mansion
+Dabouq
 
-📍 Abdoun Circle, 4th Circle Area, Amman
+Location display: Dabouq, Amman
+
+---
+
+### Required Demo Notice
+
+This is a demo test run, not final live inventory.
+
+Demo price includes a test margin for workflow simulation only. Final pricing requires owner approval and live market verification.
 
 ---
 
 ### Specs Strip
 
-🛏 4 Bedrooms
-🚿 4 Bathrooms
-📐 380 m² Interior
-🏙 Floor 12
+- 10+ Bedrooms
+- 4 Bathrooms
+- 2,160 m² Built Area
+- 2,000 m² Land Area
 
 ---
 
 ### Description
 
-A rare full-floor penthouse positioned on the 12th floor of one of Abdoun's most
-sought-after buildings. The residence commands unobstructed panoramic views across
-Amman — from the city center to the western hills.
+This page uses one publicly visible luxury property lead as a demo workflow test. The source listing describes a substantial Dabouq mansion with large built area, terraces, garden setting, private garage capacity, central systems, and high-end finish details.
 
-The interior has been finished to an exceptional standard, with imported Italian stone,
-hand-selected joinery, and a kitchen designed for both daily living and formal
-entertaining. The private rooftop terrace extends the living space outdoors with
-full city views.
+Lumina's displayed price includes a temporary 5% test margin for simulation only. The public source asking price, owner approval, availability, legal details, media rights, and live market position must all be verified before any public launch or client presentation.
 
-This is a property for a buyer who understands that true luxury is not about square
-meters alone — it is about position, privacy, and the quality of every detail.
+The imagery shown here is licensed/free demo stock imagery selected to match the property type visually. It is not presented as the original listing photography.
 
 ---
 
 ### Property Highlights
 
-- Full-floor penthouse — no shared floor
-- Private rooftop terrace (80 m²)
-- Panoramic city views, all directions
-- Italian marble throughout
-- 2 private underground parking spaces
-- 24/7 concierge and security
-- Master suite with dressing room
-- Smart home automation system
-- Storage room (25 m²)
-- Clean title deed — ready to transfer
+- Publicly visible demo lead from Bayut Jordan
+- 2,160 m² listed built area
+- 2,000 m² listed land area
+- Terraces and garden noted by source
+- Private garage capacity noted by source
+- Central A/C and underfloor heating noted by source
+- Media shown is demo stock, not source media
+- Availability and final pricing require verification
+- No ownership, exclusivity, or confirmed-inventory claim is made
 
 ---
 
 ### Location
 
-Map: Abdoun Circle, Amman
+Map: General Dabouq area only
 
-Neighborhood: Abdoun — Amman's most prestigious residential district
-Nearby: 5 min to Abdoun Circle, 10 min to 5th Circle, 15 min to Abdali
-Schools & Amenities: Walking distance to premium restaurants, international schools, embassies
+Required wording:
+
+“Map shows the general area only. Exact property location is shared privately after buyer qualification and viewing approval.”
+
+Neighborhood: Dabouq — private villa and estate district in West Amman
+Nearby: Private residential context with access to West Amman amenities
+Schools & Amenities: Verification required before public buyer presentation
 
 ---
 
 ### Inquiry Panel (right sidebar)
 
 H3: Request a Viewing
-SUB: Private viewings by appointment only.
+SUB: Demo workflow inquiry. Verification required before viewing.
 
 Form Fields:
 - Full Name
 - WhatsApp / Phone
 - Email (optional)
-- Message (pre-filled: "I am interested in this property. Please contact me to arrange a viewing.")
+- Message (pre-filled: "I am interested in this demo listing. Please contact me to discuss verification and viewing workflow.")
 
 CTA: Submit Inquiry [gold button]
 
@@ -99,15 +104,14 @@ OR:
 
 [WhatsApp] WhatsApp Directly
 
-Agent: Ahmad — Lumina Lead Agent
+Agent: Lumina — Private Advisory Desk
 
-DISCLAIMER: All inquiries are handled with complete discretion.
-            We do not share your information.
+DISCLAIMER: Demo listing for workflow testing. Final details require owner approval and live verification.
 
 ---
 
 ### Similar Properties (3 cards)
 
-- Corner Penthouse — Abdoun | JOD 780,000
-- Private Villa — Dabouq | JOD 850,000
-- Modern Villa — Dair Ghbar | JOD 1,450,000
+- Luxury Apartment For Sale In Abdoun | JOD 315,000 | Demo Lead
+- Duplex Furnished Apartment In Abdali | JOD 730,000 | Demo Lead
+- 4 Bedroom Apartment For Sale In Dair Ghbar | JOD 300,000 | Demo Lead

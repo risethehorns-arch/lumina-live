@@ -2,7 +2,7 @@
 
 ## Hero Section
 
-LABEL: Luxury Real Estate — Amman, Jordan
+LABEL: Private Real Estate Advisory — Amman, Jordan
 
 H1: Where Exceptional
     Homes Find
@@ -20,7 +20,7 @@ CTA 2: Private Consultation → #contact
 
 5+          Prime Locations
 JOD 200K+   Starting Price
-100%        Verified Listings
+100%        Curated Review Process
 Private     Viewings by Appointment
 
 ---
@@ -45,8 +45,8 @@ LABEL: Featured Properties
 H2: Exceptional Homes, Carefully Selected
 
 Cards:
-1. Sky Penthouse — Abdoun | JOD 1,200,000 | 4 Bed | 4 Bath | 380 m² | EXCLUSIVE
-2. Private Villa — Dabouq | JOD 850,000 | 5 Bed | 5 Bath | 520 m² | NEW LISTING
+1. Demo Preview Residence — Abdoun | JOD 315,000 | 4 Bed | 4 Bath | 318 m² | Demo Preview
+2. Private Villa Demo Lead — Dabouq | JOD 4,460,000 | 10+ Bed | 4 Bath | 2,160 m² | Demo Lead
 3. Premium Apartment — Dair Ghbar | JOD 420,000 | 3 Bed | 3 Bath | 210 m²
 
 CTA: View All Properties → listings.html
@@ -72,7 +72,7 @@ LABEL: Why Lumina
 H2: A Standard of Service That Matches the Property
 
 01 — Curated Selection
-We represent only properties that meet our standard. Every listing is personally vetted before it reaches you.
+We present only demo leads and future properties that meet our standard. Owner approval and live verification are required before client presentation.
 
 02 — Complete Discretion
 Your search, your budget, your timeline — handled with absolute confidentiality from first contact to closing.
