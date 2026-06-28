@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
+Disallow: /leads/
+Disallow: /scripts/
 
-Sitemap: https://www.lumina.qutaifan.com/sitemap.xml
+Sitemap: https://lumina.qutaifan.com/sitemap.xml

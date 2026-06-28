@@ -34,4 +34,11 @@
   }, { threshold: 0.12 });
   document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
 
+  // --- Lightweight visibility signals (console only, no analytics) ---
+  console.log('Lumina page load:', window.location.pathname);
+  document.addEventListener('click', event => {
+    const link = event.target.closest('a[href*="wa.me"]');
+    if (link) console.log('Lumina WhatsApp intent click:', window.location.pathname);
+  });
+
 })();
