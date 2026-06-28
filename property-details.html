@@ -113,7 +113,7 @@
 
     const root = document.getElementById('property-root');
     const placeholderImage = '/assets/images/hero-luxury-villa.jpg';
-    const whatsappNumber = '962000000000';
+    const whatsappNumber = (window.LuminaConfig && window.LuminaConfig.whatsapp) || '962000000000';
 
     const safeText = value => (value === null || value === undefined) ? '' : String(value);
     const formatPrice = value => {

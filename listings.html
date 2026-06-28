@@ -561,7 +561,7 @@
     const grid = document.getElementById('listings-grid');
     const count = document.getElementById('listing-count');
     const placeholderImage = '/assets/images/hero-luxury-villa.jpg';
-    const whatsappNumber = '962000000000';
+    const whatsappNumber = (window.LuminaConfig && window.LuminaConfig.whatsapp) || '962000000000';
 
     const formatPrice = value => {
       const amount = Number(value);
