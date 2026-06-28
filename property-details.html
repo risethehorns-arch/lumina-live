@@ -123,7 +123,7 @@
     const imagePath = value => safeText(value).trim() || placeholderImage;
     const sourceUrl = value => {
       const url = safeText(value).trim();
-      return /^https:\/\/jo\.opensooq\.com\/search\/\d+$/.test(url) ? url : '#';
+      return (url.startsWith('https://') || url.startsWith('http://')) ? url : '#';
     };
     const whatsappUrl = listing => {
       const message = [
