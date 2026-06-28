@@ -63,11 +63,13 @@
     .page-header-inner { position: relative; z-index: 2; }
     .page-header h1 { color: var(--white); font-size: clamp(2.4rem, 5vw, 4rem); font-weight: 400; }
     .page-header p { color: rgba(255,255,255,0.6); margin-top: 16px; font-size: 1.02rem; font-weight: 300; max-width: 540px; }
+    .page-header .gold-line { margin: 16px 0; }
+    .nav-links .active-link { color: var(--gold); }
 
     /* ---- FILTER BAR ---- */
     .filter-bar {
-      background: var(--white);
-      border-bottom: 1px solid var(--stone-line);
+      background: #0B0B0B;
+      border-bottom: 1px solid rgba(198,167,110,0.18);
       padding: 22px 0;
       position: sticky;
       top: 0;
@@ -84,38 +86,38 @@
       font-weight: 500;
       letter-spacing: 0.2em;
       text-transform: uppercase;
-      color: var(--gray);
+      color: #A0A0A0;
       margin-right: 8px;
       flex-shrink: 0;
     }
     .filter-select {
       padding: 11px 38px 11px 16px;
-      border: 1px solid var(--stone-line);
-      background: var(--white);
+      border: 1px solid rgba(198,167,110,0.22);
+      background: #111111;
       font-family: var(--font-sans);
       font-size: 0.78rem;
       letter-spacing: 0.04em;
-      color: var(--ink);
+      color: #FFFFFF;
       outline: none;
       appearance: none;
       cursor: pointer;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23C2A35A' stroke-width='1.2' fill='none'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
       background-position: right 14px center;
-      transition: border-color var(--transition);
+      transition: border-color 0.3s ease, color 0.3s ease;
       min-width: 168px;
     }
-    .filter-select:focus { border-color: var(--gold); }
-    .filter-select.active { border-color: var(--gold); color: var(--navy); }
+    .filter-select:focus { border-color: #C6A76E; }
+    .filter-select.active { border-color: #C6A76E; color: #FFFFFF; }
     .filter-count {
       margin-left: auto;
       font-size: 0.72rem;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: var(--gray);
+      color: #A0A0A0;
       flex-shrink: 0;
     }
-    .filter-count span { font-weight: 600; color: var(--navy); }
+    .filter-count span { font-weight: 600; color: #C6A76E; }
 
     /* ---- TYPE PILLS ---- */
     .type-pills {
@@ -125,36 +127,41 @@
     }
     .type-pill {
       padding: 10px 22px;
-      border: 1px solid var(--stone-line);
+      border: 1px solid rgba(198,167,110,0.22);
       font-size: 0.68rem;
       font-weight: 400;
       letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: var(--gray);
+      color: #A0A0A0;
       cursor: pointer;
-      transition: var(--transition);
+      transition: all 0.3s ease;
       background: transparent;
     }
     .type-pill:hover {
-      border-color: var(--gold);
-      color: var(--navy);
+      border-color: #C6A76E;
+      color: #FFFFFF;
     }
-    .type-pill.active { background: var(--navy); color: var(--white); border-color: var(--navy); }
+    .type-pill.active { background: #C6A76E; color: #0B0B0B; border-color: #C6A76E; }
 
     /* ---- LISTINGS SECTION ---- */
     .listings-section {
-      background: var(--ivory);
+      background: #0B0B0B;
       padding: 72px 0 110px;
+    }
+    .listings-section .demo-disclaimer-wide {
+      background: #111111;
+      border-color: rgba(198,167,110,0.24);
+      color: #A0A0A0;
     }
     .listings-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 52px 40px;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 32px;
     }
 
     /* ---- PROPERTY CARD (extended for listings page) ---- */
-    .property-card { background: var(--white); }
-    .card-img { aspect-ratio: 3/2; }
+    .property-card { background: #111111; }
+    .card-img { aspect-ratio: 16/10; background: #181818; }
     .card-body { padding: 24px 24px 26px; }
     .card-price { font-size: 1.5rem; margin-bottom: 6px; }
     .card-title { font-size: 1.02rem; font-weight: 400; margin-bottom: 4px; }
@@ -194,6 +201,162 @@
     }
     .card-link:hover .card-link-arrow { width: 36px; }
 
+    .listing-card {
+      background: #111111;
+      border: 1px solid rgba(198,167,110,0.14);
+      border-radius: 14px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+      display: flex;
+      flex-direction: column;
+      min-height: 100%;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(22px);
+      transition: all 0.3s ease;
+      animation: listingFadeUp 0.65s ease forwards;
+    }
+    .listing-card:hover {
+      transform: translateY(-6px) !important;
+      border-color: rgba(198,167,110,0.34);
+      box-shadow: 0 16px 52px rgba(0,0,0,0.62);
+    }
+    .listing-card:hover .card-img img { transform: scale(1.05); }
+    .listing-image { background: #181818; }
+    .listing-content {
+      padding: 26px 26px 24px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+    .listing-content h3 {
+      font-family: var(--font-sans);
+      font-size: clamp(18px, 1.4vw, 22px);
+      font-weight: 600;
+      line-height: 1.35;
+      margin-bottom: 10px;
+      color: #FFFFFF;
+    }
+    .listing-content .location {
+      font-size: 0.7rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #A0A0A0;
+      margin-bottom: 18px;
+    }
+    .listing-content .price {
+      font-family: var(--font-sans);
+      font-size: clamp(1.45rem, 2vw, 1.9rem);
+      font-weight: 600;
+      color: #C6A76E;
+      margin-bottom: 18px;
+      line-height: 1.25;
+    }
+    .listing-content .details {
+      font-size: 0.84rem;
+      letter-spacing: 0.05em;
+      color: #A0A0A0;
+      margin: 0 0 24px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .listing-content .card-link {
+      width: fit-content;
+      margin-top: auto;
+      padding: 12px 18px;
+      border: 1px solid #C6A76E;
+      border-radius: 999px;
+      background: transparent;
+      color: #C6A76E;
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      transition: all 0.3s ease;
+    }
+    .listing-content .card-link:hover {
+      background: #C6A76E;
+      color: #0B0B0B;
+    }
+    .listing-actions {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-top: auto;
+    }
+    .listing-whatsapp {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 12px 18px;
+      border: 1px solid #C6A76E;
+      border-radius: 999px;
+      font-size: 0.66rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      line-height: 1;
+      text-align: center;
+      text-transform: uppercase;
+      transition: all 0.2s ease;
+    }
+    .listing-whatsapp-primary {
+      background: #C6A76E;
+      color: #0B0B0B;
+    }
+    .listing-whatsapp-primary:hover {
+      background: #FFFFFF;
+      border-color: #FFFFFF;
+      color: #0B0B0B;
+    }
+    .listing-whatsapp-secondary {
+      background: transparent;
+      color: #C6A76E;
+    }
+    .listing-whatsapp-secondary:hover {
+      background: #C6A76E;
+      color: #0B0B0B;
+    }
+    .listing-content .status {
+      margin-top: 22px;
+      color: #A0A0A0;
+      font-size: 0.64rem;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      line-height: 1.6;
+    }
+    .listing-error {
+      grid-column: 1 / -1;
+      padding: 44px;
+      border: 1px solid rgba(198,167,110,0.28);
+      background: #111111;
+      text-align: center;
+      color: #A0A0A0;
+    }
+
+    @keyframes listingFadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .delay-0 { animation-delay: 0s; }
+    .delay-1 { animation-delay: 0.05s; }
+    .delay-2 { animation-delay: 0.1s; }
+    .delay-3 { animation-delay: 0.15s; }
+    .delay-4 { animation-delay: 0.2s; }
+    .delay-5 { animation-delay: 0.25s; }
+    .delay-6 { animation-delay: 0.3s; }
+    .delay-7 { animation-delay: 0.35s; }
+    .delay-8 { animation-delay: 0.4s; }
+    .delay-9 { animation-delay: 0.45s; }
+    @media (prefers-reduced-motion: reduce) {
+      .listing-card {
+        opacity: 1;
+        transform: none;
+        animation: none;
+      }
+      .listing-card:hover { transform: none !important; }
+      .listing-card:hover .card-img img { transform: none; }
+    }
+
     /* ---- FEATURED LARGE CARD ---- */
     .card-featured {
       grid-column: span 2;
@@ -213,15 +376,56 @@
 
     /* ---- LOAD MORE ---- */
     .load-more-wrap { text-align: center; margin-top: 56px; }
+    .listings-section .btn-outline-gold {
+      border-color: #C6A76E;
+      color: #C6A76E;
+      border-radius: 999px;
+    }
+    .listings-section .btn-outline-gold:hover {
+      background: #C6A76E;
+      color: #0B0B0B;
+    }
+    .whatsapp-float.advisor-float {
+      width: auto;
+      height: 52px;
+      padding: 0 18px;
+      gap: 10px;
+      border-radius: 999px;
+      background: #C6A76E;
+      color: #0B0B0B;
+      box-shadow: 0 10px 36px rgba(0,0,0,0.45);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      transition: all 0.2s ease;
+    }
+    .whatsapp-float.advisor-float:hover {
+      background: #FFFFFF;
+      box-shadow: 0 14px 44px rgba(0,0,0,0.55);
+      transform: translateY(-2px);
+    }
+    .whatsapp-float.advisor-float svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
 
     @media (max-width: 1024px) {
-      .listings-grid { grid-template-columns: repeat(2, 1fr); }
+      .listings-grid { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
       .card-featured { grid-column: span 1; }
     }
     @media (max-width: 680px) {
       .listings-grid { grid-template-columns: 1fr; }
       .filter-inner { flex-direction: column; align-items: stretch; }
       .type-pills { order: -1; }
+      .whatsapp-float.advisor-float {
+        right: 18px;
+        bottom: 18px;
+        height: 48px;
+        padding: 0 14px;
+        font-size: 0.64rem;
+      }
     }
   </style>
 </head>
@@ -231,7 +435,7 @@
 <nav class="nav scrolled" id="nav">
   <a href="index.html" class="nav-logo">Lumina<span>.</span></a>
   <div class="nav-links">
-    <a href="listings.html" style="color:var(--gold);">Properties</a>
+    <a href="listings.html" class="active-link">Properties</a>
     <a href="index.html#locations">Locations</a>
     <a href="index.html#why">About</a>
     <a href="index.html#contact" class="nav-cta btn">Inquire Now</a>
@@ -243,7 +447,7 @@
   <div class="page-header-bg"></div>
   <div class="container page-header-inner">
     <p class="label">Demo Preview Listings</p>
-    <span class="gold-line" style="margin:16px 0;"></span>
+    <span class="gold-line"></span>
     <h1>The Collection</h1>
     <p>A curated selection of residences across Amman's most considered neighborhoods — presented privately, by appointment.</p>
   </div>
@@ -283,7 +487,7 @@
         <option>JOD 1.5M+</option>
       </select>
 
-      <div class="filter-count">Showing <span>8</span> demo leads</div>
+      <div class="filter-count">Showing <span id="listing-count">0</span> demo leads</div>
     </div>
   </div>
 </div>
@@ -292,186 +496,7 @@
 <section class="listings-section">
   <div class="container">
     <p class="demo-disclaimer demo-disclaimer-wide">This is a demo test run, not final live inventory. Availability, pricing, and media require verification before public launch.</p>
-    <div class="listings-grid">
-
-      <!-- Featured Demo Card (span 2) -->
-      <div class="property-card card-featured demo-card">
-        <div class="card-img" style="background:var(--navy-light);">
-          <img src="assets/images/demo-dabouq-villa-01.jpg" alt="Private villa residence in Dabouq, Amman" />
-          <span class="card-badge">Demo Lead</span>
-        </div>
-        <div class="card-body">
-          <div class="card-kicker">Workflow Test · Source: Bayut Jordan</div>
-          <div class="card-price">JOD 4,460,000</div>
-          <div class="card-title">Luxurious Mansion For Sale In Dabouq</div>
-          <div class="card-location">Dabouq, Amman</div>
-          <div class="card-specs">
-            <div class="card-spec"><span>10+</span> Beds</div>
-            <div class="card-spec"><span>4</span> Baths</div>
-            <div class="card-spec"><span>2,160</span> m²</div>
-            <div class="card-spec"><span>Garden</span></div>
-          </div>
-          <a href="property-details.html" class="card-link">
-            View Demo Detail <div class="card-link-arrow"></div>
-          </a>
-        </div>
-      </div>
-
-      <!-- Demo Card 2 -->
-      <div class="property-card demo-card">
-        <div class="card-img" style="background:var(--navy-light);">
-          <img src="assets/images/demo-abdoun-penthouse-01.jpg" alt="Luxury apartment in Abdoun, Amman" />
-          <span class="card-badge">Demo Preview</span>
-        </div>
-        <div class="card-body">
-          <div class="card-kicker">Demo Lead · Abdoun</div>
-          <div class="card-price">JOD 315,000</div>
-          <div class="card-title">Luxury Apartment For Sale In Abdoun</div>
-          <div class="card-location">Abdoun, Amman</div>
-          <div class="card-specs">
-            <div class="card-spec"><span>4</span> Beds</div>
-            <div class="card-spec"><span>4</span> Baths</div>
-            <div class="card-spec"><span>318</span> m²</div>
-          </div>
-          <a href="property-details.html" class="card-link">
-            View Property <div class="card-link-arrow"></div>
-          </a>
-        </div>
-      </div>
-
-      <!-- Demo Card 3 -->
-      <div class="property-card demo-card">
-        <div class="card-img" style="background:var(--navy-light);">
-          <img src="assets/images/demo-dair-ghbar-apartment-01.jpg" alt="Premium apartment residence in Dair Ghbar, Amman" />
-          <span class="card-badge">Private Viewing</span>
-        </div>
-        <div class="card-body">
-          <div class="card-kicker">Demo Lead · Dair Ghbar</div>
-          <div class="card-price">JOD 300,000</div>
-          <div class="card-title">4 Bedroom Apartment For Sale In Dair Ghbar</div>
-          <div class="card-location">Dair Ghbar, Amman</div>
-          <div class="card-specs">
-            <div class="card-spec"><span>4</span> Beds</div>
-            <div class="card-spec"><span>5</span> Baths</div>
-            <div class="card-spec"><span>250</span> m²</div>
-          </div>
-          <a href="property-details.html" class="card-link">
-            View Property <div class="card-link-arrow"></div>
-          </a>
-        </div>
-      </div>
-
-      <!-- Demo Card 4 -->
-      <div class="property-card demo-card">
-        <div class="card-img" style="background:var(--navy-light);">
-          <img src="assets/images/demo-luxury-living-01.jpg" alt="Investment residence in Dair Ghbar, Amman" />
-          <span class="card-badge">Curated Residence</span>
-        </div>
-        <div class="card-body">
-          <div class="card-kicker">Demo Lead · Dair Ghbar</div>
-          <div class="card-price">JOD 270,000</div>
-          <div class="card-title">3 Bedroom Apartment For Sale In Dair Ghbar</div>
-          <div class="card-location">Dair Ghbar, Amman</div>
-          <div class="card-specs">
-            <div class="card-spec"><span>3</span> Beds</div>
-            <div class="card-spec"><span>5</span> Baths</div>
-            <div class="card-spec"><span>265</span> m²</div>
-          </div>
-          <a href="property-details.html" class="card-link">
-            View Property <div class="card-link-arrow"></div>
-          </a>
-        </div>
-      </div>
-
-      <!-- Demo Card 5 -->
-      <div class="property-card demo-card">
-        <div class="card-img" style="background:var(--navy-light);">
-          <img src="assets/images/demo-abdali-residence-01.jpg" alt="Urban residence in Abdali, Amman" />
-          <span class="card-badge">Demo Lead</span>
-        </div>
-        <div class="card-body">
-          <div class="card-kicker">Demo Lead · Abdali</div>
-          <div class="card-price">JOD 730,000</div>
-          <div class="card-title">Duplex Furnished Apartment In Abdali</div>
-          <div class="card-location">Abdali, Amman</div>
-          <div class="card-specs">
-            <div class="card-spec"><span>3</span> Beds</div>
-            <div class="card-spec"><span>4</span> Baths</div>
-            <div class="card-spec"><span>227</span> m² total</div>
-          </div>
-          <a href="property-details.html" class="card-link">
-            View Property <div class="card-link-arrow"></div>
-          </a>
-        </div>
-      </div>
-
-      <!-- Demo Card 6 -->
-      <div class="property-card demo-card">
-        <div class="card-img" style="background:var(--navy-light);">
-          <img src="assets/images/demo-um-uthaina-apartment-01.jpg" alt="Premium apartment residence in Um Uthaina, Amman" />
-          <span class="card-badge">Test Listing</span>
-        </div>
-        <div class="card-body">
-          <div class="card-kicker">Demo Lead · Um Uthaina</div>
-          <div class="card-price">JOD 340,000</div>
-          <div class="card-title">3 Bedroom Apartment For Sale In Um Uthaina</div>
-          <div class="card-location">Um Uthaina, Amman</div>
-          <div class="card-specs">
-            <div class="card-spec"><span>3</span> Beds</div>
-            <div class="card-spec"><span>4</span> Baths</div>
-            <div class="card-spec"><span>248</span> m²</div>
-          </div>
-          <a href="property-details.html" class="card-link">
-            View Property <div class="card-link-arrow"></div>
-          </a>
-        </div>
-      </div>
-
-      <!-- Demo Card 7 -->
-      <div class="property-card demo-card">
-        <div class="card-img" style="background:var(--navy-light);">
-          <img src="assets/images/demo-city-view-01.jpg" alt="Luxury residence with city view in Abdoun, Amman" />
-          <span class="card-badge">Demo Preview</span>
-        </div>
-        <div class="card-body">
-          <div class="card-kicker">Demo Lead · Abdoun</div>
-          <div class="card-price">JOD 380,000</div>
-          <div class="card-title">Luxury Apartment For Sale In Abdoun</div>
-          <div class="card-location">Abdoun, Amman</div>
-          <div class="card-specs">
-            <div class="card-spec"><span>4</span> Beds</div>
-            <div class="card-spec"><span>6</span> Baths</div>
-            <div class="card-spec"><span>300</span> m²</div>
-          </div>
-          <a href="property-details.html" class="card-link">
-            View Property <div class="card-link-arrow"></div>
-          </a>
-        </div>
-      </div>
-
-      <!-- Demo Card 8 -->
-      <div class="property-card demo-card">
-        <div class="card-img" style="background:var(--navy-light);">
-          <img src="assets/images/demo-villa-terrace-01.jpg" alt="Private estate terrace near Airport Road, Amman" />
-          <span class="card-badge">Villa Estate</span>
-        </div>
-        <div class="card-body">
-          <div class="card-kicker">Demo Lead · Airport Road</div>
-          <div class="card-price">JOD 6,830,000</div>
-          <div class="card-title">Luxury Furnished Palace On Airport Road</div>
-          <div class="card-location">Airport Road, Amman</div>
-          <div class="card-specs">
-            <div class="card-spec"><span>4</span> Beds</div>
-            <div class="card-spec"><span>6</span> Baths</div>
-            <div class="card-spec"><span>2,500</span> m²</div>
-          </div>
-          <a href="property-details.html" class="card-link">
-            View Property <div class="card-link-arrow"></div>
-          </a>
-        </div>
-      </div>
-
-    </div>
+    <div class="listings-grid" id="listings-grid" aria-live="polite"></div>
 
     <div class="load-more-wrap">
       <a href="index.html#contact" class="btn btn-outline-gold">Request Off-Market Listings</a>
@@ -523,19 +548,169 @@
 </footer>
 
 <!-- WHATSAPP FLOAT -->
-<a href="https://wa.me/9627XXXXXXXX" class="whatsapp-float" target="_blank" aria-label="WhatsApp">
+<a href="https://wa.me/962000000000?text=Hello%2C%20I%20am%20interested%20in%20luxury%20properties%20in%20Amman." class="whatsapp-float advisor-float" target="_blank" rel="noopener noreferrer" aria-label="Contact Advisor on WhatsApp">
   <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  <span>Contact Advisor</span>
 </a>
 
 <script src="js/site.js"></script>
 <script>
-  // Filter pill interaction
-  document.querySelectorAll('.type-pill').forEach(pill => {
-    pill.addEventListener('click', () => {
-      document.querySelectorAll('.type-pill').forEach(p => p.classList.remove('active'));
-      pill.classList.add('active');
+  (function () {
+    'use strict';
+
+    const grid = document.getElementById('listings-grid');
+    const count = document.getElementById('listing-count');
+    const placeholderImage = '/assets/images/hero-luxury-villa.jpg';
+    const whatsappNumber = '962000000000';
+
+    const formatPrice = value => {
+      const amount = Number(value);
+      return Number.isFinite(amount) ? `${amount.toLocaleString('en-US')} JOD` : 'Price on request';
+    };
+
+    const safeText = value => (value === null || value === undefined) ? '' : String(value);
+
+    const imagePath = value => {
+      const src = safeText(value).trim();
+      return src || placeholderImage;
+    };
+
+    const sourceUrl = value => {
+      const url = safeText(value).trim();
+      return /^https:\/\/jo\.opensooq\.com\/search\/\d+$/.test(url) ? url : '#';
+    };
+
+    const whatsappUrl = message => `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+
+    const listingMessage = listing => [
+      'Hello, I am interested in this property:',
+      '',
+      safeText(listing.title),
+      safeText(listing.location_area),
+      `Price: ${formatPrice(listing.price_jod_test_margin)}`,
+      '',
+      'Please share more details.'
+    ].join('\n');
+
+    const viewingMessage = listing => [
+      'Hello, I would like to schedule a viewing for:',
+      '',
+      safeText(listing.title),
+      safeText(listing.location_area),
+      '',
+      'Please contact me.'
+    ].join('\n');
+
+    const trackWhatsAppClick = listing => {
+      console.log('WhatsApp click:', listing.id);
+    };
+
+    const createWhatsAppButton = (listing, label, message, className) => {
+      const button = document.createElement('a');
+      button.href = whatsappUrl(message);
+      button.className = `listing-whatsapp ${className}`;
+      button.target = '_blank';
+      button.rel = 'noopener noreferrer';
+      button.textContent = label;
+      button.addEventListener('click', () => trackWhatsAppClick(listing));
+      return button;
+    };
+
+    const createListingCard = (listing, index) => {
+    const card = document.createElement('div');
+    card.className = `listing-card property-card demo-card delay-${index % 10}`;
+
+    const imageWrap = document.createElement('div');
+    imageWrap.className = 'card-img listing-image';
+
+      const img = document.createElement('img');
+      img.src = imagePath(listing.image_url);
+      img.alt = `${safeText(listing.title) || 'Lumina demo listing'} — ${safeText(listing.location_area) || 'Jordan'}`;
+      img.loading = 'lazy';
+      img.addEventListener('error', () => {
+        if (img.src !== new URL(placeholderImage, window.location.origin).href) img.src = placeholderImage;
+      }, { once: true });
+
+      const badge = document.createElement('span');
+      badge.className = 'card-badge';
+      badge.textContent = 'Demo Lead';
+
+      imageWrap.append(img, badge);
+
+      const content = document.createElement('div');
+      content.className = 'listing-content';
+
+      const title = document.createElement('h3');
+      title.textContent = safeText(listing.title);
+
+      const location = document.createElement('p');
+      location.className = 'location';
+      location.textContent = safeText(listing.location_area);
+
+      const price = document.createElement('p');
+      price.className = 'price';
+      price.textContent = formatPrice(listing.price_jod_test_margin);
+
+      const details = document.createElement('p');
+      details.className = 'details';
+      const detailParts = [];
+      if (listing.bedrooms) detailParts.push(`${safeText(listing.bedrooms)} Beds`);
+      if (listing.size_sqm) detailParts.push(`${Number(listing.size_sqm).toLocaleString('en-US')} sqm`);
+      details.textContent = detailParts.join(' · ');
+
+      const link = document.createElement('a');
+      link.href = sourceUrl(listing.source_url);
+      link.className = 'card-link';
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.textContent = 'View Source';
+
+      const actions = document.createElement('div');
+      actions.className = 'listing-actions';
+      actions.append(
+        createWhatsAppButton(listing, 'Request Details', listingMessage(listing), 'listing-whatsapp-primary'),
+        createWhatsAppButton(listing, 'Schedule Viewing', viewingMessage(listing), 'listing-whatsapp-secondary'),
+        link
+      );
+
+      const status = document.createElement('p');
+      status.className = 'status';
+      status.textContent = 'Demo Listing — Verification Required';
+
+      content.append(title, location, price);
+      if (detailParts.length) content.appendChild(details);
+      content.append(actions, status);
+      card.append(imageWrap, content);
+      return card;
+    };
+
+    const renderListings = listings => {
+      grid.replaceChildren(...listings.map(createListingCard));
+      if (count) count.textContent = String(listings.length);
+    };
+
+    const showFallback = () => {
+      const message = document.createElement('div');
+      message.className = 'listing-error';
+      message.textContent = 'Demo listings are temporarily unavailable. Please try again later.';
+      grid.replaceChildren(message);
+      if (count) count.textContent = '0';
+    };
+
+    if (grid) {
+      fetch('/data/lumina-demo-leads.json')
+        .then(response => response.ok ? response.json() : Promise.reject(new Error('Listing data unavailable')))
+        .then(data => Array.isArray(data) ? renderListings(data) : showFallback())
+        .catch(showFallback);
+    }
+
+    document.querySelectorAll('.type-pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        document.querySelectorAll('.type-pill').forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+      });
     });
-  });
+  })();
 </script>
 <script type="application/ld+json">
 {
