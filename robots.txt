@@ -1,5 +1,4 @@
 User-agent: *
 Allow: /
-Disallow: /assets/data/
 
-Sitemap: https://lumina.qutaifan.com/sitemap.xml
+Sitemap: https://www.lumina.qutaifan.com/sitemap.xml
