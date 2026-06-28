@@ -583,13 +583,12 @@
     const whatsappUrl = message => `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
 
     const listingMessage = listing => [
-      'Hello, I am interested in this property:',
+      'Hello, I came across this property on Lumina and it caught my attention:',
       '',
       safeText(listing.title),
       safeText(listing.location_area),
-      `Price: ${formatPrice(listing.price_jod_test_margin)}`,
       '',
-      'Please share more details.'
+      'Is it still available? I would like to know more.'
     ].join('\n');
 
     const viewingMessage = listing => [
@@ -602,7 +601,7 @@
     ].join('\n');
 
     const trackWhatsAppClick = listing => {
-      console.log('WhatsApp click:', listing.id);
+      console.log('WhatsApp intent:', { listing_id: listing.id, page_type: 'listings' });
     };
 
     const createWhatsAppButton = (listing, label, message, className) => {

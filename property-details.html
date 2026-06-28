@@ -25,6 +25,7 @@
     .detail-grid-dynamic { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 64px; align-items: start; }
     .detail-kicker { color: #C6A76E; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 18px; }
     .dynamic-title { color: #FFFFFF; font-family: var(--font-serif); font-size: clamp(2.2rem, 5vw, 4.5rem); line-height: 1.08; font-weight: 400; margin-bottom: 18px; }
+    .curated-hook { color: #C6A76E; font-size: 0.9rem; letter-spacing: 0.04em; margin: -4px 0 20px; }
     .dynamic-location { color: #A0A0A0; font-size: 0.78rem; letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: 28px; }
     .dynamic-price { color: #C6A76E; font-family: var(--font-sans); font-size: clamp(1.8rem, 3vw, 2.8rem); font-weight: 600; line-height: 1.15; margin-bottom: 8px; }
     .source-price { color: #A0A0A0; font-size: 0.85rem; margin-bottom: 34px; }
@@ -39,6 +40,7 @@
     .side-panel h2 { color: #FFFFFF; font-size: 1.45rem; margin-bottom: 10px; }
     .side-panel p { color: #A0A0A0; font-size: 0.85rem; line-height: 1.75; margin-bottom: 22px; }
     .detail-actions { display: grid; gap: 12px; }
+    .trust-signal { color: #A0A0A0; font-size: 0.78rem; line-height: 1.7; text-align: center; margin: 2px 0 6px; }
     .detail-btn { display: inline-flex; align-items: center; justify-content: center; min-height: 46px; padding: 13px 18px; border-radius: 999px; border: 1px solid #C6A76E; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; transition: all 0.2s ease; text-align: center; }
     .detail-btn-primary { background: #C6A76E; color: #0B0B0B; }
     .detail-btn-primary:hover { background: #FFFFFF; border-color: #FFFFFF; color: #0B0B0B; }
@@ -125,13 +127,12 @@
     };
     const whatsappUrl = listing => {
       const message = [
-        'Hello, I am interested in this Lumina demo listing:',
+        'Hello, I came across this property on Lumina and it caught my attention:',
         '',
         safeText(listing.title),
         safeText(listing.location_area),
-        `Price: ${formatPrice(listing.price_jod_test_margin)}`,
         '',
-        'Please share more details.'
+        'Is it still available? I would like to know more.'
       ].join('\n');
       return `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
     };
@@ -187,6 +188,7 @@
       const main = document.createElement('div');
       appendText(main, 'p', 'detail-kicker', safeText(listing.property_type));
       appendText(main, 'h1', 'dynamic-title', safeText(listing.title));
+      appendText(main, 'p', 'curated-hook', 'Curated opportunity — limited visibility, details shared upon request.');
       appendText(main, 'div', 'dynamic-location', safeText(listing.location_area));
       appendText(main, 'div', 'dynamic-price', formatPrice(listing.price_jod_test_margin));
       appendText(main, 'div', 'source-price', `Original source price: ${formatPrice(listing.price_jod_raw)}`);
@@ -222,6 +224,10 @@
       request.target = '_blank';
       request.rel = 'noopener noreferrer';
       request.textContent = 'Request Details';
+      request.addEventListener('click', () => console.log('WhatsApp intent:', { listing_id: listing.id, page_type: 'details' }));
+      const trust = document.createElement('p');
+      trust.className = 'trust-signal';
+      trust.textContent = 'Direct response within 24 hours — private advisory approach';
       const source = document.createElement('a');
       source.href = sourceUrl(listing.source_url);
       source.className = 'detail-btn detail-btn-outline';
@@ -232,7 +238,7 @@
       back.href = 'listings.html';
       back.className = 'detail-btn detail-btn-outline';
       back.textContent = 'Back to Listings';
-      actions.append(request, source, back);
+      actions.append(request, trust, source, back);
       aside.appendChild(actions);
 
       container.append(main, aside);
