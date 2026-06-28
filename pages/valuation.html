@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Private Valuation Mandate — Lumina Real Estate</title>
+  <meta name="description" content="Request a discrete, manual valuation for your luxury property in Amman. Lumina presents select residences to qualified buyers across Jordan and the Gulf." />
+  <meta name="robots" content="index, follow" />
+  <meta name="theme-color" content="#0D1B2A" />
+  <link rel="canonical" href="https://lumina.qutaifan.com/pages/valuation.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://lumina.qutaifan.com/pages/valuation.html" />
+  <meta property="og:site_name" content="Lumina Real Estate" />
+  <meta property="og:title" content="Private Valuation Mandate — Lumina Real Estate" />
+  <meta property="og:description" content="Confidential property valuation and advisory in Amman's elite areas. Private assessment of premium villas, apartments, and penthouses." />
+  <meta property="og:locale" content="en_JO" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%230D1B2A'/><text x='50%25' y='54%25' font-family='serif' font-size='20' fill='%23C9A84C' text-anchor='middle' dominant-baseline='middle'>L</text></svg>" />
+
+  <link rel="stylesheet" href="../css/style.css" />
+  <style>
+    /* ---- HERO ---- */
+    .page-hero {
+      background: var(--navy-deep);
+      padding: 160px 0 80px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .page-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(194,163,90,0.07) 0%, transparent 60%);
+    }
+    .page-hero h1 {
+      color: var(--white);
+      font-size: 2.75rem;
+      font-weight: 300;
+      line-height: 1.25;
+      margin-top: 12px;
+    }
+
+    /* ---- VALUATION CONTAINER ---- */
+    .valuation-section {
+      background: var(--white);
+      padding: 80px 0 100px;
+    }
+    .valuation-grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: 60px;
+      align-items: start;
+    }
+
+    /* ---- FORM WIZARD ---- */
+    .wizard-card {
+      background: var(--ivory);
+      border: 1px solid rgba(13,27,42,0.05);
+      padding: 48px;
+      box-shadow: 0 10px 30px rgba(13,27,42,0.02);
+    }
+    
+    /* Progress bar */
+    .progress-bar {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 40px;
+      position: relative;
+    }
+    .progress-bar::before {
+      content: '';
+      position: absolute;
+      top: 15px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: rgba(13,27,42,0.08);
+      z-index: 1;
+    }
+    .progress-line {
+      position: absolute;
+      top: 15px;
+      left: 0;
+      height: 2px;
+      background: var(--gold);
+      z-index: 1;
+      width: 0%;
+      transition: width 0.4s ease;
+    }
+    .progress-step {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--ivory);
+      border: 2px solid rgba(13,27,42,0.08);
+      color: var(--stone);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 600;
+      z-index: 2;
+      transition: all 0.3s ease;
+    }
+    .progress-step.active {
+      border-color: var(--gold);
+      background: var(--gold);
+      color: var(--white);
+    }
+    .progress-step.completed {
+      border-color: var(--gold);
+      background: var(--gold);
+      color: var(--white);
+    }
+
+    /* Steps */
+    .step-content {
+      display: none;
+      animation: fadeIn 0.4s ease-out;
+    }
+    .step-content.active {
+      display: block;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .step-title {
+      font-family: var(--font-serif);
+      color: var(--navy);
+      font-size: 1.5rem;
+      font-weight: 500;
+      margin-bottom: 12px;
+    }
+    .step-subtitle {
+      color: var(--ink-soft);
+      font-size: 0.9rem;
+      margin-bottom: 32px;
+      line-height: 1.5;
+    }
+
+    /* Form controls */
+    .form-group {
+      margin-bottom: 28px;
+    }
+    .form-label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--navy);
+      margin-bottom: 10px;
+    }
+    
+    /* Segmented Selection Buttons */
+    .selector-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .selector-btn {
+      background: var(--white);
+      border: 1px solid rgba(13,27,42,0.12);
+      color: var(--navy);
+      padding: 16px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.25s ease;
+      font-family: var(--font-display);
+    }
+    .selector-btn:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+    .selector-btn.active {
+      background: var(--navy);
+      border-color: var(--navy);
+      color: var(--white);
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 14px 18px;
+      background: var(--white);
+      border: 1px solid rgba(13,27,42,0.12);
+      color: var(--navy);
+      font-size: 0.95rem;
+      transition: border-color 0.25s ease;
+      font-family: var(--font-display);
+      border-radius: 0;
+      box-sizing: border-box;
+    }
+    .form-input:focus {
+      outline: none;
+      border-color: var(--gold);
+    }
+    .form-textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    /* Checkbox Group */
+    .checkbox-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.9rem;
+      color: var(--ink);
+      cursor: pointer;
+      user-select: none;
+    }
+    .checkbox-label input {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--gold);
+      cursor: pointer;
+    }
+
+    /* Actions */
+    .wizard-actions {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 40px;
+      border-top: 1px solid rgba(13,27,42,0.06);
+      padding-top: 28px;
+    }
+    .btn-back {
+      border-color: rgba(13,27,42,0.15);
+      color: var(--navy);
+    }
+    .btn-back:hover {
+      background: rgba(13,27,42,0.03);
+    }
+
+    /* ---- SIDE PANEL / INFO CARD ---- */
+    .info-card {
+      background: var(--navy);
+      color: var(--white);
+      padding: 48px;
+      border-top: 4px solid var(--gold);
+    }
+    .info-card h3 {
+      font-family: var(--font-serif);
+      font-size: 1.4rem;
+      font-weight: 500;
+      color: var(--gold);
+      margin-bottom: 24px;
+    }
+    .info-item {
+      margin-bottom: 28px;
+    }
+    .info-item h4 {
+      font-size: 0.95rem;
+      color: var(--white);
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+    .info-item p {
+      color: rgba(255,255,255,0.6);
+      font-size: 0.85rem;
+      line-height: 1.7;
+    }
+
+    @media (max-width: 900px) {
+      .valuation-grid { grid-template-columns: 1fr; gap: 40px; }
+      .wizard-card, .info-card { padding: 32px; }
+    }
+    @media (max-width: 560px) {
+      .selector-grid { grid-template-columns: 1fr; }
+      .checkbox-grid { grid-template-columns: 1fr; }
+      .page-hero h1 { font-size: 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav" id="nav">
+  <a href="/index.html" class="nav-logo">Lumina<span>.</span></a>
+  <div class="nav-links">
+    <a href="/listings.html">Properties</a>
+    <a href="/index.html#locations">Locations</a>
+    <a href="/pages/list-property.html">List Property</a>
+    <a href="/index.html#team">Advisors</a>
+    <a href="/index.html#contact" class="nav-cta btn">Inquire Now</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="page-hero">
+  <div class="container">
+    <p class="label">Exclusive Mandates</p>
+    <span class="gold-line gold-line-center" style="margin: 20px auto 28px;"></span>
+    <h1>Private Valuation Mandate</h1>
+    <p style="color: rgba(255,255,255,0.5); font-size: 1.05rem; max-width: 560px; margin: 0 auto; line-height: 1.75; font-weight: 300;">
+      A discrete, professional valuation. Enter details to begin the manual appraisal process for your premium residence.
+    </p>
+  </div>
+</section>
+
+<!-- VALUATION SECTION -->
+<section class="valuation-section">
+  <div class="container">
+    <div class="valuation-grid">
+      
+      <!-- Wizard -->
+      <div class="wizard-card">
+        
+        <!-- Progress Indicator -->
+        <div class="progress-bar">
+          <div class="progress-line" id="progress-line"></div>
+          <div class="progress-step active" data-step="1">1</div>
+          <div class="progress-step" data-step="2">2</div>
+          <div class="progress-step" data-step="3">3</div>
+        </div>
+
+        <form id="valuation-form">
+          <!-- STEP 1 -->
+          <div class="step-content active" data-step="1">
+            <h2 class="step-title">Property Foundations</h2>
+            <p class="step-subtitle">Specify your property classification and scale in Amman.</p>
+
+            <div class="form-group">
+              <label class="form-label">Property Type</label>
+              <div class="selector-grid">
+                <button type="button" class="selector-btn" data-value="Villa">Villa</button>
+                <button type="button" class="selector-btn" data-value="Penthouse">Penthouse</button>
+                <button type="button" class="selector-btn" data-value="Apartment">Apartment</button>
+              </div>
+              <input type="hidden" id="prop-type" name="prop_type" value="" required />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="prop-area">Neighborhood Address</label>
+              <select class="form-input" id="prop-area" name="prop_area" required>
+                <option value="" disabled selected>Select location...</option>
+                <option value="Dabouq">Dabouq</option>
+                <option value="Abdoun">Abdoun</option>
+                <option value="Dair Ghbar">Dair Ghbar</option>
+                <option value="Um Uthaina">Um Uthaina</option>
+                <option value="Abdali">Abdali</option>
+                <option value="Al Kursi">Al Kursi</option>
+                <option value="Other">Other Amman Area</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="prop-size">Built-up Area (Sqm)</label>
+              <input type="number" class="form-input" id="prop-size" name="prop_size" placeholder="e.g., 650" min="50" max="10000" required />
+            </div>
+          </div>
+
+          <!-- STEP 2 -->
+          <div class="step-content" data-step="2">
+            <h2 class="step-title">Property Features</h2>
+            <p class="step-subtitle">Provide details regarding construction specs and amenities.</p>
+
+            <div class="form-group">
+              <label class="form-label" for="prop-bedrooms">Bedrooms</label>
+              <select class="form-input" id="prop-bedrooms" name="prop_bedrooms" required>
+                <option value="2">2 Bedrooms</option>
+                <option value="3">3 Bedrooms</option>
+                <option value="4">4 Bedrooms</option>
+                <option value="5">5 Bedrooms</option>
+                <option value="6+">6 or More Bedrooms</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="prop-bathrooms">Bathrooms</label>
+              <select class="form-input" id="prop-bathrooms" name="prop_bathrooms" required>
+                <option value="2">2 Bathrooms</option>
+                <option value="3">3 Bathrooms</option>
+                <option value="4">4 Bathrooms</option>
+                <option value="5+">5 or More Bathrooms</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Luxury Features & Amenities</label>
+              <div class="checkbox-grid">
+                <label class="checkbox-label">
+                  <input type="checkbox" name="features" value="Swimming Pool" /> Swimming Pool
+                </label>
+                <label class="checkbox-label">
+                  <input type="checkbox" name="features" value="Landscaped Garden" /> Landscaped Garden
+                </label>
+                <label class="checkbox-label">
+                  <input type="checkbox" name="features" value="Panoramic Views" /> Panoramic Views
+                </label>
+                <label class="checkbox-label">
+                  <input type="checkbox" name="features" value="Underfloor Heating" /> Underfloor Heating
+                </label>
+                <label class="checkbox-label">
+                  <input type="checkbox" name="features" value="Smart Home System" /> Smart Home System
+                </label>
+                <label class="checkbox-label">
+                  <input type="checkbox" name="features" value="Private Garage" /> Private Garage
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 10px;">
+              <label class="form-label" for="prop-notes">Additional Context (Optional)</label>
+              <textarea class="form-input form-textarea" id="prop-notes" name="prop_notes" placeholder="Stonework type, elevation details, specific street, or general condition..."></textarea>
+            </div>
+          </div>
+
+          <!-- STEP 3 -->
+          <div class="step-content" data-step="3">
+            <h2 class="step-title">Owner Details</h2>
+            <p class="step-subtitle">All inquiries are held with absolute confidentiality. We will never share your identity publicly.</p>
+
+            <div class="form-group">
+              <label class="form-label" for="owner-name">Full Name</label>
+              <input type="text" class="form-input" id="owner-name" name="owner_name" placeholder="e.g., Tareq Qutaifan" required />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="owner-phone">WhatsApp/Phone Number</label>
+              <input type="tel" class="form-input" id="owner-phone" name="owner_phone" placeholder="e.g., +962 7 9123 4567" required />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="owner-email">Email Address</label>
+              <input type="email" class="form-input" id="owner-email" name="owner_email" placeholder="e.g., tareq@example.com" required />
+            </div>
+            
+            <div class="form-group">
+              <p style="font-size: 0.8rem; color: var(--ink-soft); line-height: 1.6; margin-top: 10px;">
+                By clicking Submit, your valuation request parameters will be formatted into a message and sent to our private advisor queue via WhatsApp.
+              </p>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="wizard-actions">
+            <button type="button" class="btn btn-outline btn-back" id="btn-prev" style="visibility: hidden;">Back</button>
+            <button type="button" class="btn btn-gold" id="btn-next">Next Step</button>
+          </div>
+        </form>
+
+      </div>
+
+      <!-- Info Side Panel -->
+      <aside class="info-card fade-up">
+        <h3>Discretion & Valuation Protocol</h3>
+        
+        <div class="info-item">
+          <h4>No Automated Estimates</h4>
+          <p>Automated algorithms cannot assess local variables such as stone craftsmanship, hill elevation, and privacy parameters. Lumina provides only customized manual assessments.</p>
+        </div>
+
+        <div class="info-item">
+          <h4>Private Registry</h4>
+          <p>Your property particulars are logged inside our private, off-market network. We only share details with vetted, qualified buyers after signing a formal representation mandate.</p>
+        </div>
+
+        <div class="info-item">
+          <h4>Zero Public Footprint</h4>
+          <p>Lumina does not list coordinates, exact street addresses, or recognizable entrance images on public platforms, protecting the owner's security and negotiating leverage.</p>
+        </div>
+      </aside>
+
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo">Lumina<span>.</span></div>
+        <p class="footer-desc">Luxury real estate in Amman's most prestigious addresses. Exceptional properties, presented with discretion.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Properties</h4>
+        <ul>
+          <li><a href="/listings.html">All Listings</a></li>
+          <li><a href="/listings.html?type=villa">Villas</a></li>
+          <li><a href="/listings.html?type=penthouse">Penthouses</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Locations</h4>
+        <ul>
+          <li><a href="/listings.html?location=abdoun">Abdoun</a></li>
+          <li><a href="/listings.html?location=dabouq">Dabouq</a></li>
+          <li><a href="/listings.html?location=abdali">Abdali</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="https://wa.me/9627XXXXXXXX" target="_blank" rel="noopener noreferrer">WhatsApp</a></li>
+          <li><a href="mailto:lumina@qutaifan.com">lumina@qutaifan.com</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Lumina Luxury Real Estate.</span>
+      <span>Private real estate advisory · Amman, Jordan</span>
+    </div>
+  </div>
+</footer>
+
+<!-- WHATSAPP FLOAT -->
+<a href="https://wa.me/9627XXXXXXXX?text=Hello%2C%20I%27d%20like%20to%20discuss%20a%20property%20valuation%20with%20Lumina." class="whatsapp-float" target="_blank" rel="noopener noreferrer" aria-label="Contact Advisor on WhatsApp">
+  <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</a>
+
+<!-- SCRIPTS -->
+<script src="../js/site.js"></script>
+<script>
+  (function () {
+    'use strict';
+
+    // State
+    let currentStep = 1;
+    const totalSteps = 3;
+
+    // Elements
+    const form = document.getElementById('valuation-form');
+    const steps = document.querySelectorAll('.step-content');
+    const progressSteps = document.querySelectorAll('.progress-step');
+    const progressLine = document.getElementById('progress-line');
+    const btnPrev = document.getElementById('btn-prev');
+    const btnNext = document.getElementById('btn-next');
+    const propTypeInput = document.getElementById('prop-type');
+    const typeButtons = document.querySelectorAll('.selector-btn');
+
+    // Handle Selector Buttons
+    typeButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        typeButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        propTypeInput.value = btn.dataset.value;
+      });
+    });
+
+    // Navigation functions
+    function updateProgress() {
+      // Line width
+      const widthPercent = ((currentStep - 1) / (totalSteps - 1)) * 100;
+      progressLine.style.width = `${widthPercent}%`;
+
+      // Circles active state
+      progressSteps.forEach((el, index) => {
+        const stepNum = index + 1;
+        if (stepNum <= currentStep) {
+          el.classList.add('active');
+        } else {
+          el.classList.remove('active');
+        }
+      });
+    }
+
+    function showStep(stepNum) {
+      steps.forEach(step => {
+        if (Number(step.dataset.step) === stepNum) {
+          step.classList.add('active');
+        } else {
+          step.classList.remove('active');
+        }
+      });
+
+      // Actions visibility
+      if (stepNum === 1) {
+        btnPrev.style.visibility = 'hidden';
+      } else {
+        btnPrev.style.visibility = 'visible';
+      }
+
+      if (stepNum === totalSteps) {
+        btnNext.textContent = 'Submit Mandate';
+      } else {
+        btnNext.textContent = 'Next Step';
+      }
+
+      currentStep = stepNum;
+      updateProgress();
+    }
+
+    function validateStep(stepNum) {
+      const activeStepEl = document.querySelector(`.step-content[data-step="${stepNum}"]`);
+      const requiredInputs = activeStepEl.querySelectorAll('[required]');
+      let isValid = true;
+
+      requiredInputs.forEach(input => {
+        if (!input.value.trim()) {
+          isValid = false;
+          input.style.borderColor = 'red';
+          input.addEventListener('input', () => {
+            input.style.borderColor = '';
+          }, { once: true });
+        }
+      });
+
+      return isValid;
+    }
+
+    // Submit handler
+    function submitValuation() {
+      const type = propTypeInput.value;
+      const area = document.getElementById('prop-area').value;
+      const size = document.getElementById('prop-size').value;
+      const bedrooms = document.getElementById('prop-bedrooms').value;
+      const bathrooms = document.getElementById('prop-bathrooms').value;
+      const notes = document.getElementById('prop-notes').value;
+      
+      const features = [];
+      document.querySelectorAll('input[name="features"]:checked').forEach(cb => {
+        features.push(cb.value);
+      });
+
+      const name = document.getElementById('owner-name').value;
+      const phone = document.getElementById('owner-phone').value;
+      const email = document.getElementById('owner-email').value;
+
+      // Construct message
+      const messageLines = [
+        'Hello Lumina, I would like to request a private valuation advisory:',
+        '',
+        `*Property Core Details:*`,
+        `- Property Type: ${type}`,
+        `- Neighborhood: ${area}`,
+        `- Size: ${size} sqm`,
+        `- Beds/Baths: ${bedrooms} Bed, ${bathrooms} Bath`,
+      ];
+
+      if (features.length > 0) {
+        messageLines.push(`- Amenities: ${features.join(', ')}`);
+      }
+      if (notes.trim()) {
+        messageLines.push(`- Notes: ${notes.trim()}`);
+      }
+
+      messageLines.push(
+        '',
+        `*Owner Info:*`,
+        `- Name: ${name}`,
+        `- Contact Phone: ${phone}`,
+        `- Email: ${email}`
+      );
+
+      const messageText = messageLines.join('\n');
+      console.log('Valuation Request Form Submitted:', { type, area, size, name, phone, email });
+
+      // Fetch dynamic WhatsApp number from config
+      const whatsappNumber = (window.LuminaConfig && window.LuminaConfig.whatsapp) || '962791234567';
+      const redirectUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(messageText)}`;
+
+      // Redirect browser to WhatsApp intent
+      window.open(redirectUrl, '_blank');
+    }
+
+    // Listeners
+    btnNext.addEventListener('click', () => {
+      if (validateStep(currentStep)) {
+        if (currentStep < totalSteps) {
+          showStep(currentStep + 1);
+        } else {
+          submitValuation();
+        }
+      }
+    });
+
+    btnPrev.addEventListener('click', () => {
+      if (currentStep > 1) {
+        showStep(currentStep - 1);
+      }
+    });
+
+  })();
+</script>
+</body>
+</html>
