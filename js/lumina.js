@@ -51,7 +51,7 @@
      breaks are layout-dependent, so this re-runs (debounced) on resize;
      an already-revealed headline is marked 'in' immediately, with no
      replay, since the DOM swap happens before the next paint. */
-  const headlines = $$('h1.display, h2.display');
+  const headlines = $$('h1.display, h2.display, .hero-title');
   if (!reduce && headlines.length) {
     /* Observe the (untransformed) .ln-wrap, not the .ln itself — the line
        span is deliberately transformed outside its wrapper's clipped box
