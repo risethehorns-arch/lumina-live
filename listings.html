@@ -28,7 +28,7 @@
   <meta name="twitter:image" content="https://lumina.qutaifan.com/assets/images/hero-luxury-villa.jpg" />
 
   <!-- Favicon -->
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%230D1B2A'/><text x='50%25' y='54%25' font-family='serif' font-size='20' fill='%23C9A84C' text-anchor='middle' dominant-baseline='middle'>L</text></svg>" />
+  <link rel="icon" type="image/png" href="/assets/lumina-logo.png" />
 
   <link rel="stylesheet" href="css/style.css" />
   <style>
@@ -433,7 +433,7 @@
 
 <!-- NAV -->
 <nav class="nav scrolled" id="nav">
-  <a href="/index.html" class="nav-logo">Lumina<span>.</span></a>
+  <a href="/index.html" class="nav-logo" aria-label="Lumina — home"><img src="/assets/lumina-logo.png" alt="Lumina" width="669" height="181"></a>
   <div class="nav-links">
     <a href="/listings.html" class="active-link">Properties</a>
     <a href="/index.html#locations">Locations</a>
@@ -446,10 +446,10 @@
 <div class="page-header">
   <div class="page-header-bg"></div>
   <div class="container page-header-inner">
-    <p class="label">Demo Preview Listings</p>
+    <p class="label">Private Portfolio</p>
     <span class="gold-line"></span>
     <h1>The Collection</h1>
-    <p>A curated selection of residences across Amman's most considered neighborhoods — presented privately, by appointment.</p>
+    <p>Real inventory from the Lumina portfolio — each listing matched to its reference photos. Particulars shared privately, by appointment.</p>
   </div>
 </div>
 
@@ -464,8 +464,8 @@
         <button class="type-pill active" data-type="all">All</button>
         <button class="type-pill" data-type="apartment">Apartment</button>
         <button class="type-pill" data-type="villa">Villa</button>
-        <button class="type-pill" data-type="penthouse">Penthouse</button>
-        <button class="type-pill" data-type="investment">Investment</button>
+        <button class="type-pill" data-type="rooftop">Rooftop</button>
+        <button class="type-pill" data-type="residential">Residential</button>
       </div>
 
       <!-- Location select -->
@@ -481,13 +481,15 @@
       <!-- Budget select -->
       <select class="filter-select" id="filter-budget">
         <option value="">Any Budget</option>
-        <option>Under JOD 400K</option>
-        <option>JOD 400K – 800K</option>
-        <option>JOD 800K – 1.5M</option>
-        <option>JOD 1.5M+</option>
+        <option value="rent-under-15k">Rent under 15k JOD</option>
+        <option value="rent-15-30k">Rent 15k – 30k JOD</option>
+        <option value="rent-30k-plus">Rent 30k+ JOD</option>
+        <option value="sale-under-400k">Sale under 400k JOD</option>
+        <option value="sale-400-800k">Sale 400k – 800k JOD</option>
+        <option value="sale-800k-plus">Sale 800k+ JOD</option>
       </select>
 
-      <div class="filter-count">Showing <span id="listing-count">0</span> demo leads</div>
+      <div class="filter-count">Showing <span id="listing-count">0</span> properties</div>
     </div>
   </div>
 </div>
@@ -495,7 +497,7 @@
 <!-- LISTINGS GRID -->
 <section class="listings-section">
   <div class="container">
-    <p class="demo-disclaimer demo-disclaimer-wide">This is a demo test run, not final live inventory. Availability, pricing, and media require verification before public launch.</p>
+    <p class="demo-disclaimer demo-disclaimer-wide">Lumina portfolio listings. Availability, final pricing, and access require verification before viewing. Photos are matched by reference number from the source files.</p>
     <div class="listings-grid" id="listings-grid" aria-live="polite"></div>
 
     <div class="load-more-wrap">
@@ -509,7 +511,7 @@
   <div class="container">
     <div class="footer-grid">
       <div>
-        <div class="footer-logo">Lumina<span>.</span></div>
+        <div class="footer-logo"><img src="/assets/lumina-logo.png" alt="Lumina" width="669" height="181"></div>
         <p class="footer-desc">Luxury real estate in Amman's most prestigious addresses. Exceptional properties, presented with discretion.</p>
       </div>
       <div class="footer-col">

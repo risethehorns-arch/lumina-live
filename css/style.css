@@ -147,14 +147,25 @@ p { font-size: 0.95rem; color: var(--ink-soft); line-height: 1.85; }
   padding: 18px 60px;
   border-bottom: 1px solid rgba(194,163,90,0.14);
 }
+/* Wordmark image — same asset as homepage top-left (assets/lumina-logo.png) */
 .nav-logo {
-  font-family: var(--font-serif);
-  font-size: 1.65rem;
-  color: var(--white);
-  letter-spacing: 0.06em;
-  font-weight: 500;
+  display: block;
+  line-height: 0;
+  flex-shrink: 0;
+  transition: opacity 0.35s ease, transform 0.45s ease, filter 0.45s ease;
 }
-.nav-logo span { color: var(--gold); }
+.nav-logo img {
+  display: block;
+  height: clamp(26px, 2.4vw, 34px);
+  width: auto;
+  filter: drop-shadow(0 2px 9px rgba(0, 0, 0, 0.55))
+    drop-shadow(0 0 18px rgba(255, 178, 90, 0.28));
+}
+.nav-logo:hover {
+  transform: translateY(-1px);
+  filter: drop-shadow(0 0 20px rgba(255, 178, 90, 0.55));
+}
+.nav-logo span { display: none; }
 .nav-links {
   display: flex;
   gap: 44px;
@@ -239,13 +250,18 @@ p { font-size: 0.95rem; color: var(--ink-soft); line-height: 1.85; }
   border-bottom: 1px solid rgba(255,255,255,0.08);
 }
 .footer-logo {
-  font-family: var(--font-serif);
-  font-size: 1.7rem;
-  color: var(--white);
+  display: inline-block;
+  line-height: 0;
   margin-bottom: 18px;
-  letter-spacing: 0.05em;
 }
-.footer-logo span { color: var(--gold); }
+.footer-logo img {
+  display: block;
+  height: clamp(28px, 2.6vw, 36px);
+  width: auto;
+  filter: drop-shadow(0 2px 9px rgba(0, 0, 0, 0.55))
+    drop-shadow(0 0 18px rgba(255, 178, 90, 0.22));
+}
+.footer-logo span { display: none; }
 .footer-desc { font-size: 0.88rem; line-height: 1.9; color: rgba(255,255,255,0.48); max-width: 320px; }
 .footer-col h4 {
   font-family: var(--font-sans);
