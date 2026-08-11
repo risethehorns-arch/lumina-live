@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Lumina — Private Real Estate Advisory, Amman</title>
 <meta name="description" content="Lumina is a private real estate advisory in Amman. Villas, penthouses and standalone residences in Abdoun, Dabouq, Khalda and Um Uthaina — represented with discretion.">
 <meta name="theme-color" content="#05070B">
@@ -15,6 +15,9 @@
 <link rel="preload" as="font" type="font/woff2" href="assets/fonts/InstrumentSerif.woff2" crossorigin>
 <link rel="preload" as="font" type="font/woff2" href="assets/fonts/InstrumentSans.woff2" crossorigin>
 <link rel="preload" as="image" href="assets/pod-hero.jpg">
+
+<!-- property card + gallery viewer, shared with listings.html -->
+<link rel="stylesheet" href="css/property-ui.css?v=2026-08-07i">
 
 <style>
 /* ═══ self-hosted type ════════════════════════════════════
@@ -212,6 +215,17 @@ h3.display{font-size:clamp(1.32rem,1.7vw,1.72rem); line-height:1.1}
     transition:opacity 1.05s var(--ease),transform 1.05s var(--ease),filter 1.05s var(--ease);
     transition-delay:var(--rvd,0ms)}
 .rv.in{opacity:1; transform:none; filter:none}
+/* A one-line kicker and a 480px glass panel are not the same mass, and
+   moving both 26px in the same 1.05s is what makes a reveal system read
+   as a plugin rather than a decision. .rv-lg is for the heavy blocks —
+   further, slower, and on a longer tail. */
+.rv-lg{transform:translate3d(0,40px,0) scale(.965);
+  transition-duration:1.35s; transition-timing-function:cubic-bezier(.16,1,.3,1)}
+/* Frosted surfaces reveal without the blur. `filter` on an ancestor makes
+   that ancestor the backdrop root, so a backdrop-filter panel revealing
+   inside one samples nothing but itself — and 7px of blur is invisible
+   through 28px of frost either way. */
+.rv-glass{filter:none; transition-property:opacity,transform}
 
 /* ═══ per-line headline reveal ════════════════════════════
    h1.display/h2.display are split into per-line spans at runtime
@@ -227,6 +241,21 @@ h3.display{font-size:clamp(1.32rem,1.7vw,1.72rem); line-height:1.1}
   transition-delay:var(--lnd,0ms);
 }
 .ln.in{opacity:1; transform:none; filter:none}
+
+/* ═══ hero entry, held until the curtain is off ═══════════
+   The reveal observer marks the hero 'in' on the frame the script runs,
+   which is while .boot is still an opaque z-index:100 rectangle across
+   the whole page — the staggered kicker, the per-line headline rise and
+   the CTA were performed to a black screen and the reader's first frame
+   was the finished end state. The curtain lifts on load + 240ms and
+   fades over .8s, so the hero starts a beat after that. Same fixed
+   offset the .fab already uses, and for the same reason.
+   Delay only, and only where motion is wanted: under reduced motion the
+   reveal is already a static end state with nothing to wait for. */
+@media (prefers-reduced-motion:no-preference){
+  .hero .rv{transition-delay:calc(var(--rvd,0ms) + 1550ms)}
+  .hero-title .ln{transition-delay:calc(var(--lnd,0ms) + 1550ms)}
+}
 
 /* ═══ brand bar ═══════════════════════════════════════════ */
 .bar{
@@ -273,12 +302,16 @@ h3.display{font-size:clamp(1.32rem,1.7vw,1.72rem); line-height:1.1}
   transition:color .35s var(--ease), text-shadow .35s var(--ease);
 }
 .nav a::after{
-  content:""; position:absolute; left:0; right:100%; bottom:0; height:1px;
-  background:linear-gradient(90deg,var(--gold-lt),var(--gold)); transition:right .45s var(--ease);
+  content:""; position:absolute; left:0; right:0; bottom:0; height:1px;
+  background:linear-gradient(90deg,var(--gold-lt),var(--gold));
+  /* Scaled from the left rather than animating `right`: same picture,
+     no layout pass — this page animates transform and opacity only. */
+  transform:scaleX(0); transform-origin:left center;
+  transition:transform .45s var(--ease);
   box-shadow:0 0 8px rgba(255,178,90,.55);
 }
 .nav a:hover{color:var(--cream); text-shadow:0 0 18px rgba(255,210,150,.25)}
-.nav a:hover::after{right:0}
+.nav a:hover::after{transform:scaleX(1)}
 
 .chip{
   display:inline-flex; align-items:center; gap:9px; padding:9px 17px;
@@ -291,6 +324,171 @@ h3.display{font-size:clamp(1.32rem,1.7vw,1.72rem); line-height:1.1}
 .chip:hover{border-color:var(--gold); background:rgba(255,178,90,.12); transform:translateY(-1px);
   box-shadow:0 0 28px -4px rgba(255,178,90,.45), inset 0 1px 0 rgba(255,255,255,.1)}
 .chip svg{width:15px; height:15px; flex:none}
+
+/* ═══ the showroom float ═══════════════════════════════════
+   A glass pill over the landing page leading to room.html, the
+   scroll-to-furnish room.
+
+   BOTTOM LEFT on purpose. The spine owns the right edge at mid
+   height, and the bottom right is where every site on earth puts a
+   chat bubble — a reader's eye skips it. z-index sits under the bar
+   (70) and well under the two modals (120/130), so nothing has to
+   know about it.
+
+   The mark is the whole idea in 34px: at rest the little room is
+   EMPTY, and pointing at it furnishes it. On touch, where there is
+   no hover, it starts furnished instead — an empty box that never
+   fills is just a blank icon. */
+.fab{
+  position:fixed; left:max(clamp(16px,2.2vw,40px),env(safe-area-inset-left));
+  /* max() against the safe area: measured 25px of clearance at 390x844,
+     and a modern phone puts a 34px home indicator exactly there. On a
+     device with no inset env() resolves to 0 and the clamp wins. */
+  bottom:max(clamp(18px,3vh,40px),calc(env(safe-area-inset-bottom) + 16px));
+  z-index:66; display:inline-flex; align-items:center; gap:14px;
+  padding:12px 14px 12px 15px; border-radius:999px;
+  color:var(--cream); white-space:nowrap;
+  border:1px solid rgba(255,196,120,.44);
+  background:
+    radial-gradient(120% 130% at 24% 18%,rgba(255,255,255,.1),transparent 52%),
+    linear-gradient(150deg,rgba(35,46,60,.68),rgba(12,18,26,.72));
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.22),
+    inset 0 -12px 24px -16px rgba(255,178,90,.35),
+    0 24px 52px -22px rgba(0,0,0,.95),
+    0 0 48px -12px rgba(255,178,90,.55);
+  /* CSS-only entry, so this needs no JS at all. Under reduced motion
+     the global duration override collapses it and the delay simply
+     lands it a beat after the boot curtain lifts. */
+  opacity:0; transform:translateY(14px) scale(.965);
+  animation:fabIn .9s var(--ease) 1.5s forwards;
+  transition:border-color .45s var(--ease),box-shadow .45s var(--ease),
+             transform .55s var(--ease),background-color .45s var(--ease);
+  will-change:transform,opacity;
+}
+@keyframes fabIn{to{opacity:1; transform:none}}
+@media (min-width:1024px){
+  .fab{-webkit-backdrop-filter:blur(20px) saturate(150%); backdrop-filter:blur(20px) saturate(150%)}
+}
+/* the halo: a slow breath of warm light behind the glass, so the pill
+   reads as LIT rather than merely bright. Behind (z -1) so the blur
+   above never samples it. */
+.fab::before{
+  content:""; position:absolute; inset:-22px; z-index:-1; border-radius:999px;
+  background:radial-gradient(58% 72% at 50% 55%,rgba(255,178,90,.32),transparent 72%);
+  animation:fabHalo 5.5s var(--ease) infinite;
+  pointer-events:none;
+}
+@keyframes fabHalo{
+  0%,100%{opacity:.45; transform:scale(.94)}
+  50%{opacity:1; transform:scale(1.06)}
+}
+/* the glint: a diagonal light lying across the glass that flares once
+   a cycle — opacity only, so it costs a composite and nothing else */
+.fab::after{
+  content:""; position:absolute; inset:1px; border-radius:inherit; pointer-events:none;
+  background:linear-gradient(112deg,transparent 34%,rgba(255,255,255,.2) 46%,rgba(255,255,255,.05) 52%,transparent 62%);
+  opacity:0;
+  animation:fabGlint 7s var(--ease) 3.2s infinite;
+}
+@keyframes fabGlint{
+  0%,86%,100%{opacity:0}
+  90%{opacity:1}
+  95%{opacity:.2}
+}
+
+.fab-room{position:relative; width:38px; height:30px; flex:none}
+.fr-shell{
+  position:absolute; inset:0; border-radius:3px;
+  border:1px solid rgba(180,214,232,.42);
+  border-bottom:2px solid rgba(255,224,176,.5);
+  transition:border-color .5s var(--ease);
+}
+/* the pieces: a rug, a sofa, a standing lamp */
+.fr-p{
+  position:absolute; bottom:3px; border-radius:1px;
+  background:rgba(255,224,176,.8);
+  box-shadow:0 0 8px rgba(255,178,90,.5);
+  transition:transform .55s var(--ease),opacity .45s var(--ease);
+  transition-delay:calc(var(--i,0) * 105ms);
+}
+.fr-rug  {left:4px;  width:25px; height:2px}
+.fr-sofa {left:5px;  width:13px; height:8px; bottom:5px}
+.fr-lamp {right:5px; width:2px;  height:14px; bottom:5px}
+.fr-lamp::after{
+  content:""; position:absolute; left:50%; top:-4px; width:8px; height:5px;
+  margin-left:-4px; border-radius:2px 2px 0 0; background:var(--gold-lt);
+  box-shadow:0 0 10px rgba(255,178,90,.85);
+}
+
+.fab-copy{display:flex; flex-direction:column; gap:2px; text-align:left; min-width:0}
+.fab-copy b{font-weight:600; font-size:.95rem; letter-spacing:.004em}
+.fab-copy>span{font-size:.74rem; color:var(--c-70)}
+.fab-go{
+  width:30px; height:30px; border-radius:50%; display:grid; place-items:center; flex:none;
+  border:1px solid rgba(244,239,230,.18);
+  transition:transform .45s var(--ease),border-color .45s var(--ease),background-color .45s var(--ease);
+}
+.fab-go svg{width:12px; height:12px}
+
+@media (hover:hover) and (pointer:fine){
+  /* Pointer-driven: the room starts empty and fills on hover — and
+     once a cycle it quietly furnishes ITSELF, offset so the three
+     pieces land in sequence. The icon demonstrates the page before
+     anyone has touched it, which is worth more than any label. */
+  .fr-p{
+    opacity:0; transform:translateY(9px) scale(.7);
+    animation:fabPeek 9s var(--ease) calc(3s + var(--i,0) * .16s) infinite;
+  }
+  .fab:hover .fr-p,
+  .fab:focus-visible .fr-p{animation:none; opacity:1; transform:none}
+  .fab:hover,.fab:focus-visible{
+    transform:translateY(-3px); border-color:var(--gold);
+    background:linear-gradient(150deg,rgba(38,50,66,.68),rgba(13,19,28,.7));
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.2),
+      0 28px 56px -22px rgba(0,0,0,.95),
+      0 0 52px -12px rgba(255,178,90,.6);
+  }
+  .fab:hover .fr-shell,.fab:focus-visible .fr-shell{border-color:rgba(255,224,176,.6)}
+  .fab:hover .fab-go{transform:translateX(3px); border-color:var(--gold); background:rgba(255,178,90,.16)}
+}
+@media (max-width:860px){
+  /* On a phone the hero's four glass panels stack down the page, and a
+     fixed pill sits on top of them for the whole of that scroll — it
+     was landing squarely on the quiz card's own control. So on phones
+     it TUCKS while the reader is still in the hero and slides up once
+     they are past it. On desktop the hero is a wide grid and the pill
+     sits in dead space at the bottom left, so it stays put.
+
+     Class-driven rather than the CSS entry animation, because an
+     animation with `forwards` outranks a plain declaration and the two
+     would fight. js/lumina.js owns .tuck — and adds it only after it
+     has confirmed it can also remove it, so with the script blocked
+     the pill is simply there. */
+  .fab{
+    animation:none; opacity:1; transform:none;
+    transition:opacity .45s var(--ease),transform .6s var(--ease);
+  }
+  .fab.tuck{opacity:0; transform:translateY(165%); pointer-events:none}
+}
+@media (max-width:620px){
+  /* the sub-line goes before the button does — a floating pill that
+     spans half a phone is in the way, not on offer */
+  .fab-copy>span{display:none}
+  .fab{gap:10px; padding:9px 10px 9px 11px}
+  .fab-go{width:27px; height:27px}
+}
+@keyframes fabPeek{
+  0%,52%{opacity:0; transform:translateY(9px) scale(.7)}
+  58%,76%{opacity:1; transform:none}
+  84%,100%{opacity:0; transform:translateY(9px) scale(.7)}
+}
+@media (prefers-reduced-motion:reduce){
+  .fab{animation-delay:0s}
+  .fab::before,.fab::after,.fr-p{animation:none}
+  .fab::before{opacity:.6; transform:none}
+}
 
 /* ═══ spine — scroll progress + section nav (brand device) ══ */
 .spine{
@@ -306,23 +504,34 @@ h3.display{font-size:clamp(1.32rem,1.7vw,1.72rem); line-height:1.1}
 .spine button{
   position:relative; display:block; width:26px; height:38px;
 }
+/* One geometry for every dot, scaled. The rest/active states used to be
+   6px and 11px with transition:all, i.e. an animated width and height on
+   a fixed element — the one thing this page never animates, and the
+   reason the active state read as a reflow rather than a lamp coming on. */
 .spine button::before{
-  content:""; position:absolute; left:50%; top:50%; width:6px; height:6px;
-  transform:translate(-50%,-50%); border-radius:50%;
-  background:rgba(244,239,230,.28); transition:all .45s var(--ease);
+  content:""; position:absolute; left:50%; top:50%; width:11px; height:11px;
+  transform:translate(-50%,-50%) scale(.55); border-radius:50%;
+  background:rgba(244,239,230,.28);
+  transition:transform .45s var(--ease),background-color .45s var(--ease),
+             box-shadow .45s var(--ease);
 }
-.spine button:first-of-type::before{width:11px; height:11px}
+.spine button:first-of-type::before{transform:translate(-50%,-50%) scale(1)}
 .spine button[aria-current="true"]::before{
-  background:var(--gold-lt); width:11px; height:11px;
+  background:var(--gold-lt); transform:translate(-50%,-50%) scale(1);
   box-shadow:0 0 0 4px rgba(255,215,163,.16),0 0 18px 4px rgba(255,215,163,.7),0 0 28px rgba(255,178,90,.35);
 }
 .spine button:hover::before{background:var(--gold-lt)}
 .spine .tip{
   position:absolute; right:130%; top:50%; transform:translateY(-50%) translateX(6px);
   font-size:.62rem; letter-spacing:.2em; text-transform:uppercase; color:var(--c-52);
-  white-space:nowrap; opacity:0; pointer-events:none; transition:all .4s var(--ease);
+  white-space:nowrap; opacity:0; pointer-events:none;
+  transition:opacity .4s var(--ease),transform .4s var(--ease);
 }
-.spine button:hover .tip{opacity:1; transform:translateY(-50%)}
+/* The tip is the only thing telling one 26×38 button from the next, so
+   it has to answer the keyboard as well as the pointer — without this a
+   tabbing reader gets eight identical dots. */
+.spine button:hover .tip,
+.spine button:focus-visible .tip{opacity:1; transform:translateY(-50%)}
 
 /* ═══ hero ════════════════════════════════════════════════ */
 /* align-items:stretch (not flex-end) so .hero-grid fills the hero and its 1fr
@@ -481,8 +690,639 @@ h3.display{font-size:clamp(1.32rem,1.7vw,1.72rem); line-height:1.1}
 .stat-card span{font-size:.82rem; font-weight:300; letter-spacing:.01em;
   text-transform:none; color:rgba(244,239,230,.8); line-height:1.5; position:relative}
 
+/* the third panel is a button; strip the UA chrome so it is the same
+   object as the other two — and then put back the one thing it must not
+   share with them. Its neighbours are readouts; this one opens, and it
+   has to say so before the pointer arrives, which is why the resting
+   border is already warm rather than the panels' neutral white. */
+.stat-card--act{
+  appearance:none; -webkit-appearance:none; border:1px solid rgba(255,178,90,.34);
+  font:inherit; text-align:left; cursor:pointer; width:100%; display:block;
+}
+.stat-card--act:hover{border-color:rgba(255,200,130,.55)}
+/* press flattens the hover lift — the one state the panels beside it
+   have no reason to own */
+.stat-card--act:active{transform:scale(.985)}
+.stat-card--act:focus-visible{outline:2px solid var(--gold); outline-offset:3px}
+/* Its own type scale, at equal specificity and later in source rather
+   than three !important declarations shouting down .stat-card b. The
+   padding is what keeps the title clear of the disc. */
+.stat-card--act b{font-size:1.06rem; font-weight:700; margin-bottom:5px; padding-right:34px}
+/* the affordance itself: rotates rather than slides, because this one
+   unfolds in place instead of going somewhere — the .ib-go/.fab-go
+   translate is reserved for the buttons that navigate */
+.cm-go{
+  position:absolute; top:16px; right:16px; z-index:2;
+  width:26px; height:26px; border-radius:50%; display:grid; place-items:center;
+  border:1px solid rgba(255,224,176,.34); color:var(--gold-lt);
+  transition:transform .45s var(--ease),border-color .45s var(--ease),
+             background-color .45s var(--ease);
+}
+.cm-go svg{width:12px; height:12px}
+.stat-card--act:hover .cm-go{
+  transform:rotate(90deg); border-color:var(--gold); background:rgba(255,178,90,.16)}
+
+/* weather */
+.wx-read{display:flex; align-items:baseline; gap:1px}
+/* the reading lives in a <span>, and .stat-card span is the small
+   caption rule — without this the temperature renders at .82rem while
+   the panel beside it is at 2.1rem */
+.stat-card .wx-read span{font-size:inherit; font-weight:inherit; color:inherit;
+  letter-spacing:inherit; line-height:inherit}
+.wx-deg{font-style:normal; color:var(--gold); font-size:1.05rem; font-weight:500;
+  text-shadow:0 0 16px rgba(255,178,90,.65)}
+.wx-line{display:flex; align-items:center; gap:8px}
+.wx-icon{display:inline-flex; width:26px; height:26px; flex:none}
+.wx-icon svg{width:100%; height:100%; display:block;
+  filter:drop-shadow(0 2px 8px rgba(0,0,0,.5))}
+.wx-icon:empty{display:none}
+/* The reading and its icon are held back until the request lands, then
+   fade up. This is the one genuinely live thing on the page and it used
+   to snap: a dash became two digits and a colour icon materialised in
+   the same frame, with less ceremony than the idle sweep on a button.
+   hero-panels.js writes the values, forces a reflow, then adds .wx-live,
+   so the transition has a real start value.
+   If the request never lands the dash comes back at half strength —
+   it is never replaced with an invented number. */
+.wx .wx-read,.wx .wx-icon{opacity:0; transform:translateY(5px);
+  transition:opacity .65s var(--ease),transform .65s var(--ease)}
+.wx .wx-icon{transition-delay:150ms}
+.wx.wx-live .wx-read,.wx.wx-live .wx-icon{opacity:1; transform:none}
+.wx.wx-dead .wx-read{opacity:.5; transform:none}
+
+/* ═══ commission sheet ═════════════════════════════════════ */
+.cmx{position:fixed; inset:0; z-index:120; display:grid; place-items:center;
+  padding:clamp(12px,3.5vw,44px)}
+.cmx[hidden]{display:none}          /* display:grid outranks the UA rule */
+.cmx-veil{position:absolute; inset:0; background:rgba(3,5,9,.72); opacity:0;
+  transition:opacity .5s var(--ease)}
+.cmx.open .cmx-veil{opacity:1}
+
+.cmx-panel{
+  position:relative; width:min(760px,100%); max-height:88vh; overflow-y:auto;
+  padding:clamp(26px,3.4vw,44px); border-radius:22px;
+  background:
+    linear-gradient(148deg,rgba(255,255,255,.14) 0%,rgba(255,255,255,.045) 34%,rgba(12,16,24,.72) 100%);
+  border:1px solid rgba(255,255,255,.17);
+  box-shadow:
+    0 40px 90px rgba(0,0,0,.62),
+    0 0 70px -18px rgba(255,178,90,.26),
+    inset 0 1px 0 rgba(255,255,255,.3);
+  /* the panel arrives from where the card sits — down and small, then
+     settles into the middle. transform and opacity only. */
+  opacity:0; transform:translateY(26px) scale(.94);
+  transition:opacity .5s var(--ease),transform .62s var(--ease);
+}
+.cmx.open .cmx-panel{opacity:1; transform:none}
+@media (min-width:1024px){
+  .cmx-panel{-webkit-backdrop-filter:blur(22px) saturate(150%);
+    backdrop-filter:blur(22px) saturate(150%)}
+}
+/* Below 1024 the backdrop-filter is gated off for performance — so the
+   glass has nothing to blur and the hero headline reads straight
+   through the panel. Give it a real background there. It still reads as
+   glass, because the top highlight, the border and the sheen are what
+   were doing that work; the blur was only ever making it legible.
+   Both sheets take this: the commission one had the same problem and
+   nobody had opened it on a phone. */
+@media (max-width:1023px){
+  .cmx-panel{
+    background:linear-gradient(148deg,
+      rgba(48,60,77,.97) 0%,rgba(23,31,42,.985) 34%,rgba(10,14,21,.99) 100%);
+  }
+  .cmx-veil{background:rgba(3,5,9,.86)}
+}
+.cmx-panel::before{
+  content:""; position:absolute; inset:0; pointer-events:none; border-radius:inherit;
+  background:radial-gradient(110% 70% at 14% 0%,rgba(255,230,190,.14),transparent 50%);
+}
+
+.cmx-x{position:absolute; top:16px; right:16px; z-index:2;
+  width:38px; height:38px; display:grid; place-items:center;
+  border-radius:50%; border:1px solid rgba(255,255,255,.16);
+  background:rgba(10,14,20,.4); color:var(--cream); cursor:pointer;
+  transition:border-color .35s var(--ease),background .35s var(--ease),transform .35s var(--ease)}
+.cmx-x:hover{border-color:var(--gold); background:rgba(255,178,90,.14); transform:rotate(90deg)}
+.cmx-x svg{width:17px; height:17px}
+.cmx-x:focus-visible{outline:2px solid var(--gold); outline-offset:3px}
+
+.cmx-kick{position:relative; font-size:.62rem; letter-spacing:.3em; text-transform:uppercase;
+  color:var(--gold); margin:0 0 10px}
+.cmx-panel h2{position:relative; font-size:clamp(1.7rem,3.4vw,2.5rem); line-height:1.1;
+  margin:0 0 14px; color:var(--cream)}
+.cmx-lede{position:relative; color:var(--c-70); font-size:.98rem; line-height:1.8;
+  max-width:56ch; margin:0 0 28px}
+
+.cmx-grid{position:relative; display:grid; grid-template-columns:1fr 1fr;
+  gap:clamp(16px,2vw,26px)}
+.cmx-block{border:1px solid var(--hair); border-radius:16px; padding:22px 22px 8px;
+  background:rgba(255,255,255,.02)}
+.cmx-block h3{font-family:var(--sans); font-size:.62rem; font-weight:500; letter-spacing:.24em;
+  text-transform:uppercase; color:var(--gold); margin:0 0 16px}
+
+.cmx-rows{margin:0}
+.cmx-rows>div{display:flex; align-items:flex-start; justify-content:space-between; gap:18px;
+  padding:0 0 16px; margin-bottom:16px; border-bottom:1px solid var(--hair)}
+.cmx-rows>div:last-child{border-bottom:0}
+.cmx-rows dt{font-size:.9rem; color:var(--cream); font-weight:500; margin:0}
+.cmx-rows dt em{display:block; font-style:normal; font-size:.76rem; font-weight:300;
+  color:var(--c-52); margin-top:4px; line-height:1.5}
+.cmx-rows dd{margin:0; text-align:right; flex:none; max-width:47%}
+.cmx-rows dd b{display:block; font-family:var(--sans); font-weight:600; font-size:1.5rem;
+  line-height:1; color:var(--gold); text-shadow:0 0 20px rgba(255,178,90,.4)}
+.cmx-rows dd span{display:block; font-size:.72rem; color:var(--c-52); margin-top:6px;
+  line-height:1.5}
+
+.cmx-note{position:relative; margin-top:26px; padding-top:24px; border-top:1px solid var(--hair)}
+.cmx-note h3{font-family:var(--sans); font-size:.62rem; font-weight:500; letter-spacing:.24em;
+  text-transform:uppercase; color:var(--gold); margin:0 0 12px}
+.cmx-note p{color:var(--c-70); font-size:.94rem; line-height:1.85; margin:0; max-width:64ch}
+
+.cmx-locked{overflow:hidden}
+
+/* ═══ the district quiz ════════════════════════════════════
+   Shares the commission sheet's whole shell — .cmx veil, panel, close
+   and the focus trap in hero-panels.js — so the two dialogs are the
+   same object with different contents and cannot drift apart. Only the
+   quiz's own interior lives below. */
+.qz-head{position:relative; margin-bottom:clamp(20px,2.6vw,30px)}
+.qz-bar{
+  position:relative; height:2px; border-radius:2px; margin-top:14px;
+  background:rgba(247,242,233,.12); overflow:hidden;
+}
+.qz-bar i{
+  display:block; height:100%; transform-origin:left; transform:scaleX(var(--qp,0));
+  background:linear-gradient(90deg,var(--gold-dp),var(--gold-lt),var(--plinth));
+  box-shadow:0 0 10px rgba(255,215,163,.6);
+  transition:transform .5s var(--ease);
+}
+.qz-step{
+  position:absolute; top:0; right:0;
+  font-size:.62rem; letter-spacing:.22em; text-transform:uppercase;
+  color:var(--c-38); font-variant-numeric:tabular-nums;
+}
+
+/* the card cross-fades between questions: one step at a time is what
+   keeps five questions from reading as a form */
+.qz-card{animation:qzIn .42s var(--ease) both}
+@keyframes qzIn{from{opacity:0; transform:translateY(10px)}to{opacity:1; transform:none}}
+.qz-q{
+  position:relative; margin:0 0 8px; font-family:var(--display); font-weight:400;
+  font-size:clamp(1.4rem,2.7vw,2rem); line-height:1.14; color:var(--cream);
+}
+.qz-hint{margin:0 0 clamp(18px,2.4vw,26px); font-size:.86rem; color:var(--c-52); max-width:52ch}
+
+.qz-opts{display:grid; gap:10px}
+/* Each option is its own small glass tile — the same material as the
+   panel it sits in, one step brighter. */
+.qz-opt{
+  position:relative; display:flex; align-items:center; justify-content:space-between; gap:16px;
+  width:100%; padding:16px 18px; border-radius:14px; cursor:pointer;
+  font:inherit; text-align:left; color:var(--cream);
+  border:1px solid rgba(255,255,255,.14);
+  background:linear-gradient(150deg,rgba(255,255,255,.07),rgba(12,16,24,.34));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.14);
+  transition:transform .4s var(--ease),border-color .4s var(--ease),
+             box-shadow .4s var(--ease),background-color .4s var(--ease);
+}
+.qz-opt-t{font-size:1.02rem; font-weight:500; letter-spacing:-.005em}
+.qz-tick{
+  width:24px; height:24px; flex:none; border-radius:50%; display:grid; place-items:center;
+  border:1px solid rgba(255,255,255,.18); color:var(--ink);
+  background:transparent;
+  transition:background-color .35s var(--ease),border-color .35s var(--ease),
+             transform .35s var(--ease),color .35s var(--ease);
+}
+.qz-tick svg{width:12px; height:12px; opacity:0; transition:opacity .3s var(--ease)}
+@media (hover:hover) and (pointer:fine){
+  .qz-opt:hover{
+    transform:translateX(4px); border-color:rgba(255,178,90,.5);
+    background:linear-gradient(150deg,rgba(255,200,130,.14),rgba(12,16,24,.34));
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 16px 34px -22px rgba(255,178,90,.7);
+  }
+  .qz-opt:hover .qz-tick{border-color:var(--gold)}
+}
+.qz-opt:focus-visible{outline:2px solid var(--gold-lt); outline-offset:3px}
+.qz-opt:active{transform:scale(.99)}
+/* chosen — held for a beat before the next question, because the answer
+   registering is the only feedback this interaction has */
+.qz-opt[data-on="1"]{
+  border-color:var(--gold);
+  background:linear-gradient(150deg,rgba(255,200,130,.2),rgba(12,16,24,.34));
+}
+.qz-opt[data-on="1"] .qz-tick{
+  background:var(--gold-lt); border-color:var(--gold-lt); transform:scale(1.08);
+}
+.qz-opt[data-on="1"] .qz-tick svg{opacity:1}
+
+.qz-back{
+  display:inline-flex; align-items:center; gap:8px; margin-top:18px; padding:8px 2px;
+  font:inherit; font-size:.78rem; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--c-52); cursor:pointer; transition:color .35s var(--ease);
+}
+.qz-back svg{width:13px; height:13px}
+.qz-back:hover{color:var(--cream)}
+.qz-back:focus-visible{outline:2px solid var(--gold-lt); outline-offset:3px}
+
+/* ── the answer ──────────────────────────────────────────── */
+.qz-res-kick{display:block; margin-bottom:8px; color:var(--gold)}
+.qz-res-name{
+  margin:0 0 6px; font-family:var(--display); font-weight:400;
+  font-size:clamp(2rem,4.4vw,3.1rem); line-height:1; letter-spacing:-.02em; color:var(--cream);
+}
+.qz-res-n{margin:0 0 16px; font-size:.82rem; color:var(--c-52)}
+.qz-res-n b{color:var(--gold-lt); font-variant-numeric:tabular-nums}
+.qz-res-line{margin:0 0 18px; color:var(--c-70); font-size:.96rem; line-height:1.7; max-width:56ch}
+.qz-why{
+  margin:0 0 18px; padding:16px 18px; list-style:none; display:grid; gap:9px;
+  border-radius:14px; border:1px solid rgba(255,178,90,.2);
+  background:linear-gradient(150deg,rgba(255,178,90,.07),rgba(12,16,24,.3));
+}
+.qz-why li{position:relative; padding-left:19px; font-size:.88rem; color:var(--c-70)}
+.qz-why li::before{
+  content:""; position:absolute; left:0; top:.62em; width:9px; height:1px;
+  background:var(--gold); box-shadow:0 0 8px rgba(255,178,90,.6);
+}
+/* .btn-line lives in css/elevated.css, which THIS page does not load —
+   index.html carries its own copy of the shell. Without it the quiz's
+   secondary action rendered as bare text with an un-sized SVG blown up
+   to its intrinsic box. Same rule as the shared sheet; change one,
+   change both. */
+.btn-line{
+  display:inline-flex; align-items:center; gap:12px; padding:13px 13px 13px 24px;
+  border:1px solid rgba(244,239,230,.2); border-radius:999px; color:var(--cream);
+  font-size:.86rem; white-space:nowrap; text-decoration:none;
+  transition:border-color .45s var(--ease),background-color .45s var(--ease),box-shadow .45s var(--ease);
+}
+.btn-line i{width:30px; height:30px; border-radius:50%; display:grid; place-items:center; flex:none;
+  border:1px solid rgba(244,239,230,.18);
+  transition:transform .45s var(--ease),border-color .45s var(--ease),background-color .45s var(--ease)}
+.btn-line svg{width:13px; height:13px}
+@media (hover:hover) and (pointer:fine){
+  .btn-line:hover{border-color:var(--gold); background:rgba(255,178,90,.1);
+    box-shadow:0 0 30px -10px rgba(255,178,90,.5)}
+  .btn-line:hover i{transform:translateX(3px); border-color:var(--gold); background:rgba(255,178,90,.16)}
+}
+
+.qz-alt{margin:0 0 22px; font-size:.9rem; color:var(--c-52)}
+.qz-alt a{color:var(--gold-lt); border-bottom:1px solid rgba(255,224,176,.3)}
+.qz-alt a:hover{border-bottom-color:var(--gold-lt)}
+.qz-acts{display:flex; flex-wrap:wrap; gap:12px 14px; align-items:center}
+.qz-acts .qz-back{margin-top:0}
+.qz-fine{margin:20px 0 0; padding-top:18px; border-top:1px solid var(--hair);
+  font-size:.8rem; color:var(--c-38); max-width:58ch}
+
+@media (max-width:560px){
+  .qz-acts{gap:10px}
+  .qz-acts .btn,.qz-acts .btn-line{width:100%; justify-content:center}
+}
+@media (prefers-reduced-motion:reduce){
+  .qz-card{animation:none}
+  .qz-opt:hover{transform:none}
+}
+
+/* ═══ consultation form ════════════════════════════════════ */
+/* Same glass family as the commission sheet, but it arrives differently:
+   js/consult-form.js measures the button that opened it and hands the
+   panel a --cf-dx/--cf-dy offset, so the closed state sits on top of that
+   button at 30%. Opening therefore reads as the CTA expanding into a
+   sheet rather than a dialog dropped in from nowhere. */
+.cf{position:fixed; inset:0; z-index:130; display:grid; place-items:center;
+  padding:clamp(12px,3.5vw,44px)}
+.cf[hidden]{display:none}
+.cf-veil{position:absolute; inset:0; background:rgba(3,5,9,.74); opacity:0;
+  transition:opacity .5s var(--ease)}
+.cf.open .cf-veil{opacity:1}
+
+.cf-panel{
+  position:relative; width:min(560px,100%); max-height:90vh; overflow-y:auto;
+  padding:clamp(24px,3.2vw,38px); border-radius:24px;
+  background:
+    linear-gradient(152deg,rgba(255,255,255,.15) 0%,rgba(255,255,255,.05) 32%,rgba(11,15,23,.86) 100%);
+  border:1px solid rgba(255,255,255,.17);
+  box-shadow:
+    0 44px 96px rgba(0,0,0,.66),
+    0 0 80px -20px rgba(255,178,90,.3),
+    inset 0 1px 0 rgba(255,255,255,.3);
+  opacity:0;
+  transform:translate(var(--cf-dx,0),var(--cf-dy,42px)) scale(.3);
+  transition:opacity .42s var(--ease),transform .66s cubic-bezier(.16,1,.3,1);
+  will-change:transform}
+.cf.open .cf-panel{opacity:1; transform:none}
+@media (min-width:1024px){
+  .cf-panel{-webkit-backdrop-filter:blur(24px) saturate(150%);
+    backdrop-filter:blur(24px) saturate(150%)}
+}
+/* Below that gate there is no blur behind the glass, and the hero headline
+   was reading straight through the panel. The gradient keeps its shape but
+   goes opaque so the form text holds its contrast. */
+@media (max-width:1023px){
+  .cf-panel{background:
+    linear-gradient(152deg,rgba(36,45,62,.985) 0%,rgba(19,26,39,.99) 36%,rgba(9,13,20,.995) 100%)}
+  .cf-veil{background:rgba(3,5,9,.86)}
+}
+.cf-panel::before{content:""; position:absolute; inset:0; pointer-events:none;
+  border-radius:inherit;
+  background:radial-gradient(115% 72% at 12% 0%,rgba(255,230,190,.15),transparent 52%)}
+
+/* progress thread — fills as the three fields are answered */
+.cf-thread{position:absolute; top:0; left:22px; right:22px; height:2px;
+  border-radius:2px; background:rgba(255,255,255,.09); overflow:hidden}
+.cf-thread i{display:block; height:100%; transform:scaleX(0); transform-origin:left center;
+  background:linear-gradient(90deg,rgba(255,178,90,.55),var(--gold-lt,#FAE5C8));
+  box-shadow:0 0 12px rgba(255,178,90,.6);
+  transition:transform .55s var(--ease)}
+
+.cf-x{position:absolute; top:14px; right:14px; z-index:2;
+  width:38px; height:38px; display:grid; place-items:center;
+  border-radius:50%; border:1px solid rgba(255,255,255,.16);
+  background:rgba(10,14,20,.4); color:var(--cream); cursor:pointer;
+  transition:border-color .35s var(--ease),background .35s var(--ease),transform .35s var(--ease)}
+.cf-x:hover{border-color:var(--gold); background:rgba(255,178,90,.14); transform:rotate(90deg)}
+/* same trick as the chip: 38px disc, 44px hit area */
+.cf-x::after{content:""; position:absolute; inset:-3px; border-radius:50%}
+.cf-x svg{width:17px; height:17px}
+.cf-x:focus-visible{outline:2px solid var(--gold); outline-offset:3px}
+
+.cf-kick{position:relative; font-size:.62rem; letter-spacing:.3em; text-transform:uppercase;
+  color:var(--gold); margin:0 0 10px}
+.cf-panel h2{position:relative; font-size:clamp(1.5rem,3vw,2.1rem); line-height:1.12;
+  margin:0 0 12px; color:var(--cream)}
+.cf-lede{position:relative; color:var(--c-70); font-size:.92rem; line-height:1.75;
+  max-width:46ch; margin:0 0 26px}
+
+/* fields deal in one after another once the panel has settled */
+.cf-field{position:relative; margin-bottom:20px; opacity:0; transform:translateY(14px);
+  transition:opacity .5s var(--ease),transform .5s var(--ease);
+  transition-delay:calc(180ms + var(--i,0) * 90ms)}
+.cf.open .cf-field{opacity:1; transform:none}
+.cf-field>label{display:block; font-size:.62rem; letter-spacing:.24em; text-transform:uppercase;
+  color:var(--gold); margin:0 0 9px}
+
+.cf-input,.cf-area{
+  width:100%; font-family:var(--sans); font-size:.95rem; color:var(--cream);
+  background:rgba(255,255,255,.045); border:1px solid rgba(255,255,255,.14);
+  border-radius:12px; padding:13px 15px; min-height:48px;
+  transition:border-color .3s var(--ease),background .3s var(--ease),box-shadow .3s var(--ease)}
+.cf-area{resize:vertical; min-height:92px; line-height:1.65}
+.cf-input::placeholder,.cf-area::placeholder{color:rgba(246,241,231,.38)}
+.cf-input:focus,.cf-area:focus{outline:none; border-color:var(--gold);
+  background:rgba(255,178,90,.07); box-shadow:0 0 0 3px rgba(255,178,90,.16)}
+.cf-input:disabled{opacity:.5; cursor:not-allowed}
+
+/* a wrong or repeated entry shakes rather than throwing an error message */
+@keyframes cf-nudge{
+  0%,100%{transform:translateX(0)}
+  20%{transform:translateX(-5px)} 40%{transform:translateX(5px)}
+  60%{transform:translateX(-3px)} 80%{transform:translateX(3px)}}
+.cf-nudge{animation:cf-nudge .42s var(--ease)}
+
+/* reference chips */
+.cf-chips{display:flex; flex-wrap:wrap; gap:8px; margin:0 0 10px}
+.cf-chips:empty{margin:0}
+@keyframes cf-pop{
+  0%{opacity:0; transform:translateY(6px) scale(.86)}
+  60%{opacity:1; transform:translateY(0) scale(1.04)}
+  100%{opacity:1; transform:none}}
+.cf-chip{display:inline-flex; align-items:center; gap:8px;
+  padding:7px 7px 7px 12px; border-radius:999px;
+  border:1px solid rgba(255,178,90,.34); background:rgba(255,178,90,.11);
+  animation:cf-pop .44s var(--ease) both; animation-delay:calc(var(--i,0) * 55ms);
+  max-width:100%}
+.cf-chip b{font-family:var(--sans); font-weight:600; font-size:.8rem; color:var(--gold-lt,#FAE5C8);
+  letter-spacing:.05em}
+.cf-chip em{font-style:normal; font-size:.74rem; color:var(--c-70);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:19ch}
+.cf-chip.unknown{border-color:rgba(255,255,255,.2); background:rgba(255,255,255,.06)}
+.cf-chip.unknown b{color:var(--cream)}
+.cf-chip-x{position:relative; flex:none; width:24px; height:24px; display:grid; place-items:center;
+  border-radius:50%; border:0; background:rgba(0,0,0,.28); color:var(--cream);
+  cursor:pointer; transition:background .28s var(--ease),transform .28s var(--ease)}
+/* the disc stays 24px so the chip keeps its proportions, but the thing you
+   press is 44px — below that it is a coin-toss on a phone */
+.cf-chip-x::after{content:""; position:absolute; inset:-10px; border-radius:50%}
+.cf-chip-x svg{width:11px; height:11px}
+.cf-chip-x:hover{background:rgba(255,178,90,.32); transform:rotate(90deg)}
+.cf-chip-x:focus-visible{outline:2px solid var(--gold); outline-offset:2px}
+
+.cf-note{display:block; font-size:.72rem; color:var(--c-52); margin-top:9px; line-height:1.6}
+.cf-full .cf-note{color:var(--gold)}
+
+.cf-actions{position:relative; display:flex; align-items:center; gap:14px;
+  margin-top:26px; padding-top:22px; border-top:1px solid var(--hair);
+  opacity:0; transform:translateY(14px);
+  transition:opacity .5s var(--ease),transform .5s var(--ease); transition-delay:470ms}
+.cf.open .cf-actions{opacity:1; transform:none}
+.cf-send{flex:1; min-height:50px; display:inline-flex; align-items:center; justify-content:center;
+  gap:10px; font-family:var(--sans); font-size:.82rem; font-weight:500; letter-spacing:.06em;
+  border:0; border-radius:999px; cursor:pointer; color:#1B1206;
+  background:linear-gradient(135deg,#FFE0B0,#FFB25A 58%,#E39441);
+  box-shadow:0 14px 30px -12px rgba(255,178,90,.7);
+  transition:transform .3s var(--ease),box-shadow .3s var(--ease),filter .3s var(--ease)}
+.cf-send:hover:not(:disabled){transform:translateY(-2px);
+  box-shadow:0 20px 38px -12px rgba(255,178,90,.85)}
+.cf-send:disabled{filter:grayscale(.65) brightness(.8); cursor:not-allowed; box-shadow:none}
+.cf-send:focus-visible{outline:2px solid var(--cream); outline-offset:3px}
+.cf-send svg{width:15px; height:15px}
+.cf-fine{font-size:.72rem; color:var(--c-52); line-height:1.55; max-width:21ch}
+
+/* ── review ─────────────────────────────────────────────── */
+/* The preview is a sheet of paper, not another dark card: it is a picture
+   of the PDF that is about to be sent, so it reads as a document rather
+   than as more form. It tips up from flat on entry, then keeps a slow
+   levitation with a cast shadow underneath that breathes against it —
+   the same trick the property cards use, so it belongs to the site. */
+.cf-review{position:relative}
+.cf-sheet-wrap{position:relative; perspective:1100px; margin:22px 0 26px}
+.cf-sheet-fold{position:relative; z-index:1; transform-origin:50% 100%;
+  animation:cf-unfold .82s cubic-bezier(.16,1,.3,1) both}
+@keyframes cf-unfold{
+  0%{opacity:0; transform:rotateX(52deg) translateY(26px) scale(.94)}
+  100%{opacity:1; transform:none}}
+.cf-sheet{
+  border-radius:12px; padding:0 22px 16px; overflow:hidden;
+  background:linear-gradient(168deg,#FBF7EF 0%,#F3ECE0 100%);
+  box-shadow:0 26px 52px -20px rgba(0,0,0,.85), inset 0 1px 0 rgba(255,255,255,.9);
+  /* starts once the fold has landed, and never stops */
+  animation:cf-hover 6s ease-in-out .95s infinite}
+@keyframes cf-hover{
+  0%,100%{transform:translateY(0) rotate(0deg)}
+  50%{transform:translateY(-5px) rotate(.22deg)}}
+.cf-sheet-cast{position:absolute; z-index:0; left:8%; right:8%; bottom:-14px; height:26px;
+  border-radius:50%; pointer-events:none;
+  background:radial-gradient(ellipse at center,rgba(0,0,0,.8) 0%,rgba(0,0,0,.32) 48%,transparent 72%);
+  opacity:.42; animation:cf-cast 6s ease-in-out .9s infinite}
+@keyframes cf-cast{
+  0%,100%{transform:scale(.94); opacity:.42}
+  50%{transform:scale(1.05); opacity:.26}}
+
+/* the masthead bleeds to the sheet's edges, the way the PDF's header band
+   runs the full width of the page */
+.cf-sheet-head{position:relative; margin:0 -22px 14px; padding:18px 22px 15px;
+  background:linear-gradient(168deg,#16223A 0%,#0E1729 100%);
+  border-bottom:2px solid var(--gold)}
+.cf-sheet-head img{display:block; height:30px; width:auto; margin-bottom:9px;
+  filter:drop-shadow(0 2px 8px rgba(0,0,0,.5))}
+.cf-sheet-head b{display:block; font-family:var(--sans); font-weight:600; font-size:.95rem;
+  letter-spacing:.22em; color:#F6F1E7}
+.cf-sheet-head span{display:block; font-size:.68rem; color:var(--gold);
+  letter-spacing:.04em}
+.cf-sheet-head em{display:block; font-style:normal; font-size:.62rem; letter-spacing:.2em;
+  text-transform:uppercase; color:rgba(246,241,231,.62); margin-top:8px}
+
+.cf-sheet-body{margin:0}
+.cf-sheet-body>div{display:grid; grid-template-columns:9.5rem 1fr; gap:14px; align-items:start;
+  padding:9px 0; border-bottom:1px solid rgba(20,26,36,.08);
+  opacity:0; animation:cf-line .5s var(--ease) both;
+  animation-delay:calc(360ms + var(--i,0) * 110ms)}
+@keyframes cf-line{from{opacity:0; transform:translateY(7px)} to{opacity:1; transform:none}}
+.cf-sheet-body>div:last-child{border-bottom:0}
+.cf-sheet-body dt{margin:0; font-size:.62rem; letter-spacing:.16em; text-transform:uppercase;
+  color:#96693A; padding-top:2px}
+.cf-sheet-body dd{margin:0; font-size:.9rem; line-height:1.6; color:#141A24;
+  overflow-wrap:anywhere}
+.cf-sheet-body .cf-empty{color:#8B94A1; font-style:italic}
+
+.cf-rv-ref{display:block; opacity:0; animation:cf-line .45s var(--ease) both;
+  animation-delay:calc(560ms + var(--i,0) * 90ms)}
+.cf-rv-ref+.cf-rv-ref{margin-top:5px}
+.cf-rv-ref b{font-family:var(--sans); font-weight:600; color:#0E1729; margin-right:9px}
+.cf-rv-ref em{font-style:normal; font-size:.8rem; color:#5C6673}
+
+.cf-sheet-foot{display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;
+  margin-top:14px; padding-top:11px; border-top:1px solid rgba(20,26,36,.14);
+  font-size:.66rem; color:#8B94A1}
+
+/* the three choices float in under the sheet, one after another */
+.cf-choices{position:relative; display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+.cf-choices>*{opacity:0; animation:cf-rise .55s cubic-bezier(.16,1,.3,1) both;
+  animation-delay:calc(620ms + var(--i,0) * 90ms)}
+@keyframes cf-rise{from{opacity:0; transform:translateY(14px) scale(.96)} to{opacity:1; transform:none}}
+.cf-choices .cf-send{flex:1 1 auto; min-width:150px}
+.cf-ghost{min-height:50px; padding:0 22px; border-radius:999px; cursor:pointer;
+  font-family:var(--sans); font-size:.8rem; letter-spacing:.05em; color:var(--cream);
+  background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.18);
+  transition:border-color .3s var(--ease),background .3s var(--ease),transform .3s var(--ease)}
+.cf-ghost:hover{border-color:var(--gold); background:rgba(255,178,90,.12); transform:translateY(-2px)}
+.cf-ghost:focus-visible{outline:2px solid var(--gold); outline-offset:3px}
+.cf-cancel:hover{border-color:rgba(255,120,110,.5); background:rgba(255,120,110,.1)}
+
+.cf-hand{margin:16px 0 0; font-size:.74rem; line-height:1.65; color:var(--c-52);
+  opacity:0; animation:cf-line .5s var(--ease) both; animation-delay:900ms}
+
+/* confirmation */
+.cf-done{position:relative; text-align:center; padding:8px 0 4px}
+.cf-seal{width:62px; height:62px; margin:0 auto 18px; border-radius:50%;
+  display:grid; place-items:center; color:var(--gold);
+  border:1px solid rgba(255,178,90,.4); background:rgba(255,178,90,.1);
+  animation:cf-pop .5s var(--ease) both}
+.cf-seal svg{width:26px; height:26px}
+.cf-done h3{font-family:var(--display); font-weight:400; font-size:1.5rem;
+  color:var(--cream); margin:0 0 10px}
+.cf-done p{color:var(--c-70); font-size:.9rem; line-height:1.8; margin:0 auto 22px; max-width:42ch}
+.cf-again{min-height:46px; padding:0 22px; border-radius:999px; cursor:pointer;
+  font-family:var(--sans); font-size:.78rem; letter-spacing:.06em; color:var(--cream);
+  background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.18);
+  transition:border-color .3s var(--ease),background .3s var(--ease)}
+.cf-again:hover{border-color:var(--gold); background:rgba(255,178,90,.12)}
+.cf-again:focus-visible{outline:2px solid var(--gold); outline-offset:3px}
+
+@media (max-width:860px){
+  /* .62rem is 9.9px — fine on a desktop as a tracked-out label, under the
+     legibility floor on a phone. The sheet's own labels are printed-document
+     small for the same reason and need the same floor. */
+  .cf-kick,.cf-field>label,
+  .cf-sheet-head span,.cf-sheet-head em,.cf-sheet-body dt,
+  .cf-sheet-foot{font-size:.72rem}
+}
+@media (max-width:560px){
+  .cf-actions{flex-direction:column; align-items:stretch}
+  .cf-send{width:100%}
+  .cf-fine{max-width:none; text-align:center}
+  .cf-chip em{max-width:13ch}
+  /* stacked label over value — 9.5rem of label leaves nothing for the
+     value at this width */
+  .cf-sheet-body>div{grid-template-columns:1fr; gap:4px}
+  .cf-choices{flex-direction:column; align-items:stretch}
+  .cf-choices .cf-send,.cf-ghost{width:100%}
+}
+@media (prefers-reduced-motion:reduce){
+  .cf-sheet,.cf-sheet-fold,.cf-sheet-cast,.cf-sheet-body>div,.cf-rv-ref,
+  .cf-choices>*,.cf-hand{animation:none; opacity:1; transform:none}
+  .cf-ghost:hover{transform:none}
+}
+@media (prefers-reduced-motion:reduce){
+  .cf-veil,.cf-panel,.cf-field,.cf-actions,.cf-thread i{transition-duration:.01ms !important;
+    transition-delay:0ms !important}
+  .cf-panel{transform:none}
+  .cf-field,.cf-actions{opacity:1; transform:none}
+  .cf-chip,.cf-seal{animation:none}
+  .cf-nudge{animation:none}
+  .cf-x:hover,.cf-chip-x:hover,.cf-send:hover:not(:disabled){transform:none}
+}
+
+@media (max-width:720px){
+  .cmx-grid{grid-template-columns:1fr}
+  .cmx-rows dd{max-width:none}
+}
+@media (prefers-reduced-motion:reduce){
+  .cmx-veil,.cmx-panel{transition-duration:.01ms !important}
+  .cmx-panel{transform:none}
+  .cmx-x:hover{transform:none}
+}
+
 /* CTA — centred under the open middle column so it sits below the pod */
+/* ═══ the hero's call to action ════════════════════════════
+   It does NOT arrive with the rest of the hero. It waits for the
+   reader to scroll once, then pops up from below.
+
+   An offer made after somebody has shown a flicker of interest reads
+   as an offer; the same offer made at t=0, before they have looked at
+   anything, reads as a banner — and it was competing with the
+   headline's own per-line rise for the same half-second.
+
+   .armed is added by js/lumina.js on init, which is what makes this
+   safe: with the script blocked neither class is ever set and the
+   button is simply there, at rest, doing its job. The primary CTA is
+   the last thing on the page that should depend on JavaScript. */
 .hero-cta{grid-column:1/-1; grid-row:3; justify-self:center}
+.hero-cta.armed{opacity:0; transform:translate3d(0,64px,0) scale(.9)}
+/* The pop is a keyframe rather than a transition because it overshoots
+   and settles, and a transition can only ease between two states. Rise
+   past the mark, tip back under it, rest. transform and opacity only. */
+.hero-cta.armed.up{animation:ctaPop 1.05s var(--ease) forwards}
+@keyframes ctaPop{
+  0%  {opacity:0; transform:translate3d(0,64px,0) scale(.9)}
+  46% {opacity:1; transform:translate3d(0,-9px,0) scale(1.035)}
+  70% {transform:translate3d(0,3px,0) scale(.994)}
+  86% {transform:translate3d(0,-1px,0) scale(1.002)}
+  100%{opacity:1; transform:none}
+}
+/* A halo that blooms behind the button as it lands and then goes.
+   Deliberately on the WRAPPER and not on .btn-pill: that element
+   already runs pillBreathe on box-shadow forever, and `animation` is a
+   shorthand — a keyframe added there wins on specificity and kills the
+   breathing for good. The pill keeps every effect it had. */
+.hero-cta{position:relative}
+.hero-cta.armed.up::after{
+  content:""; position:absolute; left:50%; top:50%; z-index:0;
+  width:min(380px,90vw); height:130px; margin:-65px 0 0 min(-190px,-45vw);
+  border-radius:50%; pointer-events:none;
+  background:radial-gradient(closest-side,rgba(255,178,90,.42),transparent 72%);
+  animation:ctaHalo 1.5s var(--ease) .1s both;
+}
+.hero-cta .btn-pill{z-index:1}
+@keyframes ctaHalo{
+  0%  {opacity:0; transform:scale(.55)}
+  42% {opacity:1; transform:scale(1.06)}
+  100%{opacity:0; transform:scale(1.3)}
+}
+@media (prefers-reduced-motion:reduce){
+  /* no pop, no halo — it simply appears once they have scrolled */
+  .hero-cta.armed{opacity:0; transform:none}
+  .hero-cta.armed.up{animation:none; opacity:1}
+  .hero-cta.armed.up::after{animation:none; opacity:0}
+}
 
 .btn{
   --bg:linear-gradient(180deg,#ffc06e 0%,var(--gold) 48%,#e89840 100%);
@@ -506,14 +1346,9 @@ h3.display{font-size:clamp(1.32rem,1.7vw,1.72rem); line-height:1.1}
   inset 0 1px 0 rgba(255,255,255,.5)}
 .btn:active{transform:translateY(-1px) scale(.99)}
 .btn:hover::after{transform:translateX(102%)}
-.btn-ghost{
-  --bg:transparent; color:var(--cream);
-  box-shadow:none;
-  background:transparent;
-  border:1px solid rgba(244,239,230,.22); font-weight:500;
-}
-.btn-ghost:hover{border-color:var(--gold); background:rgba(255,178,90,.08);
-  box-shadow:0 0 28px -8px rgba(255,178,90,.35)}
+/* .btn-ghost was removed with the element that was its only user in the
+   whole site — the old "Meet the team" pill. The team card is the link
+   now. Bring the rule back if a second ghost button ever appears. */
 
 /* glowing pill CTA — the hero's single action.
    overflow is re-opened so the breathing glow ring can sit outside the edge. */
@@ -583,61 +1418,124 @@ h3.display{font-size:clamp(1.32rem,1.7vw,1.72rem); line-height:1.1}
 .ethos h3{margin:0 0 12px}
 .ethos p{margin:0; color:var(--c-52); font-size:.94rem}
 
-/* ═══ collection ══════════════════════════════════════════ */
-.grid-props{display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:clamp(18px,1.8vw,28px)}
-.card{
-  position:relative; border-radius:var(--r-lg); overflow:hidden; background:var(--navy);
-  box-shadow:var(--shadow-float); transform-style:preserve-3d;
-  transition:transform .6s var(--ease),box-shadow .6s var(--ease),border-color .5s var(--ease);
-  border:1px solid rgba(255,255,255,.07);
+/* ═══ collection ══════════════════════════════════════════
+   The card and the gallery viewer now live in
+   css/property-ui.css — listings.html renders the same
+   components, and two inline copies would have drifted.
+   Everything there is scoped under .grid-props/.prop-float/.pv
+   and carries its own tokens, so it does not depend on this
+   file and cannot leak into pages that load css/style.css. */
+
+/* The one thing that is home-only: the column count. The shared grid is
+   auto-fill minmax(300px,1fr), which is right for the full portfolio but
+   gives four columns past ~1300px — and eight cards over four columns,
+   the first spanning two, leaves the last card alone on its own row.
+   Pin it instead: three columns while .wide still spans two (2+1 / 3 / 3),
+   two below 1180px where property-ui.css collapses .wide to one column
+   (4 × 2). Under 760px the shared rules already give one or two columns,
+   both of which eight divides into. Wider columns suit the shop window
+   anyway — this is eight residences, not a hundred and eighteen. */
+@media (min-width:1181px){#home-collection-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (min-width:761px) and (max-width:1180px){#home-collection-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* ── the route to invest.html ──────────────────────────────
+   A second destination off this page, so it gets its own button next
+   to the portfolio one. The glyph is four floor plates: at rest they
+   step up like an unfinished elevation, on hover they run out to
+   full width bottom-up and light — which is, in two seconds, exactly
+   what the page it opens spends a whole pinned section doing. */
+.coll-cta{
+  margin-top:clamp(28px,4vw,48px);
+  display:flex; flex-wrap:wrap; gap:14px 18px; justify-content:center; align-items:center;
 }
-.card.wide{grid-column:span 2}
-.card:hover{box-shadow:var(--shadow-lift); border-color:rgba(255,178,90,.22)}
-.card-media{position:relative; aspect-ratio:4/3; overflow:hidden;
-  background:linear-gradient(150deg,var(--navy-3),var(--navy) 70%)}
-.card.wide .card-media{aspect-ratio:16/9}
-.card-media img{width:100%; height:100%; object-fit:cover;
-  transition:transform 1.3s var(--ease),filter .8s var(--ease);
-  /* richer stills: more micro-contrast, slightly warmer */
-  filter:saturate(1.05) contrast(1.06) brightness(.94)}
-.card:hover .card-media img{transform:scale(1.06); filter:saturate(1.12) contrast(1.08) brightness(1.02)}
-.card-media::after{content:""; position:absolute; inset:0;
-  background:
-    linear-gradient(180deg,transparent 32%,rgba(4,6,11,.78)),
-    radial-gradient(80% 60% at 50% 0%,rgba(255,190,120,.08),transparent 55%)}
-/* specular highlight that tracks the pointer across the card */
-.card .spec{
-  position:absolute; inset:0; z-index:4; pointer-events:none; opacity:0;
-  background:radial-gradient(340px circle at var(--sx,50%) var(--sy,50%),rgba(255,220,170,.2),rgba(127,217,232,.06) 42%,transparent 64%);
-  transition:opacity .5s var(--ease);
-  mix-blend-mode:screen;
+.invest-btn{
+  display:inline-flex; align-items:center; gap:15px;
+  padding:11px 12px 11px 20px; border-radius:999px;
+  border:1px solid rgba(255,178,90,.3); background:rgba(255,178,90,.05);
+  color:var(--cream); white-space:nowrap;
+  box-shadow:0 0 22px -10px rgba(255,178,90,.4), inset 0 1px 0 rgba(255,255,255,.06);
+  transition:border-color .45s var(--ease),background-color .45s var(--ease),
+             box-shadow .45s var(--ease);
 }
-.card:hover .spec{opacity:1}
-.card-body{padding:22px 24px 26px; position:relative; z-index:3;
-  background:linear-gradient(180deg,rgba(13,18,25,.2),transparent 40%)}
-.card-body .kicker{font-size:.62rem; margin-bottom:11px}
-.card-body h3{margin:0 0 14px}
-.specs{display:flex; flex-wrap:wrap; gap:6px 18px; margin:0 0 18px; padding:0; list-style:none}
-.specs li{font-size:.8rem; color:var(--c-52); display:flex; align-items:center; gap:7px}
-.specs li+li::before{content:""; width:3px; height:3px; border-radius:50%; background:var(--gold);
-  box-shadow:0 0 6px rgba(255,178,90,.6); margin-right:11px; margin-left:-11px}
-.price{display:flex; align-items:center; justify-content:space-between; gap:14px;
-  padding-top:16px; border-top:1px solid var(--hair)}
-.price b{font-family:var(--display); font-size:1.22rem; font-weight:400; letter-spacing:-.01em;
-  text-shadow:0 0 20px rgba(255,178,90,.12)}
-.price em{font-style:normal; font-size:.78rem; color:var(--c-38); letter-spacing:.06em; text-transform:uppercase}
-.arrow{width:34px; height:34px; border-radius:50%; border:1px solid rgba(244,239,230,.18);
-  display:grid; place-items:center; flex:none; transition:all .45s var(--ease)}
-.card:hover .arrow{border-color:var(--gold); background:linear-gradient(160deg,#ffc06e,var(--gold)); color:var(--ink);
-  transform:rotate(-45deg); box-shadow:0 0 18px rgba(255,178,90,.45)}
-.arrow svg{width:13px; height:13px}
-/* off-market treatment — discretion, not a missing image */
-.sealed .card-media img{filter:blur(22px) saturate(.65) brightness(.52); transform:scale(1.14)}
-.card.sealed:hover .card-media img{transform:scale(1.16); filter:blur(19px) saturate(.72) brightness(.58)}
-.seal{position:absolute; inset:0; z-index:3; display:flex; flex-direction:column;
-  align-items:center; justify-content:center; gap:12px; text-align:center; padding:20px}
-.seal svg{width:22px; height:22px; color:var(--gold); filter:drop-shadow(0 0 10px rgba(255,178,90,.5))}
-.seal span{font-size:.64rem; letter-spacing:.2em; text-transform:uppercase; color:var(--c-70)}
+.invest-btn:hover{
+  border-color:var(--gold); background:rgba(255,178,90,.12);
+  box-shadow:0 0 34px -8px rgba(255,178,90,.55), inset 0 1px 0 rgba(255,255,255,.1);
+}
+.ib-bld{display:grid; gap:3px; width:24px; flex:none}
+.ib-bld i{
+  display:block; height:3px; border-radius:1px;
+  background:rgba(255,224,176,.42);
+  transform:scaleX(var(--s,1)); transform-origin:left center;
+  transition:transform .5s var(--ease),background-color .5s var(--ease),box-shadow .5s var(--ease);
+  transition-delay:calc(var(--i,0) * 55ms);
+}
+.invest-btn:hover .ib-bld i{
+  transform:scaleX(1); background:var(--gold-lt);
+  box-shadow:0 0 10px rgba(255,178,90,.6);
+}
+/* ── the services button ──────────────────────────────────────
+   Same shell as the invest button, different mark: three dots on a
+   ring, which is the thing they are about to arrive at. The ring
+   turns only on hover — a permanently spinning icon in a row of
+   buttons is noise. */
+/* Services outranks Invest, and a 4% alpha difference is not a rank —
+   it is below anyone's perceptual threshold, so the stated hierarchy
+   did not exist on screen. Full-strength gold rim plus an inner glow
+   reads as the lit shell of the two; Invest keeps the quiet one. */
+.svc-btn{
+  border-color:rgba(255,178,90,.72); background:rgba(255,178,90,.11);
+  box-shadow:0 0 30px -8px rgba(255,178,90,.5),
+             inset 0 0 22px -10px rgba(255,210,150,.55),
+             inset 0 1px 0 rgba(255,255,255,.12);
+}
+.svc-btn:hover{
+  border-color:var(--gold-lt); background:rgba(255,178,90,.17);
+  box-shadow:0 0 42px -6px rgba(255,178,90,.62),
+             inset 0 0 26px -8px rgba(255,210,150,.7),
+             inset 0 1px 0 rgba(255,255,255,.16);
+}
+.ib-orb{position:relative; width:26px; height:26px; flex:none}
+.ib-orb::before{
+  content:""; position:absolute; inset:0; border-radius:50%;
+  border:1px dashed rgba(255,224,176,.4);
+}
+.ib-orb::after{
+  content:""; position:absolute; left:50%; top:50%; width:5px; height:5px; margin:-2.5px;
+  border-radius:50%; background:var(--gold-lt); box-shadow:0 0 8px rgba(255,178,90,.8);
+}
+.ib-orb i{
+  position:absolute; left:50%; top:50%; width:4px; height:4px; margin:-2px;
+  border-radius:50%; background:rgba(255,224,176,.75);
+  transform:rotate(calc(var(--i) * 120deg)) translateY(-13px);
+  transition:background-color .5s var(--ease),box-shadow .5s var(--ease);
+}
+.svc-btn:hover .ib-orb i{background:var(--gold-lt); box-shadow:0 0 9px rgba(255,178,90,.9)}
+@media (hover:hover) and (pointer:fine){
+  /* Paused, not cancelled — the same reason property-card.js pauses the
+     levitation off screen (note 2f). A cancelled rotation snaps back to
+     0deg the instant the pointer leaves, which on an element whose whole
+     point is a slow considered turn reads as a glitch. Slower, too: at
+     5.5s it was a spinner. */
+  .ib-orb{animation:ibOrbit 22s linear infinite; animation-play-state:paused}
+  .svc-btn:hover .ib-orb{animation-play-state:running}
+}
+@keyframes ibOrbit{to{transform:rotate(360deg)}}
+
+.ib-copy{display:flex; flex-direction:column; gap:2px; text-align:left; min-width:0}
+.ib-copy b{font-weight:600; font-size:.92rem; letter-spacing:.005em}
+.ib-copy>span{font-size:.74rem; color:var(--c-52); white-space:normal}
+.ib-go{
+  width:32px; height:32px; border-radius:50%; display:grid; place-items:center; flex:none;
+  border:1px solid rgba(244,239,230,.18);
+  transition:transform .45s var(--ease),border-color .45s var(--ease),background-color .45s var(--ease);
+}
+.ib-go svg{width:13px; height:13px}
+.invest-btn:hover .ib-go{transform:translateX(3px); border-color:var(--gold); background:rgba(255,178,90,.16)}
+@media (max-width:560px){
+  .coll-cta{flex-direction:column; align-items:stretch}
+  .coll-cta .btn{justify-content:center}
+  .invest-btn{justify-content:space-between}
+}
 
 /* ═══ film band — aperture bridge ═════════════════════════
    The section pins to the viewport and reveals through a clip-path
@@ -645,7 +1543,7 @@ h3.display{font-size:clamp(1.32rem,1.7vw,1.72rem); line-height:1.1}
    range, so the film opens like a camera aperture then closes again
    into the next section. See onScrollAperture(). */
 .aperture{position:relative; height:300vh; --ap-max:42%}
-.aperture-pin{position:sticky; top:0; height:100vh; overflow:clip}
+.aperture-pin{position:sticky; top:0; height:100vh; height:100svh; overflow:clip}
 .film{position:relative; width:100%; height:100%; display:grid; place-items:center; overflow:clip;
   padding:clamp(70px,10vh,120px) var(--gutter);
   clip-path:inset(var(--ap,42%) round 28px);
@@ -759,6 +1657,119 @@ h3.display{font-size:clamp(1.32rem,1.7vw,1.72rem); line-height:1.1}
 .quote footer{margin-top:14px; font-family:var(--sans); font-size:.78rem; letter-spacing:.13em;
   text-transform:uppercase; color:var(--gold); text-shadow:0 0 14px rgba(255,178,90,.3)}
 
+/* ── the route to team.html, from the body of the page ──
+   The monogram discs are the same device team.html uses on each card,
+   shrunk and overlapped, so arriving there is recognisable rather than
+   a surprise. All seven of them: "Seven people, one desk" set against
+   four discs and a "+3" was a caption arguing with its own picture.
+   Decorative — aria-hidden on the container.
+
+   Two elements, not one, and for the usual reason (note 1): .team-cta
+   owns the reveal transform, .team-card owns the tilt the pointer
+   writes inline. On one element the first pointer crossing cancels a
+   reveal still in flight and the card snaps. */
+.team-cta{margin-top:34px}
+.team-card{
+  position:relative; isolation:isolate; overflow:hidden;
+  /* Discs and copy sit across the top; the pill needs ~700px to join
+     them and the advisory column is ~590px, so it wraps. row-gap and
+     the auto margin below make that wrap look chosen rather than
+     accidental — pill flush to the right edge, on its own line. */
+  display:flex; align-items:center; flex-wrap:wrap;
+  column-gap:clamp(14px,1.6vw,24px); row-gap:18px;
+  padding:22px clamp(18px,2vw,26px);
+  border:1px solid var(--hair); border-radius:var(--r-lg);
+  background:
+    radial-gradient(130% 150% at 6% 0%,rgba(255,178,90,.09),transparent 54%),
+    linear-gradient(150deg,rgba(29,38,50,.62),rgba(13,18,25,.62));
+  color:inherit; text-decoration:none;
+  transition:border-color .5s var(--ease), box-shadow .5s var(--ease);
+}
+/* the lit top edge every raised surface on this page has */
+.team-card::before{
+  content:""; position:absolute; inset:0 0 auto; height:1px; z-index:3; pointer-events:none;
+  background:linear-gradient(90deg,transparent,rgba(255,210,150,.5) 20%,rgba(255,210,150,.14) 64%,transparent);
+  opacity:.5; transition:opacity .5s var(--ease);
+}
+.team-card:hover{border-color:rgba(255,178,90,.34); box-shadow:0 24px 62px -28px rgba(255,178,90,.55)}
+.team-card:hover::before{opacity:1}
+.team-card:focus-visible{outline:2px solid var(--gold); outline-offset:4px}
+/* Pointer sheen. Same device as the property cards and driven by the
+   same --sx/--sy the tilt handler already writes, so this adds no
+   listener of its own — .tilt on the card is the whole wiring. */
+.team-spec{
+  position:absolute; inset:0; z-index:1; opacity:0; pointer-events:none;
+  background:radial-gradient(440px circle at var(--sx,50%) var(--sy,50%),
+    rgba(255,220,170,.17),rgba(127,217,232,.05) 44%,transparent 66%);
+  transition:opacity .5s var(--ease);
+}
+.team-card:hover .team-spec{opacity:1}
+.team-card>*:not(.team-spec){position:relative; z-index:2}
+
+.team-faces{display:flex; flex:none; padding-right:22px}
+.team-faces span{
+  width:42px; height:42px; margin-right:-13px; border-radius:50%;
+  display:grid; place-items:center; flex:none;
+  font-family:var(--display); font-size:.84rem; letter-spacing:.02em;
+  color:var(--gold-lt);
+  border:1px solid rgba(255,178,90,.28);
+  /* the light falls a little differently on each disc, so seven of them
+     read as seven people rather than one shape stamped seven times */
+  background:linear-gradient(calc(152deg + var(--i,0) * 13deg),#1F2937,#0C1118);
+  box-shadow:0 10px 22px -12px rgba(0,0,0,.95), inset 0 1px 0 rgba(255,214,160,.13);
+  transition:transform .55s var(--ease), border-color .55s var(--ease), box-shadow .55s var(--ease);
+  transition-delay:calc(var(--i,0) * 26ms);
+}
+/* the stack opens like a hand of cards — each disc a little further out
+   and a beat later than the one before it */
+.team-card:hover .team-faces span{
+  transform:translateX(calc(var(--i,0) * 3px)) translateY(-4px);
+  border-color:rgba(255,190,110,.5);
+  box-shadow:0 14px 26px -12px rgba(0,0,0,.95),
+             0 0 20px -6px rgba(255,178,90,.4),
+             inset 0 1px 0 rgba(255,214,160,.2);
+}
+
+.team-cta-copy{display:flex; flex-direction:column; gap:5px; min-width:0; flex:1 1 210px}
+.team-cta-copy b{font-family:var(--display); font-weight:400; font-size:1.16rem; color:var(--cream)}
+.team-cta-copy span{font-size:.86rem; color:var(--c-52); line-height:1.6}
+.team-cta-tags{
+  display:block; margin-top:7px; font-style:normal;
+  font-size:.65rem; letter-spacing:.19em; text-transform:uppercase;
+  color:var(--gold); opacity:.72; transition:opacity .5s var(--ease);
+}
+.team-card:hover .team-cta-tags{opacity:1}
+
+.team-cta-go{
+  flex:none; margin-left:auto;
+  display:inline-flex; align-items:center; gap:12px; white-space:nowrap;
+  padding:10px 11px 10px 22px; border-radius:999px;
+  border:1px solid rgba(244,239,230,.2);
+  font-size:.84rem; letter-spacing:.02em; color:var(--cream);
+  transition:border-color .45s var(--ease), background-color .45s var(--ease), box-shadow .45s var(--ease);
+}
+.team-go-arrow{
+  width:30px; height:30px; border-radius:50%; display:grid; place-items:center; flex:none;
+  border:1px solid rgba(244,239,230,.18);
+  transition:transform .45s var(--ease), border-color .45s var(--ease), background-color .45s var(--ease);
+}
+.team-go-arrow svg{width:13px; height:13px}
+.team-card:hover .team-cta-go{
+  border-color:var(--gold); background:rgba(255,178,90,.1);
+  box-shadow:0 0 30px -10px rgba(255,178,90,.5);
+}
+.team-card:hover .team-go-arrow{
+  transform:translateX(3px); border-color:var(--gold); background:rgba(255,178,90,.16);
+}
+@media (max-width:860px){
+  .team-card{padding:20px 18px}
+  .team-cta-go{width:100%; justify-content:space-between; padding-left:20px}
+}
+@media (prefers-reduced-motion:reduce){
+  .team-card:hover .team-faces span{transform:none}
+  .team-faces span{transition-delay:0ms}
+}
+
 /* ═══ contact ═════════════════════════════════════════════ */
 .contact{padding-bottom:clamp(70px,9vh,120px)}
 .contact-shell{display:grid; grid-template-columns:1fr minmax(0,480px); gap:clamp(30px,4vw,66px); align-items:start}
@@ -822,8 +1833,7 @@ footer.foot{position:relative; z-index:2; padding:clamp(46px,6vh,74px) var(--gut
 /* ═══ responsive ══════════════════════════════════════════ */
 @media (max-width:1180px){
   .spine{display:none}
-  .card.wide{grid-column:span 1}
-  .card.wide .card-media{aspect-ratio:4/3}
+  /* .prop-float.wide is handled in css/property-ui.css */
 }
 @media (max-width:980px){
   /* hero stacks: headline first, then the stat pair, then the CTA */
@@ -883,8 +1893,26 @@ footer.foot{position:relative; z-index:2; padding:clamp(46px,6vh,74px) var(--gut
   .aperture{height:auto}
   .aperture-pin{position:static; height:auto}
   .film{clip-path:none; min-height:96vh}
+  /* The house rule is that reduced motion lands on the static END state,
+     not on a different design. splitLines() is skipped here, so
+     .hero-title .ln:last-child matches nothing and the headline's amber
+     final line — the one piece of the concept render carried into live
+     DOM — disappeared. The last WORD burns instead: the same treatment
+     at the smallest honest scale, and no line-splitting needed to do it. */
+  .hero-title .hero-burn{
+    background:linear-gradient(92deg,#fff5e6 0%,#FFB25A 62%,#ffd7a3 100%);
+    -webkit-background-clip:text; background-clip:text;
+    -webkit-text-fill-color:transparent; color:transparent;
+    text-shadow:none;
+  }
 }
 </style>
+  <!-- Same icon every other page already declares. Without it the browser
+       asks for /favicon.ico on every visit and takes a 404 for it. -->
+  <link rel="icon" type="image/png" href="assets/lumina-logo.png" />
+
+  <!-- last: phone-only overrides -->
+  <link rel="stylesheet" href="css/mobile.css?v=2026-08-07d" />
 </head>
 <body>
 
@@ -897,6 +1925,27 @@ footer.foot{position:relative; z-index:2; padding:clamp(46px,6vh,74px) var(--gut
 <div class="grain" aria-hidden="true"></div>
 <div class="glow" id="glow" aria-hidden="true"></div>
 
+<!-- ═══ the showroom float ══════════════════════════════
+     The way into room.html. It is a link and nothing else — no
+     JS anywhere on this page knows it exists, and it works with
+     scripting off. See .fab in the stylesheet for why it sits
+     bottom-left and why the little room starts empty. -->
+<a class="fab" href="room.html">
+  <span class="fab-room" aria-hidden="true">
+    <i class="fr-shell"></i>
+    <i class="fr-p fr-rug"  style="--i:0"></i>
+    <i class="fr-p fr-sofa" style="--i:1"></i>
+    <i class="fr-p fr-lamp" style="--i:2"></i>
+  </span>
+  <span class="fab-copy">
+    <b>See it furnished</b>
+    <span>Scroll an empty room into a home</span>
+  </span>
+  <span class="fab-go" aria-hidden="true">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+  </span>
+</a>
+
 <!-- ═══ brand bar ═══════════════════════════════════════ -->
 <header class="bar" id="bar">
   <a href="#hero" class="mark-img" aria-label="Lumina — home">
@@ -905,7 +1954,16 @@ footer.foot{position:relative; z-index:2; padding:clamp(46px,6vh,74px) var(--gut
   <nav class="nav" aria-label="Primary">
     <a href="#hero">Home</a>
     <a href="listings.html" class="keep">Properties</a>
-    <a href="#hoods">Neighbourhoods</a>
+    <a href="services.html">Services</a>
+    <a href="areas.html">Areas</a>
+    <!-- No Neighbourhoods and no Team link here. On this page the bar
+         is a set of in-page anchors (Properties and Services aside);
+         #hoods is reached by scrolling past it, and the team card in
+         #advisory is the route to team.html — a richer one than a word
+         in a bar. The footer keeps a text link to both, and
+         js/nav-menu.js builds the phone sheet from these links, so the
+         sheet drops them too. Every other page still carries its own
+         Areas and Team links in its own bar. -->
     <a href="#advisory">About</a>
     <a href="#contact">Contact</a>
     <a href="https://wa.me/962771505250" class="chip keep" target="_blank" rel="noopener">
@@ -922,11 +1980,15 @@ footer.foot{position:relative; z-index:2; padding:clamp(46px,6vh,74px) var(--gut
 <nav class="spine" id="spine" aria-label="Section navigation">
   <span class="rail" aria-hidden="true"></span>
   <span class="fill" id="fill" aria-hidden="true"></span>
-  <button type="button" data-to="hero"><span class="tip">Sanctuary</span></button>
+  <!-- Each tip is its section's own kicker, word for word — together they
+       are the page's table of contents, and three of them had drifted:
+       "Sanctuary" appears nowhere on the page, and "The House" / "The
+       Film" named sections that call themselves something else. -->
+  <button type="button" data-to="hero"><span class="tip">Private advisory</span></button>
   <button type="button" data-to="ethos"><span class="tip">Approach</span></button>
-  <button type="button" data-to="house"><span class="tip">The House</span></button>
+  <button type="button" data-to="house"><span class="tip">Represented · Dabouq</span></button>
   <button type="button" data-to="collection"><span class="tip">Collection</span></button>
-  <button type="button" data-to="film"><span class="tip">The Film</span></button>
+  <button type="button" data-to="film"><span class="tip">On a loop</span></button>
   <button type="button" data-to="hoods"><span class="tip">Neighbourhoods</span></button>
   <button type="button" data-to="advisory"><span class="tip">Advisory</span></button>
   <button type="button" data-to="contact"><span class="tip">Contact</span></button>
@@ -945,29 +2007,106 @@ footer.foot{position:relative; z-index:2; padding:clamp(46px,6vh,74px) var(--gut
 
   <div class="hero-grid">
 
+    <!-- Four nested elements per panel, not two. .depth, .rv and .lev
+         each write a transform, and so does .stat-card:hover — they do
+         not compose on one element, the last declaration simply wins.
+         Stacked on one element the hover lift held only while its .55s
+         transition was in flight, then the levitation keyframe reclaimed
+         the channel and the card sank back under the pointer; the .rv
+         rise never played at all. Same rule as note 1 and as the
+         invest.html card stack. --rvd rides the reveal, --dur/--amp/
+         --delay/--rot ride the levitation. -->
     <div class="hero-stats">
       <div class="depth" style="--d:26px">
-        <div class="stat-card lev rv" style="--dur:11s;--amp:9px;--delay:.2s">
-          <b class="num">14<i>+</i></b>
-          <span>Active mandates across West Amman</span>
+        <div class="rv rv-glass">
+          <div class="lev" style="--dur:11s;--amp:9px;--delay:.2s">
+            <div class="stat-card">
+              <b class="num">150<i>+</i></b>
+              <span>Listings in prime locations</span>
+            </div>
+          </div>
         </div>
       </div>
+      <!-- live: js/hero-panels.js fills these from Open-Meteo. The dash
+           is what shows if the request fails; it is never replaced with
+           a made-up figure. -->
       <div class="depth" style="--d:15px">
-        <div class="stat-card lev rv" style="--dur:13.5s;--amp:7px;--delay:1.2s;--rot:.4deg;--rvd:130ms">
-          <b style="font-size:1.12rem;font-weight:500">Premium Locations</b>
-          <span>Abdoun · Dabouq · Khalda · Um Uthaina</span>
+        <div class="rv rv-glass" style="--rvd:130ms">
+          <div class="lev" style="--dur:13.5s;--amp:7px;--delay:1.2s;--rot:.4deg">
+            <div class="stat-card wx" id="wx">
+              <b class="wx-read"><span data-wx-temp>—</span><i class="wx-deg">°C</i></b>
+              <span class="wx-line">
+                <span class="wx-icon" data-wx-icon aria-hidden="true"></span>
+                <span data-wx-desc>Amman</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="depth" style="--d:20px">
+        <div class="rv rv-glass" style="--rvd:260ms">
+          <div class="lev" style="--dur:12.4s;--amp:8px;--delay:.8s;--rot:.28deg">
+            <!-- The figures are the label. "Click here to know more" was
+                 the only sentence on a page that elsewhere writes "We
+                 book the light, not just the appointment" — and it left
+                 the one clickable panel in the hero reading as a third
+                 statistic. It is a readout now, like its neighbours, and
+                 the disc says it opens. -->
+            <button class="stat-card stat-card--act" id="cmOpen" type="button"
+                    aria-haspopup="dialog">
+              <b>Commission Structure</b>
+              <span>5% long-term · 1–2% on sales</span>
+              <span class="cm-go" aria-hidden="true">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- The fourth panel opens the district quiz. It is the same
+           object as the commission card — .stat-card--act, the same
+           sheet shell, the same focus trap — because a second dialog
+           that behaves differently from the first is a second thing to
+           learn. Its own --dur/--amp/--delay so it does not levitate in
+           step with the three above it. -->
+      <div class="depth" style="--d:26px">
+        <div class="rv rv-glass" style="--rvd:340ms">
+          <div class="lev" style="--dur:10.6s;--amp:9px;--delay:1.6s;--rot:.22deg">
+            <button class="stat-card stat-card--act" id="qzOpen" type="button"
+                    aria-haspopup="dialog">
+              <b>Where should you live?</b>
+              <span>Five questions · one answer</span>
+              <span class="cm-go" aria-hidden="true">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+              </span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
 
     <div class="hero-lede">
       <p class="kicker rv">Amman · Private advisory</p>
-      <h1 class="hero-title">Where luxury finds its light</h1>
+      <!-- The span is the reduced-motion fallback for the amber final
+           line, nothing else. splitLines() rebuilds this headline from
+           its own textContent, so with motion on the span is gone before
+           it can paint and .hero-title .ln:last-child does the work; with
+           motion off splitLines never runs, no .ln is ever created, and
+           without this the headline lost its gold entirely. -->
+      <h1 class="hero-title">Where luxury finds its <span class="hero-burn">light</span></h1>
       <p class="hero-sub rv" style="--rvd:120ms">Exclusive villas and residences in Amman's most prestigious neighbourhoods — sourced quietly, represented properly.</p>
     </div>
 
-    <div class="hero-cta rv" style="--rvd:240ms">
-      <a href="https://wa.me/962771505250" class="btn btn-pill mag" target="_blank" rel="noopener">
+    <!-- Not .rv: this one is not part of the hero's reveal cascade. It
+         holds until the reader scrolls once — see .hero-cta in the
+         stylesheet and onScrollCta in js/lumina.js. -->
+    <div class="hero-cta" id="heroCta">
+      <!-- Still a real wa.me link: without JS this opens the chat exactly as
+           it always did. js/consult-form.js intercepts the click and opens
+           the form instead, which is the enhancement, not the baseline. -->
+      <a href="https://wa.me/962771505250" class="btn btn-pill mag" id="cfOpen"
+         target="_blank" rel="noopener" aria-haspopup="dialog">
         Book a private consultation
         <span class="btn-arrow" aria-hidden="true">
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -1039,19 +2178,51 @@ footer.foot{position:relative; z-index:2; padding:clamp(46px,6vh,74px) var(--gut
   <div class="sec-head rv">
     <p class="kicker">Current collection</p>
     <h2 class="display">Residences from the private portfolio.</h2>
-    <p class="lede">Real inventory matched to reference photos. Full particulars and galleries open on each property — or browse the complete list.</p>
+    <p class="lede">A live cut of the current book — the largest villas, the rooftop terraces and the full floors, drawn one from each district we work in. Open any residence to page through its gallery without leaving the room, or browse the complete portfolio.</p>
   </div>
 
   <div class="grid-props" id="home-collection-grid" aria-live="polite">
     <!-- Filled by js/home-collection.js from data/lumina-demo-leads.json -->
   </div>
 
-  <p class="rv" style="margin-top:clamp(28px,4vw,48px);text-align:center">
-    <a href="listings.html" class="btn" style="display:inline-flex">
+  <div class="coll-cta rv">
+    <a href="listings.html" class="btn">
       View all properties
       <span aria-hidden="true">→</span>
     </a>
-  </p>
+    <!-- Two destinations off this page, and they are different kinds of
+         thing from the portfolio rather than another view of it, which
+         is why they get buttons and not only a line in the bar.
+
+         Services is the parent — Invest lives inside it — so it leads.
+         The Invest button stays because it is the offer most visitors
+         to this page are here for, and making them go through a menu
+         to reach it would be tidy and worse. -->
+    <a href="services.html" class="invest-btn svc-btn mag">
+      <span class="ib-orb" aria-hidden="true">
+        <i style="--i:0"></i><i style="--i:1"></i><i style="--i:2"></i>
+      </span>
+      <span class="ib-copy">
+        <b>Services</b>
+        <span>Invest, property management, property evaluation</span>
+      </span>
+      <span class="ib-go" aria-hidden="true">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+      </span>
+    </a>
+    <a href="invest.html" class="invest-btn mag">
+      <span class="ib-bld" aria-hidden="true">
+        <i style="--i:3;--s:.50"></i><i style="--i:2;--s:.72"></i><i style="--i:1;--s:.86"></i><i style="--i:0;--s:1"></i>
+      </span>
+      <span class="ib-copy">
+        <b>Invest with us</b>
+        <span>High-specification new builds, before they are listed</span>
+      </span>
+      <span class="ib-go" aria-hidden="true">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+      </span>
+    </a>
+  </div>
 </section>
 
 <!-- ═══ FILM — aperture bridge ══════════════════════════ -->
@@ -1085,34 +2256,55 @@ footer.foot{position:relative; z-index:2; padding:clamp(46px,6vh,74px) var(--gut
     <p class="lede">Indicative sale values, updated quarterly from our own closed transactions rather than asking prices.</p>
   </div>
 
+  <!-- Same four-level stack as the hero panels, and for the same reason:
+       .hood:hover lifts the card 6px, and with .lev on that element the
+       levitation keyframe took the transform back the moment the hover
+       transition finished — the card lifted and sank again while the
+       pointer was still on it. -->
   <div class="hoods">
     <div class="depth" style="--d:20px">
-      <article class="glass hood lev rv" style="--dur:11s;--amp:9px">
-        <h3>Abdoun</h3>
-        <p>Embassy-adjacent, walkable, established. The safest resale story in the city.</p>
-        <p class="stat"><b class="num">1,450</b><span>JOD / m²</span></p>
-      </article>
+      <div class="rv rv-glass">
+        <div class="lev" style="--dur:11s;--amp:9px">
+          <article class="glass hood">
+            <h3>Abdoun</h3>
+            <p>Embassy-adjacent, walkable, established. The safest resale story in the city.</p>
+            <p class="stat"><b class="num">1,450</b><span>JOD / m²</span></p>
+          </article>
+        </div>
+      </div>
     </div>
     <div class="depth" style="--d:30px">
-      <article class="glass hood lev rv" style="--dur:9s;--amp:12px;--delay:.5s;--rvd:100ms">
-        <h3>Dabouq</h3>
-        <p>Space, air and plot size. Where standalone villas and ambassadors' residences sit.</p>
-        <p class="stat"><b class="num">1,250</b><span>JOD / m²</span></p>
-      </article>
+      <div class="rv rv-glass" style="--rvd:100ms">
+        <div class="lev" style="--dur:9s;--amp:12px;--delay:.5s">
+          <article class="glass hood">
+            <h3>Dabouq</h3>
+            <p>Space, air and plot size. Where standalone villas and ambassadors' residences sit.</p>
+            <p class="stat"><b class="num">1,250</b><span>JOD / m²</span></p>
+          </article>
+        </div>
+      </div>
     </div>
     <div class="depth" style="--d:22px">
-      <article class="glass hood lev rv" style="--dur:12.5s;--amp:10px;--delay:1s;--rvd:200ms">
-        <h3>Khalda</h3>
-        <p>Newer stock, better yields. Our most active rental desk by a wide margin.</p>
-        <p class="stat"><b class="num">1,100</b><span>JOD / m²</span></p>
-      </article>
+      <div class="rv rv-glass" style="--rvd:200ms">
+        <div class="lev" style="--dur:12.5s;--amp:10px;--delay:1s">
+          <article class="glass hood">
+            <h3>Khalda</h3>
+            <p>Newer stock, better yields. Our most active rental desk by a wide margin.</p>
+            <p class="stat"><b class="num">1,100</b><span>JOD / m²</span></p>
+          </article>
+        </div>
+      </div>
     </div>
     <div class="depth" style="--d:14px">
-      <article class="glass hood lev rv" style="--dur:13.5s;--amp:8px;--delay:1.6s;--rvd:300ms">
-        <h3>Um Uthaina</h3>
-        <p>Central, dense, convenient. Strong for professionals on two-to-three year postings.</p>
-        <p class="stat"><b class="num">1,300</b><span>JOD / m²</span></p>
-      </article>
+      <div class="rv rv-glass" style="--rvd:300ms">
+        <div class="lev" style="--dur:13.5s;--amp:8px;--delay:1.6s">
+          <article class="glass hood">
+            <h3>Um Uthaina</h3>
+            <p>Central, dense, convenient. Strong for professionals on two-to-three year postings.</p>
+            <p class="stat"><b class="num">1,300</b><span>JOD / m²</span></p>
+          </article>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -1120,7 +2312,9 @@ footer.foot{position:relative; z-index:2; padding:clamp(46px,6vh,74px) var(--gut
 <!-- ═══ ADVISORY ════════════════════════════════════════ -->
 <section class="sec" id="advisory">
   <div class="split">
-    <div class="split-media rv">
+    <!-- .rv-lg: this is a full-height plate, not a line of type. Same
+         reveal, more mass — further, slower, longer tail. -->
+    <div class="split-media rv rv-lg">
       <img src="assets/advisory.jpg?v=2" alt="A Lumina represented residence in West Amman at dusk" loading="lazy">
       <div class="depth" style="--d:12px">
         <div class="glass split-badge lev" style="--dur:10s;--amp:6px">
@@ -1148,6 +2342,32 @@ footer.foot{position:relative; z-index:2; padding:clamp(46px,6vh,74px) var(--gut
         “We would rather lose a commission than place a family in the wrong street.”
         <footer>Lumina · founding principle</footer>
       </blockquote>
+
+      <!-- The route to team.html from the body of the page — and since
+           the bar no longer carries a Team link on this page, the route.
+           The monograms are the page's own artwork, so the card carries
+           a stack of them rather than an icon. The whole card is the
+           link: one tab stop, and the click target is the object you
+           are already looking at rather than a pill at the end of it. -->
+      <div class="team-cta rv rv-lg" style="--rvd:260ms">
+        <a class="team-card tilt" href="team.html" aria-label="Meet the team — the seven advisors at Lumina">
+          <span class="team-spec" aria-hidden="true"></span>
+          <span class="team-faces" aria-hidden="true">
+            <span style="--i:0">SN</span><span style="--i:1">YT</span><span style="--i:2">AD</span><span style="--i:3">AS</span><span style="--i:4">AQ</span><span style="--i:5">TH</span><span style="--i:6">RH</span>
+          </span>
+          <span class="team-cta-copy">
+            <b>Seven people, one desk.</b>
+            <span>The same advisor from the first message to the keys.</span>
+            <em class="team-cta-tags">Leadership · Advisory · Client care</em>
+          </span>
+          <span class="team-cta-go">
+            Meet the team
+            <span class="team-go-arrow" aria-hidden="true">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+            </span>
+          </span>
+        </a>
+      </div>
     </div>
   </div>
 </section>
@@ -1170,7 +2390,11 @@ footer.foot{position:relative; z-index:2; padding:clamp(46px,6vh,74px) var(--gut
     </div>
 
     <div class="depth" style="--d:-14px">
-      <div class="glass form lev rv" style="--dur:14s;--amp:7px;--rvd:180ms">
+      <!-- rv-glass: no blur on the reveal. This panel is 28px of frost
+           already, so a 7px blur is invisible through it, and a filter
+           here makes this element the backdrop root for its own
+           backdrop-filter. -->
+      <div class="glass form lev rv rv-glass" style="--dur:14s;--amp:7px;--rvd:180ms">
         <h3>Request the full collection</h3>
         <p class="sub">Three fields. Opens WhatsApp with your brief already written.</p>
 
@@ -1221,7 +2445,9 @@ footer.foot{position:relative; z-index:2; padding:clamp(46px,6vh,74px) var(--gut
     </div>
     <nav class="foot-nav" aria-label="Footer">
       <a href="listings.html">Properties</a><a href="#hoods">Neighbourhoods</a>
-      <a href="#advisory">Advisory</a><a href="#contact">Contact</a>
+      <a href="services.html">Services</a><a href="lumina-studio.html">Studio</a>
+    <a href="areas.html">Areas</a><a href="room.html">The room</a>
+      <a href="team.html">Team</a><a href="#advisory">Advisory</a><a href="#contact">Contact</a>
       <a href="https://wa.me/962771505250" target="_blank" rel="noopener">WhatsApp</a>
     </nav>
     <p class="fine">
@@ -1232,7 +2458,200 @@ footer.foot{position:relative; z-index:2; padding:clamp(46px,6vh,74px) var(--gut
   </div>
 </footer>
 
-<script src="js/lumina.js" defer></script>
-<script src="js/home-collection.js" defer></script>
+<!-- ═══ commission sheet ════════════════════════════════ -->
+<div class="cmx" id="cmx" hidden>
+  <div class="cmx-veil" data-cmx-close aria-hidden="true"></div>
+  <div class="cmx-panel" role="dialog" aria-modal="true" aria-labelledby="cmxTitle">
+    <button class="cmx-x" type="button" data-cmx-close aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+        <path d="M6 6l12 12M18 6L6 18"/>
+      </svg>
+    </button>
+
+    <p class="cmx-kick">Lumina</p>
+    <h2 class="display" id="cmxTitle">Commission Structure</h2>
+    <p class="cmx-lede">Transparency, professionalism and real value at every stage of a transaction. These are our terms, and they are the same for everyone.</p>
+
+    <div class="cmx-grid">
+      <section class="cmx-block">
+        <h3>Rental services</h3>
+        <dl class="cmx-rows">
+          <div>
+            <dt>Short-term<em>3–6 months</em></dt>
+            <dd><b>10%</b><span>of total rental value</span></dd>
+          </div>
+          <div>
+            <dt>Long-term<em>6–12 months and above</em></dt>
+            <dd><b>5%</b><span>of total rental value</span></dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="cmx-block">
+        <h3>Sales</h3>
+        <dl class="cmx-rows">
+          <div>
+            <dt>Property sales<em>By value and transaction detail</em></dt>
+            <dd><b>1–2%</b><span>2% standard, unless agreed otherwise</span></dd>
+          </div>
+        </dl>
+      </section>
+    </div>
+
+    <div class="cmx-note">
+      <h3>Our commitment</h3>
+      <p>Viewings are free of charge. Trust is the foundation of any property relationship, and we would rather earn it than bill for it — our work is advising well and making the process seamless, not charging for access to a door.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ the district quiz ═══════════════════════════════
+     Deliberately built out of the commission sheet's shell: same veil,
+     same panel, same close button, same focus trap and scroll lock in
+     hero-panels.js. Only the interior is its own. js/quiz.js renders
+     into #qzBody and owns nothing else. -->
+<div class="cmx qz" id="qz" hidden>
+  <div class="cmx-veil" data-cmx-close aria-hidden="true"></div>
+  <div class="cmx-panel" role="dialog" aria-modal="true" aria-labelledby="qzTitle">
+    <button class="cmx-x" type="button" data-cmx-close aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+        <path d="M6 6l12 12M18 6L6 18"/>
+      </svg>
+    </button>
+
+    <div class="qz-head">
+      <p class="cmx-kick">Lumina</p>
+      <h2 class="display" id="qzTitle">Where should you live?</h2>
+      <p class="qz-step mono" id="qzStep">01 / 05</p>
+      <p class="cmx-lede">Nine districts in West Amman, and a newcomer cannot tell them apart from a map. Five taps — no typing — and we will tell you which two to start with.</p>
+      <div class="qz-bar" aria-hidden="true"><i id="qzBar"></i></div>
+    </div>
+
+    <!-- js/quiz.js renders one question at a time in here. With the
+         script blocked the sheet never opens, so there is nothing to
+         degrade — the areas page carries the same information as prose. -->
+    <div id="qzBody"></div>
+  </div>
+</div>
+
+<!-- ═══ consultation form ═══════════════════════════════ -->
+<div class="cf" id="cf" hidden>
+  <div class="cf-veil" data-cf-close aria-hidden="true"></div>
+  <div class="cf-panel" role="dialog" aria-modal="true" aria-labelledby="cfTitle">
+    <span class="cf-thread" aria-hidden="true"><i></i></span>
+
+    <button class="cf-x" type="button" data-cf-close aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+        <path d="M6 6l12 12M18 6L6 18"/>
+      </svg>
+    </button>
+
+    <div class="cf-stage">
+      <p class="cf-kick">Lumina</p>
+      <h2 class="display" id="cfTitle">Book a private consultation</h2>
+      <p class="cf-lede">Tell us who you are and which residences you would like to see. We reply on WhatsApp, usually the same day.</p>
+
+      <div class="cf-field" style="--i:0">
+        <label for="cf-name">Full name</label>
+        <input class="cf-input" id="cf-name" type="text" autocomplete="name"
+               placeholder="Your name" required />
+      </div>
+
+      <div class="cf-field" style="--i:1">
+        <label for="cf-ref">Property reference(s)</label>
+        <div class="cf-chips" id="cf-chips"></div>
+        <input class="cf-input" id="cf-ref" type="text" inputmode="numeric"
+               autocomplete="off" placeholder="e.g. 015 — press Enter"
+               aria-describedby="cf-ref-note" />
+        <span class="cf-note" id="cf-ref-note">0 of 3 added. Press Enter after each.</span>
+      </div>
+
+      <div class="cf-field" style="--i:2">
+        <label for="cf-comment">Comments</label>
+        <textarea class="cf-area" id="cf-comment" rows="3"
+                  placeholder="Dates that suit you, budget, anything we should know."></textarea>
+      </div>
+
+      <div class="cf-actions">
+        <button class="cf-send" id="cf-send" type="button" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 12h13M13 6l6 6-6 6"/>
+          </svg>
+          Review and send
+        </button>
+        <span class="cf-fine">You will see it before it goes.</span>
+      </div>
+    </div>
+
+    <!-- Step two: the details read back as a sheet of paper laid out like
+         the PDF itself, so what is on screen is what arrives. -->
+    <div class="cf-review" hidden>
+      <p class="cf-kick">Check this over</p>
+      <h2 class="display">Ready to send</h2>
+
+      <!-- one transform each: .cf-sheet-fold tips it up, .cf-sheet levitates.
+           Both on one element and the levitation never runs. -->
+      <div class="cf-sheet-wrap">
+        <span class="cf-sheet-cast" aria-hidden="true"></span>
+        <div class="cf-sheet-fold">
+        <article class="cf-sheet">
+          <!-- the masthead is the site's own wordmark on the brand navy,
+               laid out exactly as the PDF's header band -->
+          <header class="cf-sheet-head">
+            <img src="assets/lumina-logo.png" alt="Lumina" width="669" height="181" />
+            <span>Private property advisory · Amman, Jordan</span>
+            <em>Consultation request</em>
+          </header>
+          <dl class="cf-sheet-body">
+            <div style="--i:0"><dt>Full name</dt><dd id="rv-name"></dd></div>
+            <div style="--i:1"><dt>Property references</dt><dd id="rv-refs"></dd></div>
+            <div style="--i:2"><dt>Comments</dt><dd id="rv-comment"></dd></div>
+          </dl>
+          <footer class="cf-sheet-foot">
+            <span id="rv-stamp"></span>
+            <span>WhatsApp +962 77 150 5250</span>
+          </footer>
+        </article>
+        </div>
+      </div>
+
+      <div class="cf-choices">
+        <button class="cf-send cf-go" type="button" style="--i:0">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 12h13M13 6l6 6-6 6"/>
+          </svg>
+          Send
+        </button>
+        <button class="cf-ghost cf-edit" type="button" style="--i:1">Edit</button>
+        <button class="cf-ghost cf-cancel" type="button" style="--i:2">Cancel</button>
+      </div>
+      <p class="cf-hand" id="cf-hand"></p>
+    </div>
+
+    <div class="cf-done" hidden>
+      <span class="cf-seal" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 12.5l5 5L20 6.5"/>
+        </svg>
+      </span>
+      <h3>On its way</h3>
+      <p id="cf-done-msg"></p>
+      <button class="cf-again" type="button">Send another</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/lumina.js?v=2026-08-07d" defer></script>
+<!-- order matters: the card builder asks the viewer to open, and
+     home-collection.js asks the builder to build -->
+<script src="js/property-viewer.js?v=2026-08-07h" defer></script>
+<script src="js/property-card.js?v=2026-08-07b" defer></script>
+<script src="js/home-collection.js?v=2026-08-07b" defer></script>
+<script src="js/hero-panels.js?v=2026-08-07c" defer></script>
+<!-- after hero-panels.js: that file exposes the sheet machinery the
+     quiz reuses, and defer preserves document order -->
+<script src="js/quiz.js?v=2026-08-07c" defer></script>
+<script src="js/nav-menu.js?v=2026-08-07b" defer></script>
+<script src="js/consult-form.js?v=2026-08-07b" defer></script>
 </body>
 </html>

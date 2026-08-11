@@ -1,0 +1,458 @@
+/* ═══════════════════════════════════════════════════════════
+   LUMINA — property card + gallery viewer
+   ═══════════════════════════════════════════════════════════
+
+   The floating card and the semi-fullscreen gallery, in one
+   place, so index.html and listings.html render identically
+   from a single source rather than from two copies that drift.
+
+   Everything is scoped under .grid-props / .prop-float / .pv,
+   including the design tokens. That matters because the two
+   pages disagree: listings.html loads css/style.css, whose
+   --gold is #C2A35A and whose type is Inter. Declaring the
+   tokens on the component roots means the cards look the same
+   on both pages without either page's palette leaking in — or
+   this one leaking out.
+
+   Pairs with js/property-card.js (builds the markup) and
+   js/property-viewer.js (drives the gallery).
+   ═══════════════════════════════════════════════════════════ */
+
+/* Self-hosted, so this works on pages that never loaded them.
+   Re-declaring a face already declared elsewhere is a no-op —
+   the browser dedupes on the source URL. */
+@font-face{
+  font-family:"Instrument Serif"; font-style:normal; font-weight:400;
+  font-display:swap; src:url('../assets/fonts/InstrumentSerif.woff2') format('woff2');
+}
+@font-face{
+  font-family:"Instrument Sans"; font-style:normal; font-weight:400 700;
+  font-display:swap; src:url('../assets/fonts/InstrumentSans.woff2') format('woff2');
+}
+
+.grid-props,.prop-float,.pv{
+  --lum-ink:#05070B;
+  --lum-navy:#0B1018;
+  --lum-navy-2:#121A24;
+  --lum-navy-3:#1A2431;
+  --lum-cream:#F7F2E9;
+  --lum-gold:#FFB25A;
+  --lum-gold-lt:#FFE0B0;
+  --lum-c-70:rgba(247,242,233,.72);
+  --lum-c-52:rgba(247,242,233,.54);
+  --lum-c-38:rgba(247,242,233,.40);
+  --lum-hair:rgba(247,242,233,.11);
+  --lum-glow-gold:rgba(255,178,90,.55);
+  --lum-display:"Instrument Serif",Georgia,"Times New Roman",serif;
+  --lum-sans:"Instrument Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --lum-ease:cubic-bezier(.22,.68,.16,1);
+  --lum-r:18px;
+  --lum-shadow-lift:
+    0 52px 96px -28px rgba(0,0,0,.88),
+    0 14px 30px -14px rgba(0,0,0,.62),
+    0 0 60px -20px rgba(255,178,90,.18);
+}
+
+/* ═══ grid ════════════════════════════════════════════════ */
+.grid-props{
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+  gap:clamp(18px,1.8vw,28px);
+}
+
+/* ═══ floating shell ══════════════════════════════════════
+   Four nested elements, one transform each:
+     .prop-float (.rv reveal) → .depth (cursor parallax)
+       → .lev (levitation) → .card (.tilt, inline from JS)
+   Collapsing any two silently kills the outer one. The card
+   already owned an inline tilt transform, and a CSS animation
+   outranks an inline declaration, so .lev can never share it.
+
+   These are scoped copies of index.html's generic .rv/.lev/
+   .depth so the component also works on pages that never had
+   them. Same values, so nothing shifts where both apply. */
+.prop-float{position:relative}
+.prop-float.wide{grid-column:span 2}
+.prop-float>.depth,.prop-float .lev{height:100%}
+
+.prop-float.rv{
+  opacity:0; transform:translate3d(0,26px,0) scale(.975); filter:blur(7px);
+  transition:opacity 1.05s var(--lum-ease),transform 1.05s var(--lum-ease),filter 1.05s var(--lum-ease);
+  transition-delay:var(--rvd,0ms);
+}
+.prop-float.rv.in{opacity:1; transform:none; filter:none}
+
+.prop-float .lev{animation:lum-lev var(--dur,11s) var(--lum-ease) var(--delay,0s) infinite}
+/* A hundred-odd cards levitating at once is a hundred-odd compositor
+   animations ticking whether or not anyone can see them. js/property-card.js
+   marks what is off screen; the animation is paused, not cancelled, so a
+   card resumes mid-phase and the grid never pulses in unison. */
+.prop-float.rest .lev{animation-play-state:paused}
+@keyframes lum-lev{
+  0%,100%{transform:translate3d(0,calc(var(--amp,10px) * -1),0) rotate(calc(var(--rot,.25deg) * -1))}
+  50%{transform:translate3d(0,var(--amp,10px),0) rotate(var(--rot,.25deg))}
+}
+.prop-float .depth{
+  transform:translate3d(calc(var(--px,0) * var(--d,14px)),calc(var(--py,0) * var(--d,14px)),0);
+  transition:transform .9s var(--lum-ease);
+  will-change:transform;
+}
+
+/* ═══ card ════════════════════════════════════════════════ */
+.prop-float .card{
+  position:relative; border-radius:var(--lum-r); overflow:hidden;
+  background:var(--lum-navy); transform-style:preserve-3d;
+  border:1px solid rgba(255,255,255,.07);
+  height:100%; display:flex; flex-direction:column;
+  font-family:var(--lum-sans); color:var(--lum-cream);
+  transition:transform .6s var(--lum-ease),box-shadow .6s var(--lum-ease),border-color .5s var(--lum-ease);
+  box-shadow:0 42px 84px -30px rgba(0,0,0,.9),0 12px 28px -14px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.05);
+}
+.prop-float .card:hover{
+  border-color:rgba(255,178,90,.22);
+  box-shadow:var(--lum-shadow-lift),0 0 74px -22px rgba(255,178,90,.34);
+}
+
+.prop-float .card-media{
+  position:relative; aspect-ratio:4/3; overflow:hidden;
+  background:linear-gradient(150deg,var(--lum-navy-3),var(--lum-navy) 70%);
+}
+.prop-float.wide .card-media{aspect-ratio:16/9}
+/* no photography yet — an honest empty frame rather than a stock
+   photograph of a building that is not the one being sold */
+.prop-float .card-media.no-photo{
+  display:grid; place-items:center;
+  background:
+    repeating-linear-gradient(135deg,rgba(247,242,233,.02) 0 12px,transparent 12px 24px),
+    linear-gradient(150deg,var(--lum-navy-3),var(--lum-navy) 70%);
+}
+.prop-float .no-photo-note{
+  position:relative; z-index:2; font-size:.62rem; letter-spacing:.2em;
+  text-transform:uppercase; color:var(--lum-c-38);
+}
+.prop-float .card-media.no-photo::after{opacity:.5}
+.prop-float .card-media img{
+  width:100%; height:100%; object-fit:cover; display:block;
+  transition:transform 1.3s var(--lum-ease),filter .8s var(--lum-ease);
+  /* richer stills: more micro-contrast, slightly warmer */
+  filter:saturate(1.05) contrast(1.06) brightness(.94);
+}
+.prop-float .card:hover .card-media img{transform:scale(1.06); filter:saturate(1.12) contrast(1.08) brightness(1.02)}
+.prop-float .card-media::after{
+  content:""; position:absolute; inset:0;
+  background:
+    linear-gradient(180deg,transparent 32%,rgba(4,6,11,.78)),
+    radial-gradient(80% 60% at 50% 0%,rgba(255,190,120,.08),transparent 55%);
+}
+/* specular highlight that tracks the pointer across the card */
+.prop-float .spec{
+  position:absolute; inset:0; z-index:4; pointer-events:none; opacity:0;
+  background:radial-gradient(340px circle at var(--sx,50%) var(--sy,50%),rgba(255,220,170,.2),rgba(127,217,232,.06) 42%,transparent 64%);
+  transition:opacity .5s var(--lum-ease);
+  mix-blend-mode:screen;
+}
+.prop-float .card:hover .spec{opacity:1}
+
+/* chips floating over the cover photo. Deliberately solid, not
+   backdrop-filter — a full listings page would put hundreds of
+   blur surfaces on the compositor, far over the stated ceiling. */
+.prop-float .card-tag,
+.prop-float .card-badge,
+.prop-float .card-shots{
+  position:absolute; z-index:4; display:inline-flex; align-items:center; gap:7px;
+  padding:7px 12px; border-radius:999px; font-size:.6rem; letter-spacing:.15em;
+  font-family:var(--lum-sans); font-weight:400; text-transform:uppercase;
+  line-height:1; white-space:nowrap;
+  background:rgba(5,7,11,.62); border:1px solid rgba(247,242,233,.14); color:var(--lum-c-70);
+}
+.prop-float .card-tag{left:14px; right:auto; top:14px; bottom:auto}
+.prop-float .card-tag::before{
+  content:""; width:5px; height:5px; border-radius:50%; flex:none;
+  background:var(--lum-gold); box-shadow:0 0 8px var(--lum-glow-gold);
+}
+/* left:auto is load-bearing. css/style.css — which listings.html and the
+   area pages load before this file — has its own .card-badge from the old
+   flat card, pinned at left:16px. Setting only `right` here left BOTH
+   offsets applied, so the badge stretched the full width of every card and
+   printed the word RENT on a gold bar across the photograph. */
+.prop-float .card-badge{
+  right:14px; left:auto; top:14px; bottom:auto;
+  font-weight:600; color:var(--lum-ink); border-color:transparent;
+  background:linear-gradient(160deg,var(--lum-gold-lt),var(--lum-gold));
+  box-shadow:0 0 22px -8px var(--lum-glow-gold);
+}
+.prop-float .card-shots{right:14px; left:auto; bottom:14px; top:auto; padding:6px 11px; letter-spacing:.1em}
+.prop-float .card-shots svg{width:12px; height:12px; opacity:.8}
+
+.prop-float .card-body{
+  padding:22px 24px 26px; position:relative; z-index:3;
+  flex:1; display:flex; flex-direction:column;
+  background:linear-gradient(180deg,rgba(13,18,25,.2),transparent 40%);
+}
+.prop-float .kicker{
+  margin:0 0 11px; font-size:.62rem; font-family:var(--lum-sans); font-weight:400;
+  letter-spacing:.22em; text-transform:uppercase; color:var(--lum-gold);
+}
+.prop-float .card-body h3{
+  margin:0 0 14px; font-family:var(--lum-display); font-weight:400;
+  font-size:clamp(1.15rem,1.5vw,1.42rem); line-height:1.2; letter-spacing:-.01em;
+  color:var(--lum-cream);
+}
+.prop-float .specs{display:flex; flex-wrap:wrap; gap:6px 18px; margin:0 0 18px; padding:0; list-style:none}
+.prop-float .specs li{font-size:.8rem; color:var(--lum-c-52); display:flex; align-items:center; gap:7px}
+.prop-float .specs li+li::before{
+  content:""; width:3px; height:3px; border-radius:50%; background:var(--lum-gold);
+  box-shadow:0 0 6px rgba(255,178,90,.6); margin-right:11px; margin-left:-11px;
+}
+.prop-float .price{
+  display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap;
+  margin:auto 0 0; padding-top:16px; border-top:1px solid var(--lum-hair);
+}
+.prop-float .price b{
+  font-family:var(--lum-display); font-size:1.22rem; font-weight:400; letter-spacing:-.01em;
+  color:var(--lum-cream); text-shadow:0 0 20px rgba(255,178,90,.12);
+}
+.prop-float .arrow{
+  width:34px; height:34px; border-radius:50%; border:1px solid rgba(244,239,230,.18);
+  display:grid; place-items:center; flex:none; color:var(--lum-cream);
+  transition:all .45s var(--lum-ease);
+}
+.prop-float .arrow svg{width:13px; height:13px}
+.prop-float .card:hover .arrow{
+  border-color:var(--lum-gold); background:linear-gradient(160deg,#ffc06e,var(--lum-gold));
+  color:var(--lum-ink); transform:rotate(-45deg); box-shadow:0 0 18px rgba(255,178,90,.45);
+}
+
+/* explicit affordance — the card is clickable, but the gallery
+   needs a named control for keyboard and screen-reader users */
+.prop-float .view-btn{
+  appearance:none; -webkit-appearance:none; cursor:pointer;
+  font-family:var(--lum-sans); font-size:.66rem; letter-spacing:.15em;
+  text-transform:uppercase; color:var(--lum-cream);
+  display:inline-flex; align-items:center; gap:10px; flex:none;
+  padding:5px 5px 5px 15px; border-radius:999px;
+  border:1px solid rgba(247,242,233,.16); background:transparent;
+  transition:border-color .45s var(--lum-ease),background .45s var(--lum-ease),box-shadow .45s var(--lum-ease);
+}
+.prop-float .view-btn .arrow{width:28px; height:28px}
+.prop-float .view-btn .arrow svg{width:12px; height:12px}
+.prop-float .card:hover .view-btn,
+.prop-float .view-btn:hover,
+.prop-float .view-btn:focus-visible{
+  border-color:var(--lum-gold); background:rgba(255,178,90,.1);
+  box-shadow:0 0 30px -10px var(--lum-glow-gold);
+}
+
+/* optional secondary actions (the listings page keeps its two
+   WhatsApp routes; the home grid passes none) */
+.prop-float .card-actions{display:flex; gap:9px; flex-wrap:wrap; margin-top:16px}
+.prop-float .card-act{
+  flex:1 1 auto; min-width:130px; text-align:center; text-decoration:none;
+  font-family:var(--lum-sans); font-size:.62rem; letter-spacing:.15em;
+  text-transform:uppercase; padding:11px 14px; border-radius:999px;
+  border:1px solid rgba(247,242,233,.16); color:var(--lum-c-70); background:transparent;
+  transition:border-color .4s var(--lum-ease),background .4s var(--lum-ease),color .4s var(--lum-ease);
+}
+.prop-float .card-act:hover,.prop-float .card-act:focus-visible{
+  border-color:var(--lum-gold); color:var(--lum-cream); background:rgba(255,178,90,.1);
+}
+.prop-float .card-act-primary{
+  border-color:var(--lum-gold); color:var(--lum-ink);
+  background:linear-gradient(160deg,var(--lum-gold-lt),var(--lum-gold));
+}
+.prop-float .card-act-primary:hover{color:var(--lum-ink); background:var(--lum-gold-lt)}
+
+/* ═══ property viewer — semi-fullscreen gallery ═══════════ */
+.pv{
+  position:fixed; inset:0; z-index:1200; display:grid; place-items:center;
+  padding:clamp(10px,3vw,44px);
+  font-family:var(--lum-sans); color:var(--lum-cream);
+  opacity:0; pointer-events:none;
+  transition:opacity .45s var(--lum-ease);
+}
+/* `display:grid` above outranks the UA rule for [hidden], so the
+   attribute needs restating — and it has to be the attribute, not
+   `visibility`, that hides this: visibility transitions discretely,
+   so it still computes `hidden` on the frame the dialog opens and
+   the focus() that runs on that frame would silently do nothing. */
+.pv[hidden]{display:none}
+.pv.open{opacity:1; pointer-events:auto}
+
+.pv-scrim{position:absolute; inset:0; background:rgba(3,5,8,.86); border:0; padding:0; cursor:pointer}
+/* one blur surface, only while open, desktop only */
+@media (min-width:1024px){
+  .pv-scrim{background:rgba(3,5,8,.72);
+    -webkit-backdrop-filter:blur(16px) saturate(120%); backdrop-filter:blur(16px) saturate(120%)}
+}
+.pv-win{
+  position:relative; width:min(1180px,100%); height:min(86vh,880px);
+  border-radius:clamp(14px,1.6vw,22px); overflow:hidden;
+  background:radial-gradient(72% 62% at 50% 38%,var(--lum-navy-2),var(--lum-ink));
+  border:1px solid rgba(247,242,233,.12);
+  box-shadow:0 60px 140px -40px rgba(0,0,0,.95),0 0 100px -34px rgba(255,178,90,.18);
+  opacity:0; transform:translate3d(0,30px,0) scale(.965);
+  transition:opacity .5s var(--lum-ease),transform .6s var(--lum-ease);
+}
+.pv.open .pv-win{opacity:1; transform:none}
+
+/* stage — every shot stacked, cross-faded by opacity only */
+.pv-stage{position:absolute; inset:0; overflow:hidden}
+.pv-shot{
+  position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center;
+  opacity:0; transform:scale(1.05);
+  transition:opacity .7s var(--lum-ease),transform 1.5s var(--lum-ease);
+}
+.pv-shot.on{opacity:1; transform:none}
+.pv-stage::after{
+  content:""; position:absolute; inset:0; z-index:5; pointer-events:none;
+  background:
+    linear-gradient(180deg,rgba(3,5,8,.62) 0%,transparent 20%,transparent 42%,rgba(3,5,8,.88) 100%),
+    radial-gradient(120% 90% at 50% 50%,transparent 52%,rgba(3,5,8,.42));
+}
+
+.pv-head{position:absolute; left:clamp(18px,3vw,40px); top:clamp(18px,2.4vw,32px);
+  z-index:7; max-width:min(60ch,66%)}
+.pv-head .kicker{
+  margin:0 0 9px; font-size:.6rem; letter-spacing:.22em;
+  text-transform:uppercase; color:var(--lum-gold);
+}
+.pv-head h3{
+  margin:0; font-family:var(--lum-display); font-weight:400;
+  font-size:clamp(1.3rem,2.5vw,2rem); line-height:1.18; letter-spacing:-.01em;
+  color:var(--lum-cream);
+}
+
+.pv-foot{
+  position:absolute; left:0; right:0; bottom:0; z-index:7;
+  padding:clamp(14px,2.2vw,26px) clamp(18px,3vw,40px);
+  /* `1fr auto 1fr` gave the photo counter a 310px column to hold "1 / 9"
+     in, and took it from the links — which left 310px for a row that
+     needs 320, so the share mark wrapped onto its own line at 1440 and
+     "Ask about this" wrapped as well at 1024. The counter is content-
+     sized now and the links keep the slack. Measured both. */
+  display:grid; grid-template-columns:minmax(0,1fr) auto auto;
+  align-items:end; gap:clamp(12px,2vw,24px);
+}
+.pv-info{display:flex; flex-direction:column; gap:9px; align-items:flex-start}
+.pv-info b{font-family:var(--lum-display); font-weight:400; font-size:clamp(1.05rem,1.8vw,1.34rem);
+  letter-spacing:-.01em; text-shadow:0 0 22px rgba(255,178,90,.16)}
+.pv-links{display:flex; gap:16px; flex-wrap:wrap; align-items:center}
+.pv-more{
+  font-size:.66rem; letter-spacing:.15em; text-transform:uppercase; color:var(--lum-gold);
+  display:inline-flex; align-items:center; gap:8px; text-decoration:none;
+  border-bottom:1px solid rgba(255,178,90,.28); padding-bottom:3px;
+  transition:color .4s var(--lum-ease),border-color .4s var(--lum-ease);
+}
+.pv-more:hover{color:var(--lum-gold-lt); border-color:var(--lum-gold-lt)}
+/* Share sits beside "Ask about this" and takes the same colour from
+   .pv-more — it is the same class, so the two can never drift apart.
+   A <button> in a row of <a>s needs the UA chrome stripped, and the
+   underline goes because the mark has no baseline for one to sit on. */
+.pv-share{
+  padding:0 0 3px; border:0; border-bottom:1px solid transparent;
+  background:none; cursor:pointer; line-height:0;
+}
+.pv-share svg{
+  width:17px; height:17px; display:block;
+  /* the plane leans into its own direction of travel */
+  transition:transform .32s var(--lum-ease);
+}
+.pv-share:hover svg{transform:translate(2px,-2px)}
+.pv-share:focus-visible{outline:2px solid var(--lum-gold-lt); outline-offset:3px; border-radius:3px}
+/* sent: it flies out and the brighter gold holds for the two seconds
+   the toast is up */
+.pv-share[data-done]{color:var(--lum-gold-lt)}
+.pv-share[data-done] svg{transform:translate(5px,-5px) scale(.9)}
+
+/* the confirmation. z-index above the viewer, which is 120. */
+.pv-toast{
+  position:fixed; left:50%; bottom:clamp(88px,14vh,132px); z-index:130;
+  padding:10px 18px; border-radius:999px;
+  border:1px solid rgba(255,178,90,.5); background:rgba(12,16,24,.94);
+  color:var(--lum-gold-lt);
+  font-size:.66rem; font-weight:600; letter-spacing:.15em; text-transform:uppercase;
+  white-space:nowrap; pointer-events:none;
+  -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px);
+  opacity:0; transform:translate(-50%,10px);
+  transition:opacity .3s var(--lum-ease),transform .36s var(--lum-ease);
+}
+.pv-toast[data-on]{opacity:1; transform:translate(-50%,0)}
+@media (prefers-reduced-motion:reduce){
+  .pv-share svg,.pv-toast{transition-duration:.01ms}
+  .pv-share:hover svg,.pv-share[data-done] svg{transform:none}
+}
+.pv-count{justify-self:end; align-self:end; font-size:.66rem; letter-spacing:.18em;
+  color:var(--lum-c-52); font-variant-numeric:tabular-nums}
+
+/* the fading slide — active thumb pinned to centre, the track
+   slides under a mask so neighbours dissolve toward both edges */
+.pv-strip{
+  width:min(430px,52vw); overflow:hidden; padding:8px 0;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 20%,#000 80%,transparent);
+          mask-image:linear-gradient(90deg,transparent,#000 20%,#000 80%,transparent);
+}
+.pv-track{display:flex; gap:10px; transition:transform .65s var(--lum-ease); will-change:transform}
+.pv-thumb{
+  flex:none; width:60px; height:44px; padding:0; border-radius:8px; overflow:hidden;
+  border:1px solid transparent; background:var(--lum-navy-3); cursor:pointer; opacity:.32;
+  transition:opacity .5s var(--lum-ease),transform .5s var(--lum-ease),
+             border-color .5s var(--lum-ease),box-shadow .5s var(--lum-ease);
+}
+.pv-thumb img{width:100%; height:100%; object-fit:cover; display:block}
+.pv-thumb:hover{opacity:.72}
+.pv-thumb.on{opacity:1; transform:translateY(-5px) scale(1.09);
+  border-color:var(--lum-gold); box-shadow:0 0 22px -5px var(--lum-glow-gold)}
+
+.pv-nav,.pv-x{
+  position:absolute; z-index:8; display:grid; place-items:center; cursor:pointer;
+  border-radius:50%; color:var(--lum-cream); padding:0;
+  border:1px solid rgba(247,242,233,.18); background:rgba(5,7,11,.55);
+  transition:background .4s var(--lum-ease),border-color .4s var(--lum-ease),
+             transform .4s var(--lum-ease),box-shadow .4s var(--lum-ease);
+}
+.pv-nav:hover,.pv-x:hover,.pv-nav:focus-visible,.pv-x:focus-visible{
+  border-color:var(--lum-gold); background:rgba(255,178,90,.16); box-shadow:0 0 30px -8px var(--lum-glow-gold)}
+.pv-nav{top:50%; width:clamp(40px,3.2vw,48px); height:clamp(40px,3.2vw,48px); transform:translateY(-50%)}
+.pv-prev{left:clamp(10px,1.8vw,22px)}
+.pv-next{right:clamp(10px,1.8vw,22px)}
+.pv-prev:hover{transform:translateY(-50%) translateX(-3px)}
+.pv-next:hover{transform:translateY(-50%) translateX(3px)}
+.pv-nav svg{width:15px; height:15px}
+.pv-x{top:clamp(12px,1.6vw,20px); right:clamp(12px,1.6vw,20px); width:40px; height:40px}
+.pv-x svg{width:14px; height:14px}
+.pv-nav[hidden],.pv-x[hidden]{display:none}
+
+/* scroll lock. Fixed page furniture has to absorb the same gutter
+   the scrollbar leaves behind, or the nav jumps sideways. */
+html.pv-lock{overflow:hidden}
+html.pv-lock body{padding-right:var(--sbw,0px)}
+html.pv-lock .bar{padding-right:calc(var(--gutter,0px) + var(--sbw,0px))}
+html.pv-lock .nav{padding-right:var(--sbw,0px)}
+
+@media (max-width:1180px){
+  .prop-float.wide{grid-column:span 1}
+  .prop-float.wide .card-media{aspect-ratio:4/3}
+}
+@media (max-width:760px){
+  .pv-win{height:92vh}
+  .pv-shot{object-fit:contain}
+  .pv-head{max-width:calc(100% - 68px)}
+  .pv-foot{grid-template-columns:1fr; justify-items:center; text-align:center; gap:14px}
+  .pv-info{align-items:center}
+  .pv-links{justify-content:center}
+  .pv-count{justify-self:center}
+  .pv-strip{width:min(320px,78vw)}
+  .pv-nav{width:38px; height:38px}
+}
+
+/* index.html carries a global reduced-motion kill switch; pages
+   that only load this file need their own. */
+@media (prefers-reduced-motion:reduce){
+  .prop-float *,.prop-float *::before,.prop-float *::after,
+  .pv,.pv *,.pv *::before,.pv *::after{
+    animation-duration:.001ms !important; animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;
+  }
+  .prop-float .lev{animation:none}
+  .prop-float .depth{transform:none}
+  .prop-float.rv{opacity:1; transform:none; filter:none}
+}

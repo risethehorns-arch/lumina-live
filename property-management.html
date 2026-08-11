@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Property management — Lumina, Amman</title>
+<meta name="description" content="Lumina manages residential property in West Amman for owners who are not in the country: tenant finding and vetting, rent and dues, maintenance, inspections and one written report a month. Fees quoted per instruction.">
+<meta name="theme-color" content="#05070B">
+
+<meta property="og:title" content="Property management — Lumina">
+<meta property="og:description" content="One point of contact, one report a month, and a building someone has actually stood in.">
+<meta property="og:type" content="website">
+
+<link rel="icon" type="image/png" href="assets/lumina-logo.png" />
+<link rel="preload" as="font" type="font/woff2" href="assets/fonts/InstrumentSerif.woff2" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="assets/fonts/InstrumentSans.woff2" crossorigin>
+
+<link rel="stylesheet" href="css/elevated.css?v=2026-08-07b">
+
+<style>
+/* ═══════════════════════════════════════════════════════════
+   LUMINA — Property management
+   Everything shared comes from css/elevated.css. This block is
+   only what is particular to this page: the hero, the year clock,
+   and the two-column "what is included" ledger.
+
+   WHAT IS REAL ON THIS PAGE
+   The service, the districts, the WhatsApp number, and the fact
+   that fees are quoted per instruction. There are no figures — no
+   percentage, no unit count, no response time — because none has
+   been supplied. Do not invent one. See CLAUDE.md.
+   ═══════════════════════════════════════════════════════════ */
+
+.hero{
+  position:relative; z-index:2; overflow-x:clip;
+  padding:clamp(120px,17vh,190px) var(--gutter) clamp(50px,8vh,90px);
+  max-width:var(--max); margin-inline:auto;
+}
+.hero-in{position:relative; z-index:1; max-width:820px}
+.hero h1{margin:20px 0 22px}
+.hero .lede{max-width:52ch}
+.hero-cta{display:flex; flex-wrap:wrap; gap:14px 18px; margin-top:clamp(28px,4vw,40px)}
+
+/* the drafting field behind the hero. .bp-grid itself is in
+   css/elevated.css; only invest.html was instantiating it, so the
+   other service pages had no line-work at all and the .mono
+   annotations on them read as grey captions rather than as marks on a
+   sheet. Quieter and slower here than on invest, because this hero is
+   type-led and at invest's weight the grid competes with the headline.
+
+   The parallax has to live on a wrapper: .bp-grid's own transform is
+   already spent on bpDrift, and a second transform on one element
+   silently wins. .depth is the site's existing wrapper for exactly
+   that, and it is already pinned to none under reduced motion. */
+.bp-plane{position:absolute; inset:0; z-index:0; pointer-events:none}
+.hero .bp-grid{opacity:.3; animation-duration:120s}
+
+/* ── the year clock ───────────────────────────────────────────
+   Twelve marks on a ring, one per month, with the four that carry
+   a scheduled visit lit. It is a picture of the one thing this
+   service really sells — that something happens on a calendar
+   whether or not the owner is in the country.
+
+   The ring is drawn from a conic gradient and a mask, so it is one
+   element and one paint. The marks are absolutely positioned by an
+   inline --i and rotated into place.
+
+   The four scheduled visits arrive in calendar order once the card
+   has revealed. That is the whole claim of the section — that four
+   things are spaced through a year whether or not you ask — and four
+   marks appearing one after another is that sentence, where four
+   marks already lit is a picture of it. The eight quiet months do not
+   move; they are the gaps the four are spaced across. */
+.clock{
+  /* the mark radius, named so the reveal below can restate the
+     placement transform without repeating the number */
+  --cr:min(170px,37vw);
+  position:relative; width:min(340px,74vw); aspect-ratio:1; margin-inline:auto;
+  display:grid; place-items:center;
+}
+.clock-ring{
+  position:absolute; inset:0; border-radius:50%;
+  border:1px dashed rgba(160,196,214,.22);
+}
+.clock-ring::after{
+  content:""; position:absolute; inset:11%; border-radius:50%;
+  border:1px solid rgba(255,178,90,.12);
+  background:radial-gradient(closest-side,rgba(255,178,90,.08),transparent 76%);
+}
+.clock-m{
+  position:absolute; left:50%; top:50%; width:2px; height:9px; margin:-1px 0 0 -1px;
+  transform:rotate(calc(var(--i) * 30deg)) translateY(calc(var(--cr) * -1)) scale(var(--s,1));
+  background:rgba(244,239,230,.22); border-radius:2px;
+  /* the delay comes off --i, so it is the month index that spaces the
+     four rather than an arbitrary stagger */
+  transition:transform .75s var(--ease) calc(var(--i) * 70ms + 220ms),
+             background-color .45s var(--ease);
+}
+.clock-m[data-on]{
+  height:15px; width:3px; background:var(--gold-lt);
+  box-shadow:0 0 12px 2px rgba(255,215,163,.6);
+}
+/* The resting state is the finished one and only the pre-reveal state
+   is scoped here, so reduced motion — and a reveal observer that never
+   fires — land on all four lit rather than on four marks stuck small. */
+@media (prefers-reduced-motion:no-preference){
+  .rv:not(.in) .clock-m[data-on]{--s:.4}
+}
+/* Twelve months are only readable if you can see the eight quiet ones.
+   The hit target is the whole ring, not a 2px mark. */
+@media (hover:hover) and (pointer:fine){
+  .clock:hover .clock-m:not([data-on]){background:rgba(244,239,230,.44)}
+}
+.clock-in{position:relative; z-index:1; text-align:center; padding:0 18%}
+.clock-in .mono{display:block; margin-bottom:10px}
+.clock-in b{display:block; font-family:var(--display); font-weight:400;
+  font-size:clamp(1.5rem,2.4vw,2.1rem); line-height:1.05; color:var(--cream)}
+.clock-in span{display:block; margin-top:10px; font-size:.84rem; color:var(--c-52)}
+
+.split{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,380px);
+  gap:clamp(30px,5vw,72px); align-items:center}
+@media (max-width:980px){.split{grid-template-columns:1fr}}
+
+/* ── the included / not included ledger ───────────────────── */
+.incl{display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  gap:clamp(16px,1.8vw,26px)}
+.incl h3{margin:0 0 14px; font-family:var(--display); font-weight:400;
+  font-size:clamp(1.2rem,1.6vw,1.46rem); line-height:1.1; color:var(--cream)}
+.incl ul{margin:0; padding:0; list-style:none; display:grid; gap:11px}
+.incl li{position:relative; padding-left:26px; font-size:.9rem; color:var(--c-52)}
+.incl li::before{
+  content:""; position:absolute; left:0; top:.42em; width:13px; height:13px; border-radius:4px;
+  border:1px solid rgba(255,178,90,.34); background:rgba(255,178,90,.07);
+}
+.incl li::after{
+  content:""; position:absolute; left:3.5px; top:.72em; width:6px; height:3px;
+  border-left:1.5px solid var(--gold-lt); border-bottom:1.5px solid var(--gold-lt);
+  transform:rotate(-45deg);
+}
+/* the honest column: things we do not do, drawn without a tick */
+.incl .not li::before{border-color:rgba(160,196,214,.24); background:transparent}
+.incl .not li::after{
+  left:4.5px; top:.62em; width:4px; height:4px; transform:none;
+  border:0; background:rgba(160,196,214,.4); border-radius:1px;
+}
+</style>
+
+<link rel="stylesheet" href="css/mobile.css?v=2026-08-07d">
+</head>
+<!-- data-subject is what js/service-form.js puts in the WhatsApp
+     greeting, so the message says what it is about. -->
+<body data-subject="managing a property">
+
+<div class="boot" id="boot" aria-hidden="true">
+  <img src="assets/lumina-logo.png" alt="" width="669" height="181">
+</div>
+
+<div class="grain" aria-hidden="true"></div>
+<div class="glow" id="glow" aria-hidden="true"></div>
+
+<header class="bar" id="bar">
+  <a href="index.html" class="mark-img" aria-label="Lumina — home">
+    <img src="assets/lumina-logo.png" alt="Lumina" width="669" height="181">
+  </a>
+  <nav class="nav" aria-label="Primary">
+    <a href="index.html">Home</a>
+    <a href="listings.html">Properties</a>
+    <a href="services.html">Services</a>
+    <a href="areas.html">Areas</a>
+    <a href="team.html">Team</a>
+    <a href="index.html#contact">Contact</a>
+    <a href="https://wa.me/962771505250" class="chip" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
+        <path d="M21 11.5a8.4 8.4 0 0 1-12.3 7.4L3.5 20.5l1.7-5A8.4 8.4 0 1 1 21 11.5Z"/>
+        <path d="M8.6 9.2c.3 2.5 2.6 4.8 5.1 5.2.7.1 1.5-.4 1.6-1.1l.1-.6-2-.9-.9.9c-1-.4-1.9-1.3-2.3-2.3l.9-.9-.9-2-.6.1c-.7.1-1.1.9-1 1.6Z"/>
+      </svg>
+      WhatsApp
+    </a>
+  </nav>
+</header>
+
+<nav class="spine" id="spine" aria-label="Section navigation">
+  <span class="rail" aria-hidden="true"></span>
+  <span class="fill" id="fill" aria-hidden="true"></span>
+  <button type="button" data-to="top"><span class="tip">Management</span></button>
+  <button type="button" data-to="year"><span class="tip">What happens, and when</span></button>
+  <button type="button" data-to="scope"><span class="tip">What is included</span></button>
+  <button type="button" data-to="how"><span class="tip">How it works</span></button>
+  <button type="button" data-to="terms"><span class="tip">Fees and terms</span></button>
+  <button type="button" data-to="start"><span class="tip">Get started</span></button>
+  <button type="button" data-to="more"><span class="tip">Also from Lumina</span></button>
+</nav>
+
+<main>
+
+<!-- ═══ HERO ════════════════════════════════════════════ -->
+<section class="hero" id="top">
+  <div class="depth bp-plane" style="--d:8px" aria-hidden="true"><div class="bp-grid"></div></div>
+  <div class="hero-in">
+    <p class="kicker rv">Services · Property management</p>
+    <h1 class="display rv" style="--rvd:60ms">Your property, run properly, while you are somewhere else.</h1>
+    <p class="lede rv" style="--rvd:140ms">Someone has to open the door, chase the rent and notice the leak. This is that someone: tenants found and checked, money collected and accounted for, repairs arranged and supervised, and one report a month whether or not anything happened.</p>
+
+    <!-- The fastest answer to "am I in the right place". Every service
+         page carries this in the same position and the same wording
+         pattern — see .whofor in css/elevated.css. -->
+    <div class="whofor rv" style="--rvd:200ms">
+      <p class="mono">Right for you if</p>
+      <ul>
+        <li>You own in Amman and live somewhere else for most of the year</li>
+        <li>You are here, but would rather not take the tenant's call yourself</li>
+        <li>You are about to take handover of a new build and it will sit empty</li>
+      </ul>
+      <p class="out">Looking to buy rather than hold? <a href="invest.html">New buildings</a>. Need a value rather than a manager? <a href="property-evaluation.html">Property evaluation</a>.</p>
+    </div>
+
+    <div class="hero-cta rv" style="--rvd:280ms">
+      <a class="btn" href="#start">
+        Ask about your property
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:15px;height:15px"><path d="M4.8 11.2 11.2 4.8M6.1 4.8h5.1v5.1"/></svg>
+      </a>
+      <a class="btn-line" href="services.html">
+        All services
+        <i aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4.8 11.2 11.2 4.8M6.1 4.8h5.1v5.1"/></svg></i>
+      </a>
+    </div>
+  </div>
+</section>
+
+<div class="rule"></div>
+
+<!-- ═══ THE YEAR ════════════════════════════════════════ -->
+<section class="sec" id="year">
+  <div class="split">
+    <div>
+      <div class="sec-head rv" style="margin-bottom:0">
+        <p class="kicker">What happens, and when</p>
+        <h2 class="display">Four inspections a year you did not have to ask for.</h2>
+        <p class="lede">The property is inspected quarterly whether or not anything is wrong, and the condition report reaches you either way. It is the difference between finding out about a leak and being told about one.</p>
+      </div>
+      <ul class="ticks rv" style="--rvd:120ms">
+        <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8.4l3.2 3.2L13 4.8"/></svg><span>Quarterly inspection, photographed, with a written condition note.</span></li>
+        <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8.4l3.2 3.2L13 4.8"/></svg><span>A monthly statement: rent in, costs out, and what is outstanding.</span></li>
+        <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8.4l3.2 3.2L13 4.8"/></svg><span>Anything urgent reaches you the same day, in the time zone you are in.</span></li>
+      </ul>
+    </div>
+
+    <div class="float rv" style="--rvd:180ms">
+      <div class="depth" style="--d:20px">
+        <div class="lev" style="--dur:13.4s;--amp:8px;--rot:.2deg;--delay:-3.1s">
+          <div class="clock" role="img" aria-label="A twelve-month ring with four scheduled inspection visits marked">
+            <span class="clock-ring" aria-hidden="true"></span>
+            <span class="clock-m" style="--i:0" data-on aria-hidden="true"></span>
+            <span class="clock-m" style="--i:1" aria-hidden="true"></span>
+            <span class="clock-m" style="--i:2" aria-hidden="true"></span>
+            <span class="clock-m" style="--i:3" data-on aria-hidden="true"></span>
+            <span class="clock-m" style="--i:4" aria-hidden="true"></span>
+            <span class="clock-m" style="--i:5" aria-hidden="true"></span>
+            <span class="clock-m" style="--i:6" data-on aria-hidden="true"></span>
+            <span class="clock-m" style="--i:7" aria-hidden="true"></span>
+            <span class="clock-m" style="--i:8" aria-hidden="true"></span>
+            <span class="clock-m" style="--i:9" data-on aria-hidden="true"></span>
+            <span class="clock-m" style="--i:10" aria-hidden="true"></span>
+            <span class="clock-m" style="--i:11" aria-hidden="true"></span>
+            <span class="clock-in">
+              <span class="mono">Twelve months</span>
+              <b>Four inspections<br>Twelve statements</b>
+              <span>Scheduled, not requested</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="rule"></div>
+
+<!-- ═══ SCOPE ═══════════════════════════════════════════ -->
+<section class="sec" id="scope">
+  <div class="sec-head rv">
+    <p class="kicker">What is included</p>
+    <h2 class="display">What we handle, and what we deliberately do not.</h2>
+    <p class="lede">Management goes wrong when nobody wrote down where it stops. All four cards below are part of the instruction — including the last one.</p>
+  </div>
+
+  <div class="incl">
+    <div class="float rv">
+      <div class="depth" style="--d:16px">
+        <div class="lev" style="--dur:12.6s;--amp:7px;--rot:.2deg;--delay:-1.4s">
+          <article class="card-g tilt">
+            <span class="spec" aria-hidden="true"></span>
+            <span class="mono">01 — Tenancy</span>
+            <h3>Finding a tenant, and checking them</h3>
+            <ul>
+              <li>Marketing, viewings and shortlisting</li>
+              <li>Identity, employment and reference checks</li>
+              <li>The contract, the deposit and the inventory</li>
+              <li>Renewals, notice and the handback inspection</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="float rv" style="--rvd:110ms">
+      <div class="depth" style="--d:24px">
+        <div class="lev" style="--dur:10.8s;--amp:9px;--rot:.26deg;--delay:-5.2s">
+          <article class="card-g tilt">
+            <span class="spec" aria-hidden="true"></span>
+            <span class="mono">02 — Money</span>
+            <h3>Rent, dues and the paperwork</h3>
+            <ul>
+              <li>Rent collection and chasing arrears</li>
+              <li>Utilities, municipal dues and service charges</li>
+              <li>A monthly statement, and an annual summary</li>
+              <li>Transfer to the account you nominate</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="float rv" style="--rvd:220ms">
+      <div class="depth" style="--d:20px">
+        <div class="lev" style="--dur:14.1s;--amp:6px;--rot:.18deg;--delay:-8.3s">
+          <article class="card-g tilt">
+            <span class="spec" aria-hidden="true"></span>
+            <span class="mono">03 — The building</span>
+            <h3>Keeping it as you left it</h3>
+            <ul>
+              <li>Quarterly inspection with photographs</li>
+              <li>Repairs arranged, supervised and invoiced at cost</li>
+              <li>Our own trades, or yours if you would rather</li>
+              <li>Key holding, and access for anyone you authorise</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="float rv" style="--rvd:330ms">
+      <div class="depth" style="--d:26px">
+        <div class="lev" style="--dur:11.7s;--amp:8px;--rot:.24deg;--delay:-2.9s">
+          <article class="card-g tilt not">
+            <span class="spec" aria-hidden="true"></span>
+            <span class="mono">04 — Not included</span>
+            <h3>Four things we do not take on</h3>
+            <ul>
+              <li>Legal proceedings — we will introduce a lawyer, not act as one</li>
+              <li>Tax filing and accountancy in your own jurisdiction</li>
+              <li>Insurance broking, though we will tell you if cover looks thin</li>
+              <li>Major works without your written instruction, whatever the urgency</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="rule"></div>
+
+<!-- ═══ HOW IT RUNS ═════════════════════════════════════ -->
+<section class="sec" id="how">
+  <div class="sec-head rv">
+    <p class="kicker">How it works</p>
+    <h2 class="display">Three rules we run everything by.</h2>
+  </div>
+
+  <div class="points rv">
+    <div class="point">
+      <b>i</b>
+      <div>
+        <h4>One name, not a department</h4>
+        <p>The person who inspected your property is the person who answers about it. Nobody on our side has to read a file before they can tell you what the kitchen looks like, because they were standing in it in March.</p>
+      </div>
+    </div>
+    <div class="point">
+      <b>ii</b>
+      <div>
+        <h4>Nothing is spent without a yes</h4>
+        <p>Repairs are quoted before they are ordered and invoiced at what they cost — there is no margin added to a plumber. An agreed standing limit for small items is the only exception, and you set it.</p>
+      </div>
+    </div>
+    <div class="point">
+      <b>iii</b>
+      <div>
+        <h4>The report goes out even when it is dull</h4>
+        <p>A month with nothing in it still produces a statement. Management that only contacts you when something is wrong trains you to dread the message, and it hides the months where something was quietly going wrong.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="rule"></div>
+
+<!-- ═══ TERMS ═══════════════════════════════════════════ -->
+<section class="sec" id="terms">
+  <div class="sec-head rv">
+    <p class="kicker">Fees and terms</p>
+    <h2 class="display">What it costs, and what you would be signing.</h2>
+    <p class="lede">The fee depends on the property, the tenancy, and how much of the above you actually want. It is quoted once, in writing, before anything starts.</p>
+  </div>
+
+  <dl class="terms rv" style="--tc:3">
+    <div><dt>What we manage</dt><dd>Residential<small>Apartments, whole floors, villas and small residential buildings. Commercial is outside what we do well, and we will say so.</small></dd></div>
+    <div><dt>Where</dt><dd>West Amman<small>The districts the rest of the portfolio is in. Outside them we will tell you rather than take the instruction and struggle.</small></dd></div>
+    <div><dt>Fee</dt><dd>Quoted per instruction<small>A management fee, set against the property and the scope you choose, agreed in writing before the first month. No rate card, because there is no one rate.</small></dd></div>
+    <div><dt>Term</dt><dd>Twelve months, then rolling<small>A year is long enough to be worth setting up and short enough that you are not trapped with us if it is not working.</small></dd></div>
+    <div><dt>Your money</dt><dd>Held separately<small>Rent collected on your behalf is not run through the trading account, and the monthly statement reconciles to it.</small></dd></div>
+    <div><dt>Leaving</dt><dd>With notice, and with the file<small>Keys, contracts, inventories, statements and the tenant relationship hand over. Nothing about your property is ours to keep.</small></dd></div>
+  </dl>
+
+  <p class="note rv" style="--rvd:120ms">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><circle cx="8" cy="8" r="6.4"/><path d="M8 7.2v4M8 4.9v.9"/></svg>
+    <span>No percentage appears on this page on purpose. A management fee that is quoted before anyone has seen the property is either padded to cover the worst case or about to be revised upwards — both are worse than a number that arrives a day later and holds.</span>
+  </p>
+</section>
+
+<div class="rule"></div>
+
+<!-- ═══ START ═══════════════════════════════════════════ -->
+<section class="sec" id="start">
+  <div class="sec-head rv">
+    <p class="kicker">Get started</p>
+    <h2 class="display">Tell us what you own and where you are.</h2>
+    <p class="lede">Those two facts decide most of it. The rest we can work out on a call — no form fields you have to look up.</p>
+  </div>
+
+  <div class="reg">
+    <div class="reg-side rv">
+      <p>If the property is tenanted we will want to know on what terms and since when; if it is empty we will want to know how long it has been. Neither is a problem — they just change what the first month looks like.</p>
+      <ul class="ticks">
+        <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8.4l3.2 3.2L13 4.8"/></svg><span>A visit and a written proposal before you commit to anything.</span></li>
+        <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8.4l3.2 3.2L13 4.8"/></svg><span>If you already have an agent, we will not ask you to break a contract early.</span></li>
+        <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8.4l3.2 3.2L13 4.8"/></svg><span>If the honest answer is that you do not need managing, we will say that.</span></li>
+      </ul>
+    </div>
+
+    <!-- No backend. The button is a real wa.me link without JS; the
+         script only composes the message into the href on click. -->
+    <form class="reg-form rv" style="--rvd:130ms" id="regForm">
+      <label class="field">
+        <span>Your name</span>
+        <input type="text" id="r-name" name="name" autocomplete="name" placeholder="Name">
+      </label>
+      <label class="field">
+        <span>What you own</span>
+        <select id="r-what" name="what">
+          <option>An apartment</option>
+          <option>A whole floor</option>
+          <option>A villa</option>
+          <option>A residential building</option>
+          <option>More than one property</option>
+        </select>
+      </label>
+      <label class="field">
+        <span>Right now it is</span>
+        <select id="r-state" name="state">
+          <option>Tenanted</option>
+          <option>Empty</option>
+          <option>Being handed over by the builder</option>
+          <option>Managed by someone else</option>
+        </select>
+      </label>
+      <label class="field">
+        <span>Anything else</span>
+        <textarea id="r-note" name="note" placeholder="District, where you are based, and anything that is currently going wrong."></textarea>
+      </label>
+      <a class="btn" id="regSend" href="https://wa.me/962771505250" target="_blank" rel="noopener">
+        Send on WhatsApp
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true" style="width:16px;height:16px">
+          <path d="M21 11.5a8.4 8.4 0 0 1-12.3 7.4L3.5 20.5l1.7-5A8.4 8.4 0 1 1 21 11.5Z"/>
+        </svg>
+      </a>
+      <p class="fine">Goes to +962 77 150 5250. Nothing is stored on this site.</p>
+    </form>
+  </div>
+</section>
+
+<div class="rule"></div>
+
+<!-- ═══ THE OTHER TWO ═══════════════════════════════════
+     Every service page ends with the other two, so the three read
+     as a set rather than three dead ends. Without it the only way
+     across is back up to services.html and hunting a bubble. -->
+<section class="sec" id="more">
+  <div class="sec-head rv" style="margin-bottom:clamp(28px,3.4vw,44px)">
+    <p class="kicker">Also from Lumina</p>
+    <h2 class="display">The other two services.</h2>
+  </div>
+  <div class="more-grid rv" style="--rvd:90ms">
+    <a class="more-card" href="invest.html">
+      <span class="mono">For buyers</span>
+      <h3>Investment</h3>
+      <p>New buildings from one contractor, offered to our register before they are listed. If you are about to buy rather than hold, start here.</p>
+      <span class="more-go">Open
+        <i aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4.8 11.2 11.2 4.8M6.1 4.8h5.1v5.1"/></svg></i>
+      </span>
+    </a>
+    <a class="more-card" href="property-evaluation.html">
+      <span class="mono">For sellers, buyers and lenders</span>
+      <h3>Property evaluation</h3>
+      <p>A written opinion of what a property is worth, with the evidence attached. Useful before you let, and useful before you sell.</p>
+      <span class="more-go">Open
+        <i aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4.8 11.2 11.2 4.8M6.1 4.8h5.1v5.1"/></svg></i>
+      </span>
+    </a>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="foot-in">
+    <div>
+      <a href="index.html" class="mark-img" aria-label="Lumina — home">
+        <img src="assets/lumina-logo.png" alt="Lumina" width="669" height="181">
+      </a>
+      <p class="fine" style="margin:12px 0 0">Private real estate advisory · Amman, Jordan</p>
+    </div>
+    <nav class="foot-nav" aria-label="Footer">
+      <a href="index.html">Home</a><a href="listings.html">Properties</a>
+      <a href="services.html">Services</a><a href="lumina-studio.html">Studio</a><a href="invest.html">Invest</a><a href="room.html">The room</a>
+      <a href="property-evaluation.html">Evaluation</a>
+      <a href="team.html">Team</a><a href="index.html#contact">Contact</a>
+    </nav>
+    <p class="fine">
+      <span>© <span id="yr">2026</span> Lumina Real Estate Advisory</span>
+      <span>Residential management · West Amman</span>
+      <span>Fees quoted per instruction</span>
+    </p>
+  </div>
+</footer>
+
+<script src="js/lumina.js?v=2026-08-07d" defer></script>
+<script src="js/nav-menu.js?v=2026-08-07b" defer></script>
+<script src="js/service-form.js?v=2026-08-07b" defer></script>
+</body>
+</html>

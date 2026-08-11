@@ -131,7 +131,7 @@
     const messageText = messageLines.join('\n');
     console.log('Valuation Request Form Submitted:', { type, area, size, name, phone, email });
 
-    const whatsappNumber = (window.LuminaConfig && window.LuminaConfig.whatsapp) || '962791234567';
+    const whatsappNumber = (window.LuminaConfig && window.LuminaConfig.whatsapp) || '962771505250';
     const redirectUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(messageText)}`;
 
     window.open(redirectUrl, '_blank');

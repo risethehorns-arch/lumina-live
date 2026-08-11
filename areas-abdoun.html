@@ -2,14 +2,17 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Abdoun Luxury Real Estate — Lumina</title>
-  <meta name="description" content="A refined overview of Abdoun villas and high-end residences in Amman, with demo-safe listing previews from Lumina." />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Property in Abdoun, Amman — Lumina</title>
+  <meta name="description" content="What is actually available in Abdoun: villas and large apartments, typical sizes, rental ranges, and what to check before you view." />
   <meta name="robots" content="index, follow" />
   <meta name="author" content="Lumina Real Estate" />
   <meta name="theme-color" content="#0B0B0B" />
   <link rel="canonical" href="https://lumina.qutaifan.com/areas-abdoun.html" />
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" type="image/png" href="assets/lumina-logo.png" />
+  <link rel="stylesheet" href="css/style.css?v=2026-08-07b" />
+  <link rel="preload" as="font" type="font/woff2" href="assets/fonts/InstrumentSerif.woff2" crossorigin>
+  <link rel="preload" as="font" type="font/woff2" href="assets/fonts/InstrumentSans.woff2" crossorigin>
   <style>
     body { background:#0B0B0B; color:#FFFFFF; }
     .nav-links .active-link { color:#C6A76E; }
@@ -21,49 +24,149 @@
     .organic-grid { display:grid; grid-template-columns:1.15fr .85fr; gap:54px; align-items:start; }
     .organic-copy h2, .article-body h2 { color:#FFFFFF; font-family:var(--font-serif); font-size:clamp(1.8rem,3vw,2.8rem); font-weight:400; margin-bottom:18px; }
     .organic-copy p, .article-body p { color:#A0A0A0; line-height:1.95; margin-bottom:18px; }
+    .organic-copy h3 { color:#FFFFFF; font-size:1rem; font-weight:600; margin:26px 0 8px; }
     .market-card { border:1px solid rgba(198,167,110,.24); background:#0B0B0B; padding:30px; border-radius:16px; }
     .market-card strong { display:block; color:#C6A76E; font-size:.72rem; letter-spacing:.16em; text-transform:uppercase; margin-bottom:10px; }
-    .preview-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:22px; margin-top:34px; }
-    .preview-card { background:#111111; border:1px solid rgba(198,167,110,.18); border-radius:14px; overflow:hidden; box-shadow:0 10px 32px rgba(0,0,0,.38); }
-    .preview-card img { width:100%; aspect-ratio:16/10; object-fit:cover; display:block; opacity:.88; }
-    .preview-body { padding:20px; }
-    .preview-body h3 { color:#FFFFFF; font-size:1rem; line-height:1.35; margin-bottom:8px; }
-    .preview-body p { color:#A0A0A0; font-size:.82rem; line-height:1.6; margin-bottom:8px; }
-    .preview-price { color:#C6A76E; font-weight:600; }
-    .demo-safe { border-left:2px solid #C6A76E; background:#111111; color:#A0A0A0; padding:18px 22px; line-height:1.75; margin-top:28px; }
+    .market-card p { color:#A0A0A0; line-height:1.9; margin-bottom:14px; }
+    .market-card p:last-child { margin-bottom:0; }
+    .at-a-glance { list-style:none; padding:0; margin:0 0 6px; }
+    .at-a-glance li { display:flex; justify-content:space-between; gap:16px; padding:11px 0; border-bottom:1px solid rgba(255,255,255,.07); color:#A0A0A0; font-size:.88rem; }
+    .at-a-glance li:last-child { border-bottom:0; }
+    .at-a-glance b { color:#FFFFFF; font-weight:500; text-align:right; }
+    .preview-grid { margin-top:34px; }
+    .note { border-left:2px solid #C6A76E; background:#111111; color:#A0A0A0; padding:18px 22px; line-height:1.75; margin-top:28px; }
     .article-body { max-width:850px; }
-    .article-body a, .organic-copy a { color:#C6A76E; }
-    .distribution-box { border:1px solid rgba(198,167,110,.22); background:#111111; padding:24px; border-radius:16px; margin-top:28px; }
+    .article-body a, .organic-copy a, .market-card a { color:#C6A76E; }
     @media(max-width:900px) { .organic-grid { grid-template-columns:1fr; } .organic-hero { padding-top:150px; } }
   </style>
+
+  <!-- shared property card + gallery viewer, same file index.html loads -->
+  <link rel="stylesheet" href="css/property-ui.css?v=2026-08-07i" />
+  <!-- the landing page's brand bar, shared -->
+
+  <link rel="stylesheet" href="css/nav.css?v=2026-08-07b" />
+
+  <!-- last: phone-only overrides -->
+  <link rel="stylesheet" href="css/mobile.css?v=2026-08-07d" />
 </head>
 <body>
-<nav class="nav scrolled" id="nav">
-  <a href="/index.html" class="nav-logo" aria-label="Lumina — home"><img src="/assets/lumina-logo.png" alt="Lumina" width="669" height="181"></a>
-  <div class="nav-links">
-    <a href="/listings.html" class="active-link">Properties</a>
-    <a href="/areas-dabouq.html">Areas</a>
-    <a href="/insights/best-areas-in-amman.html">Insights</a>
-    <a href="/listings.html" class="nav-cta btn">View Preview</a>
-  </div>
-</nav>
+
+<header class="bar stuck" id="bar">
+  <a href="index.html" class="mark-img" aria-label="Lumina — home">
+    <img src="assets/lumina-logo.png" alt="Lumina" width="669" height="181">
+  </a>
+  <nav class="nav" aria-label="Primary">
+    <a href="index.html">Home</a>
+    <a href="listings.html" class="keep">Properties</a>
+    <a href="services.html">Services</a>
+    <a href="areas.html" class="active-link" aria-current="page">Areas</a>
+    <a href="insights/best-areas-in-amman.html">Insights</a>
+    <a href="team.html">Team</a>
+    <a href="pages/list-property.html">Sell With Us</a>
+    <a href="https://wa.me/962771505250" class="chip keep" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-12.3 7.4L3.5 20.5l1.7-5A8.4 8.4 0 1 1 21 11.5Z"/><path d="M8.6 9.2c.3 2.5 2.6 4.8 5.1 5.2.7.1 1.5-.4 1.6-1.1l.1-.6-2-.9-.9.9c-1-.4-1.9-1.3-2.3-2.3l.9-.9-.9-2-.6.1c-.7.1-1.1.9-1 1.6Z"/></svg>
+      WhatsApp
+    </a>
+  </nav>
+</header>
 <main data-area="abdoun">
-<section class="organic-hero"><div class="container"><p class="label">Area Guide · Demo-Safe Preview</p><span class="gold-line"></span><h1>Abdoun luxury property, viewed with discretion.</h1><p>Abdoun remains a reference point for established luxury in Amman: embassies, mature streets, private villas, and apartment buildings with enduring appeal. It is less about novelty and more about address credibility, convenience, and the quality of surrounding homes.</p></div></section>
-<section class="organic-section"><div class="container organic-grid"><div class="organic-copy"><h2>Market Positioning</h2><p>Premium buyers value Abdoun for access, reputation, and liquidity. The strongest opportunities usually combine a clean title story, private setting, sensible circulation, and pricing that survives comparison against newer districts.</p><p>Lumina’s public preview remains controlled: listings shown through this site are workflow previews until availability, price, ownership, media permission, and representation authority are verified.</p><p><a href="/listings.html">View selected premium opportunities</a></p></div><aside class="market-card"><strong>Review Standard</strong><p>Area-level location only. No exact addresses. No ownership claim. No source media reuse without permission.</p></aside></div><p class="demo-safe">This is a demo test run, not final live inventory. Availability, pricing, and media require verification before public launch.</p></div></section>
-<section class="organic-section alt"><div class="container"><p class="label">Listing Preview</p><span class="gold-line"></span><h2>Selected premium opportunities</h2><div id="listing-preview" class="preview-grid"></div></div></section>
+
+<section class="organic-hero">
+  <div class="container">
+    <p class="label">Area Guide</p>
+    <span class="gold-line"></span>
+    <h1>Abdoun, and what is actually on the market.</h1>
+    <p>Embassies, mature streets, and the deepest stock of large apartments and villas in west Amman. More of our portfolio sits here than in any other district.</p>
+  </div>
+</section>
+
+<section class="organic-section">
+  <div class="container organic-grid">
+    <div class="organic-copy">
+      <h2>What the stock looks like</h2>
+      <p>Abdoun is an apartment market first. 57 of the 68 residences we currently hold here are apartments, with 7 villas alongside them. Two and three bedrooms are the norm, and the typical unit runs about 140 m².</p>
+      <p>Annual rents span a wide band — from around 8,000 JOD for a modest two-bedroom to 120,000 JOD for a large furnished villa. The middle of the market sits near 15,000 JOD. Villas rarely reach a public listing at all; most change hands through direct introduction.</p>
+
+      <h3>What to look at before you view</h3>
+      <p>Abdoun's streets differ more than the address suggests. A building on the ring road behaves nothing like one on a quiet internal street, and the difference shows up in noise, parking and resale. Ask which street the entrance is on, not just which district.</p>
+      <p>Many Abdoun blocks are built into a slope, so a flat described as being on level −1 or −2 may still be full height with a garden at the back. It is worth asking where the daylight comes from before ruling a floor out.</p>
+      <p><a href="listings.html?location=Abdoun">See every Abdoun residence we hold →</a></p>
+    </div>
+    <aside class="market-card">
+      <ul class="at-a-glance">
+        <li><span>Residences listed</span><b>68</b></li>
+        <li><span>To rent / to buy</span><b>66 / 2</b></li>
+        <li><span>Typical annual rent</span><b>15,000 JOD</b></li>
+        <li><span>Rental range</span><b>8,000 – 120,000 JOD</b></li>
+        <li><span>Typical size</span><b>140 m²</b></li>
+        <li><span>Mix</span><b>57 apartments, 7 villas, 2 rooftops, 2 residential</b></li>
+      </ul>
+    </aside>
+  </div>
+</section>
+
+<section class="organic-section alt">
+  <div class="container organic-grid">
+    <div class="organic-copy">
+      <h2>Before you enquire</h2>
+      <p>Everything on this page is real inventory, but a listing is a starting point rather than a guarantee. Availability, the final figure, and permission to show photography are confirmed with the owner before we arrange anything.</p>
+      <p>That is deliberate. It is a slower way to work, and it means we do not send you to see a property that was let last week.</p>
+    </div>
+    <aside class="market-card">
+      <strong>How we present this area</strong>
+      <p>We publish the district, never the exact address. Photography stays with the owner's permission, and availability is confirmed before a viewing is arranged.</p>
+      <p>If nothing here fits, tell us what does — a good part of what we handle never appears on this page.</p>
+    </aside>
+  </div>
+</section>
+
+<section class="organic-section">
+  <div class="container">
+    <p class="label">Currently available</p>
+    <span class="gold-line"></span>
+    <h2 style="color:#fff;font-family:var(--font-serif);font-weight:400;font-size:clamp(1.8rem,3vw,2.8rem);margin-bottom:6px">A selection from this area</h2>
+    <div id="listing-preview" class="preview-grid grid-props"></div>
+  </div>
+</section>
+
 </main>
+
 <footer class="footer">
   <div class="container">
     <div class="footer-grid">
-      <div><div class="footer-logo"><img src="/assets/lumina-logo.png" alt="Lumina" width="669" height="181"></div><p class="footer-desc">Private luxury real estate advisory for Amman and selected Jordan destinations. Demo preview remains verification-required.</p></div>
-      <div class="footer-col"><h4>Areas</h4><ul><li><a href="/areas-dabouq.html">Dabouq</a></li><li><a href="/areas-abdoun.html">Abdoun</a></li><li><a href="/areas-dead-sea.html">Dead Sea</a></li></ul></div>
-      <div class="footer-col"><h4>Insights</h4><ul><li><a href="/insights/best-areas-in-amman.html">Best Areas in Amman</a></li><li><a href="/insights/luxury-living-dabouq.html">Dabouq Living</a></li><li><a href="/insights/invest-dead-sea-real-estate.html">Dead Sea Investment</a></li></ul></div>
-      <div class="footer-col"><h4>Preview</h4><ul><li><a href="/listings.html">Selected premium opportunities</a></li><li><a href="mailto:lumina@qutaifan.com">lumina@qutaifan.com</a></li></ul></div>
+      <div>
+        <div class="footer-logo"><img src="assets/lumina-logo.png" alt="Lumina" width="669" height="181"></div>
+        <p class="footer-desc">A private property advisory in Amman. We represent a small number of residences at a time and introduce them quietly.</p>
+      </div>
+      <div class="footer-col"><h4>Areas</h4><ul>
+        <li><a href="areas-abdoun.html">Abdoun</a></li>
+        <li><a href="areas-swefieh.html">Swefieh</a></li>
+        <li><a href="areas-circles.html">The Circles</a></li>
+      </ul></div>
+      <div class="footer-col"><h4>Reading</h4><ul>
+        <li><a href="insights/best-areas-in-amman.html">Choosing an area</a></li>
+        <li><a href="insights/living-in-swefieh.html">Living in Swefieh</a></li>
+        <li><a href="insights/amman-circles-guide.html">A guide to the Circles</a></li>
+      </ul></div>
+      <div class="footer-col"><h4>Lumina</h4><ul>
+        <li><a href="team.html">The team</a></li>
+        <li><a href="listings.html">All properties</a></li>
+        <li><a href="pages/list-property.html">Sell with us</a></li>
+        <li><a href="pages/valuation.html">Request a valuation</a></li>
+        <li><a href="https://wa.me/962771505250" target="_blank" rel="noopener noreferrer">WhatsApp</a></li>
+        <li><a href="mailto:Lumina@lumina-jo.com">Lumina@lumina-jo.com</a></li>
+      </ul></div>
     </div>
-    <div class="footer-bottom"><span>© 2026 Lumina Luxury Real Estate.</span><span>Demo-safe preview · Verification required</span></div>
+    <div class="footer-bottom">
+      <span>© 2026 Lumina Real Estate Advisory · Amman</span>
+      <span>Particulars confirmed with the owner before viewing</span>
+    </div>
   </div>
 </footer>
-<script src="js/site.js"></script>
-<script src="js/areas.js"></script>
+<script src="js/site.js?v=2026-08-07b"></script>
+<script src="js/property-viewer.js?v=2026-08-07h"></script>
+<script src="js/property-card.js?v=2026-08-07b"></script>
+<script src="js/areas.js?v=2026-08-06a"></script>
+<script src="js/nav-menu.js?v=2026-08-07b" defer></script>
 </body>
 </html>

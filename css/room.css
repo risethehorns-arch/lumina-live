@@ -1,0 +1,538 @@
+/* ==========================================================================
+   LUMINA — room.css
+   The scroll-to-furnish room. Loaded after css/elevated.css, which owns
+   the tokens, the type, the bar, the spine, the cards and the footer.
+
+   ┌──────────────────────────────────────────────────────────────────────┐
+   │ THE CONSTRUCTION — two formulas, and nothing on this page is placed  │
+   │ by eye.                                                              │
+   │                                                                      │
+   │ viewBox 0 0 1600 1000. Vanishing point VP = (880, 470).              │
+   │ The back wall is the frame scaled by k = 0.432 about VP, which is    │
+   │ what makes this a real one-point room rather than a rectangle put    │
+   │ somewhere it looked right:                                           │
+   │      x: 880 ± 880k / 720k  →  500 … 1191                             │
+   │      y: 470 ± 470k / 530k  →  267 …  699                             │
+   │ so the back wall is x=500 y=267 w=691 h=432, the horizon is y=470,   │
+   │ and the eye sits at 53% of the wall — a standing adult in a 2.9m     │
+   │ room.                                                                │
+   │                                                                      │
+   │ 1. DEPTH.  s(y) = (y − 470) / 229                                    │
+   │            x(x0, y) = 880 + (x0 − 880) · s(y)                        │
+   │    A back-wall x projected to any floor depth. At y=699 it is the    │
+   │    identity; at y=1000 the back wall's two bottom corners land on    │
+   │    x=0 and x=1600 — the construction checking itself.                │
+   │                                                                      │
+   │ 2. HEIGHT. top_y = yf − 1.8865 · h · (yf − 470)                      │
+   │    An object of height h (as a fraction of the room) standing on a   │
+   │    floor point at screen y. h=0 → the floor. h=0.53 → the horizon,   │
+   │    at any depth. h=1 at the wall → the ceiling.                      │
+   │                                                                      │
+   │ EVERY receding edge in this file points at (880, 470). Anything      │
+   │ that does not is a bug, not a style choice.                          │
+   └──────────────────────────────────────────────────────────────────────┘
+
+   ┌──────────────────────────────────────────────────────────────────────┐
+   │ THE TIMELINE. p is the pin's 0…1 progress, derived exactly as        │
+   │ js/invest.js derives it. Every value below is a PURE FUNCTION of p — │
+   │ nothing holds a timer and nothing integrates a spring, which is why  │
+   │ scrolling back up un-furnishes the room exactly as carefully as      │
+   │ scrolling down furnished it, bounces included.                       │
+   │                                                                      │
+   │  .000–.075  DRAW-ON.  the shell scales out of the VP (easeOutExpo)   │
+   │  .000–.090  SURVEY.   dashed setting-out lines + 4800 × 2900         │
+   │  .030–.190  TITLE OUT (invest.html's exact numbers, deliberately)    │
+   │  .075–.200  SOLIDIFY. fills, then the window inks LAST so the light  │
+   │                       arrives with it. Nine plan ghosts come up.     │
+   │  .100–.620  CAMERA.   dolly in 1.00→1.30, an S-curve left then back. │
+   │                       FINISHED BY .62 — the last third is STILL.     │
+   │                       Stillness at the end is what makes a finished  │
+   │                       room feel finished; invest's camera runs to    │
+   │                       .86 and its ending is restless because of it.  │
+   │                                                                      │
+   │  ── nine arrivals, nine grammars, no repeats ──                      │
+   │  .150–.250  1 RUG        unrolls toward you, roll riding the edge    │
+   │  .215–.365  2 SOFA       slides out of the left wall, overshoots;    │
+   │                          its shadow arrives LATE, on its own driver  │
+   │  .330–.435  3 TABLE      legs unfold IN THE AIR, then it falls under │
+   │                          easeInQuad — gravity, not an ease-out       │
+   │  .395–.545  4 CHAIR      swings in on a real arc about a pivot 300   │
+   │                          units to its left                          │
+   │  .480–.660  5 CREDENZA   extrudes; drawers appear as the edge passes │
+   │  .600–.720  6 PICTURE    drops crooked, then swings level            │
+   │  .640–.745  7 ARC LAMP   telescopes up — AND ARRIVES DARK            │
+   │  .745–.815  ── the only silence in the piece. Nothing arrives. ──    │
+   │  .760–.808  IGNITION. flash, drop, two flickers, settle. The peak.   │
+   │  .815–.905  8 PLANT      pot, then seven leaves from their own stems │
+   │  .885–.975  9 SIDE TABLE rises, then its lamp dims up LINEARLY —     │
+   │                          the deliberate opposite of the arc lamp     │
+   │                                                                      │
+   │  .120–.900  THE SUN runs underneath all of it. 06:10 → 19:40.        │
+   │  ≥ .220     .reading   the panel narrates                            │
+   │  ≥ .945     .armed     the nine pieces become controls               │
+   └──────────────────────────────────────────────────────────────────────┘
+
+   NO `filter` ANYWHERE ON THIS PAGE. Not animated, not static, not on
+   the shadows. A static filter inside a scaling camera re-rasters its
+   whole filter region on every frame the camera moves, and at 1600×1000
+   that is a slideshow on a mid laptop. Every glow, bloom, pool and
+   shadow here is a gradient on a rect or an ellipse. This is the single
+   most important prohibition in the file.
+   ========================================================================== */
+
+/* ── the stage ────────────────────────────────────────────────────────── */
+.room{position:relative; height:460vh}
+
+/* grid-template-rows + align-items:stretch, NOT place-items:center. With
+   an auto row and a centred item the row is content-sized, .room-stage's
+   height:100% has nothing definite to resolve against, and the stage
+   quietly grows past a pin that clips. That is exactly how invest.html
+   and services.html each lost a panel below the fold. */
+.room-pin{
+  position:sticky; top:0; height:100vh; height:100svh; overflow:clip;
+  display:grid; grid-template-rows:minmax(0,1fr); align-items:stretch; justify-items:center;
+}
+.room-pin .bp-grid{
+  opacity:.3; animation-duration:140s;
+  /* the ambient field moves a third of the camera's distance, so the
+     background has depth without ever asking for attention */
+  translate:0 calc(var(--cam-y,0px) * -.34);
+}
+.room-pin::after{
+  content:""; position:absolute; inset:auto 0 0; height:11vh; z-index:6;
+  pointer-events:none; background:linear-gradient(180deg,transparent,var(--ink));
+}
+.room-stage{position:relative; z-index:2; width:100%; height:100%}
+
+#roomSvg{width:100%; height:100%; display:block}
+
+/* ── the camera ───────────────────────────────────────────────────────────
+   In one-point perspective, walking forward IS scaling the scene about the
+   vanishing point — so a single scale() with its origin at VP produces a
+   geometrically correct walk into the room, and the perspective stays
+   honest the whole way. One transform on one group.
+
+   The explicit triple-translate rather than transform-origin: SVG origin
+   handling needs transform-box and has been inconsistent across Safari
+   versions, and this composition needs no transform-box at all. */
+#cam,.obj-layer{
+  /* --par-x/y is the pointer parallax, spring-written by its own small
+     rAF in room.js. It rides the same chain so the hit targets can
+     never drift off the drawing, and it is the one value here that is
+     NOT a function of scroll — a pointer is not a scrollbar, and easing
+     it is what makes the room feel inhabited rather than strapped on. */
+  transform:
+    translate(calc(var(--cam-x,0px) + var(--par-x,0px)),calc(var(--cam-y,0px) + var(--par-y,0px)))
+    translate(880px,470px) scale(var(--cam-z,1)) translate(-880px,-470px);
+  will-change:transform;
+}
+/* .obj-layer carries the IDENTICAL transform on the identical frame, or
+   the invisible hit targets silently drift off the objects as the camera
+   dollies in. Its px are CSS px against a 1600×1000 box, which is why it
+   is sized and positioned in % of the stage below. */
+
+/* ── shell ──────────────────────────────────────────────────────────────── */
+#shell{
+  transform:translate(880px,470px) scale(var(--draw,1)) translate(-880px,-470px);
+  opacity:var(--draw-o,0);
+}
+/* NOT .ln — that class belongs to elevated.css's per-line headline
+   reveal and ships with opacity:0, so every line in this room rendered
+   invisible and the drawing came out as flat silhouettes. Exactly the
+   class of bug CLAUDE.md records for .win on invest.html. Check any new
+   class on this page against the shared sheets before using it.
+
+   This is a DRAWING, and the line is the subject. The first cut used
+   the page tokens straight (--draft-lt at 1.2px) and the furniture
+   disappeared into the walls — near-black line-work on near-black fill
+   reads as nothing at all on a screen that is not in a dark room.
+   These are deliberately brighter than the tokens elsewhere on the
+   site, and the three weights ARE the depth cue. */
+.rln{fill:none; stroke:rgba(206,232,248,.92); stroke-width:1.9}
+.rln.thin{stroke:rgba(186,216,236,.66); stroke-width:1.4}
+.rln.hair{stroke:rgba(170,204,224,.36); stroke-width:1.1}
+.svg-note{fill:var(--draft-lt); font-family:var(--sans); font-size:15px; letter-spacing:2px}
+/* every stroked path, without exception — without it the dolly thickens
+   every line as you walk in and the drafting crispness goes */
+/* .ln takes its stroke from CSS and so has no stroke ATTRIBUTE — an
+   [stroke] selector alone misses every line in the room. */
+#roomSvg [stroke],.rln,.rim{vector-effect:non-scaling-stroke}
+
+/* the fills only have to separate the objects from the wall, not
+   describe them — the line does that. But they must separate. */
+.fill-a{fill:#20303F}
+.fill-b{fill:#18242F}
+.rug-f{fill:#1A2836}
+.rug-roll{fill:#1B2735; stroke:var(--draft); stroke-width:1.2}
+
+/* the warm rim every object carries. It is the whole reason the room
+   changes character at ignition rather than just getting a glow on top:
+   each object is individually re-lit. */
+.rim{
+  fill:none; stroke:var(--gold-lt); stroke-width:1.6;
+  opacity:calc(var(--lamp,0) * .55 + var(--warm,0) * .18);
+}
+#bulb{fill:var(--gold-lt); opacity:var(--lamp,0)}
+#city circle{fill:var(--gold-lt); opacity:.6}
+
+/* ── the nine grammars ────────────────────────────────────────────────────
+   Each piece is nested, because transforms do not compose on one element —
+   the same law the float stack obeys in elevated.css. The outer <g> takes
+   the arrival, .obj-alt takes the second driver, .obj-sub takes per-part
+   motion.
+
+   --p may overshoot past 1: the overshoot is baked into the eased value
+   the script writes, so a single property carries the landing AND the
+   bounce, and CSS never has to know a bounce happened. */
+.obj{opacity:var(--o,1)}
+.obj[data-live="1"]{will-change:transform,opacity}
+
+/* 1 RUG — scaleY from the FAR edge, so it unrolls toward the reader */
+.obj[data-i="1"]{
+  transform:translate(830px,760px) scaleY(var(--p)) translate(-830px,-760px);
+  opacity:calc(var(--p) * 4);
+}
+.obj[data-i="1"] .obj-alt{
+  transform:translate(279px,900px) rotate(var(--yaw,0deg)) translate(-279px,-900px);
+}
+.rug-roll{opacity:calc((1 - var(--p,0)) * 5 - .1)}
+.rug-fringe{opacity:calc(var(--p,0) * 6 - 5)}
+
+/* 2 SOFA — out of the left wall, with the overshoot inside --p */
+.obj[data-i="2"]{
+  transform:
+    translateX(calc((1 - var(--p)) * -340px))
+    translate(620px,700px)
+    scale(calc(.94 + var(--p) * .06))
+    rotate(calc((1 - var(--p)) * -1.4deg))
+    translate(-620px,-700px);
+  opacity:calc(var(--p) * 5);
+}
+
+/* 3 COFFEE TABLE — the legs finish BEFORE touchdown. That is the joke. */
+.obj[data-i="3"]{
+  transform:translateY(calc((1 - var(--p)) * -260px));
+  opacity:calc(var(--p) * 6);
+}
+.leg{transform-box:view-box; transform-origin:var(--o); transform:rotate(calc((1 - var(--l,0)) * -34deg))}
+
+/* 4 ARMCHAIR — outer swings about a pivot on the floor 300 units to its
+   left; inner counter-rotates by the same angle so the chair stays
+   upright while its POSITION travels the arc. */
+.obj[data-i="4"]{
+  transform:translate(813px,880px) rotate(calc((1 - var(--p)) * -26deg)) translate(-813px,-880px);
+  opacity:calc(var(--p) * 5);
+}
+.obj[data-i="4"] .obj-alt{
+  transform:translate(1113px,768px) rotate(calc((1 - var(--p)) * 26deg)) scale(calc(.90 + var(--p) * .10)) translate(-1113px,-768px);
+}
+
+/* 5 CREDENZA — scaleX from its left end. The drawer fronts do NOT scale
+   with it; each appears as the leading edge reaches its x. opacity clamps
+   its own input, so four thresholds cost no extra writes. */
+.obj[data-i="5"]{
+  transform:translate(900px,640px) scaleX(var(--p)) translate(-900px,-640px);
+  opacity:calc(var(--p) * 8);
+}
+.obj[data-i="5"] .dr[data-d="0"]{opacity:calc((var(--p) - .25) * 6)}
+.obj[data-i="5"] .dr[data-d="1"]{opacity:calc((var(--p) - .45) * 6)}
+.obj[data-i="5"] .dr[data-d="2"]{opacity:calc((var(--p) - .65) * 6)}
+.obj[data-i="5"] .dr[data-d="3"]{opacity:calc((var(--p) - .85) * 6)}
+.obj[data-i="5"] .top-things{opacity:calc((var(--p) - .9) * 8)}
+
+/* 6 PICTURE — falls the last 60 units onto the hook, then swings level
+   about the hook itself. Still moving after it has arrived, which is why
+   the eye tracks it longest. */
+.obj[data-i="6"]{
+  transform:translateY(calc((1 - var(--p)) * -60px));
+  opacity:calc(var(--p) * 6);
+}
+.obj[data-i="6"] .obj-alt{
+  transform:translate(690px,316px) rotate(var(--pend,0deg)) translate(-690px,-316px);
+}
+
+/* 7 ARC LAMP — telescopes out of its own base, arc unfurling as it grows */
+.obj[data-i="7"]{
+  transform:translate(1434px,940px) scaleY(calc(.12 + var(--p) * .88)) translate(-1434px,-940px);
+  opacity:calc(var(--p) * 6);
+}
+.obj[data-i="7"] .obj-sub{
+  transform:translate(1180px,408px) rotate(calc((1 - var(--p)) * -14deg)) translate(-1180px,-408px);
+}
+#cone{opacity:calc(var(--lamp,0) * .3); transform:translate(1180px,432px) scaleY(var(--lamp,0)) translate(-1180px,-432px)}
+
+/* 8 PLANT — pot, then seven leaves from their own stem bases */
+.obj[data-i="8"]{
+  transform:translate(324px,905px) scale(var(--p)) translate(-324px,-905px);
+  opacity:calc(var(--p) * 6);
+}
+.lf{
+  transform-box:view-box; transform-origin:var(--o);
+  transform:rotate(calc((1 - var(--f,0)) * -18deg)) scale(calc(.04 + var(--f,0) * .96));
+  opacity:calc(var(--f,0) * 4);
+}
+/* Two of the seven keep moving after everything has landed. A finished
+   BUILDING is static and reads as done; a finished ROOM should look lived
+   in — this is the whole difference, and it is two keyframes. */
+.room-stage.armed .lf[data-sway="a"]{animation:leafSway 14s var(--ease) infinite}
+.room-stage.armed .lf[data-sway="b"]{animation:leafSway 17s var(--ease) -6s infinite}
+@keyframes leafSway{
+  0%,100%{transform:rotate(-1.1deg) scale(1)}
+  50%{transform:rotate(1.1deg) scale(1)}
+}
+
+/* 9 SIDE TABLE — rises out of the floor. Small, quick, unremarkable on
+   purpose: the room needs one arrival that does not ask for attention. */
+.obj[data-i="9"]{
+  transform:translateY(calc((1 - var(--p)) * 90px));
+  opacity:calc(var(--p) * 6);
+}
+#lamp2Glow{opacity:calc(var(--lamp2,0) * .8)}
+
+/* ── light ──────────────────────────────────────────────────────────────── */
+#solids{opacity:var(--solid,0)}
+#win{opacity:var(--win,0)}
+#trims{opacity:calc(var(--solid,0) * .85)}
+#curt .fill-b{fill:#121B27}
+/* the sun crosses the aperture as --sun runs; visible early, gone by
+   midday, clipped so it can never paint over the wall */
+#sunDisc,#sunGlow{
+  transform:translate(calc(var(--sun,0) * 195px),calc(var(--sun,0) * 60px));
+  opacity:calc(var(--win,0) * (1 - abs(var(--sun,0) - .22) * 3.2));
+}
+#skyl{fill:#0A121C; opacity:calc(var(--win,0) * .9)}
+/* dust: five slow uncorrelated drifts, only alive while the lamp is */
+#dust{opacity:calc(var(--lamp,0) * .5)}
+.dm{
+  fill:var(--gold-lt);
+  animation:dustDrift calc(8s + var(--i,0) * 2.7s) var(--ease) calc(var(--i,0) * -3.3s) infinite;
+}
+@keyframes dustDrift{
+  0%,100%{transform:translate(0,0)}
+  33%{transform:translate(calc(4px + var(--i,0) * 1px),-26px)}
+  66%{transform:translate(calc(-5px + var(--i,0) * 1px),-11px)}
+}
+#warmWash{opacity:calc(var(--lamp,0) * .07)}
+#vig{opacity:.6; pointer-events:none}
+/* four skies, crossfaded on opacity. --sun 0→1 walks the day. */
+.sky[data-sky="0"]{opacity:calc(1 - var(--sun,0) * 3.4)}
+.sky[data-sky="1"]{opacity:calc(1 - abs(var(--sun,0) - .38) * 4)}
+.sky[data-sky="2"]{opacity:calc(1 - abs(var(--sun,0) - .76) * 4.6)}
+.sky[data-sky="3"]{opacity:calc((var(--sun,0) - .84) * 6)}
+#plan{opacity:calc(var(--plan,0) - var(--warm,0) * .3)}
+#ghosts .gh{opacity:calc((1 - var(--gp,0)) * .55 * var(--plan,0) * 2)}
+#survey{opacity:var(--survey,0)}
+#haze{opacity:calc(var(--haze,0) * .1)}
+#cool{opacity:calc(1 - var(--warm,0))}
+/* the patch of sun on the floor travels with the sun that casts it */
+#pool{
+  opacity:calc(var(--pool,0) * .85);
+  transform:translateX(var(--pool-x,0px));
+}
+#city{opacity:calc(var(--city,0) * .7)}
+#bloomLamp{opacity:calc(var(--lamp,0) * .5)}
+#bloomFloor{opacity:calc(var(--lamp,0) * .34)}
+.sh{opacity:calc(var(--sp,0) * .8)}
+
+/* ── chrome ─────────────────────────────────────────────────────────────── */
+.room-skip{
+  position:absolute; right:clamp(16px,2.4vw,36px); top:clamp(86px,11vh,120px); z-index:8;
+  display:inline-flex; align-items:center; gap:9px;
+  padding:9px 15px; border-radius:999px;
+  border:1px solid var(--hair); background:rgba(11,16,24,.6);
+  font-size:.74rem; letter-spacing:.1em; text-transform:uppercase; color:var(--c-70);
+  transition:border-color .4s var(--ease),color .4s var(--ease),background-color .4s var(--ease);
+}
+.room-skip svg{width:13px; height:13px}
+@media (hover:hover) and (pointer:fine){
+  .room-skip:hover{border-color:var(--gold); color:var(--cream); background:rgba(255,178,90,.1)}
+}
+
+/* progress meter, table of contents and transport control in one object */
+.room-rail{
+  position:absolute; left:clamp(14px,2vw,30px); top:50%; transform:translateY(-50%); z-index:8;
+  display:flex; flex-direction:column; align-items:flex-start; gap:0;
+}
+.rr-line{position:absolute; left:5px; top:8px; bottom:26px; width:1px; background:var(--hair)}
+.rr-line i{
+  display:block; width:100%; height:100%; transform-origin:top;
+  transform:scaleY(var(--rp,0));
+  background:linear-gradient(180deg,var(--gold-lt),var(--gold),var(--plinth));
+  box-shadow:0 0 10px rgba(255,215,163,.6);
+}
+.rr-tick{
+  position:relative; display:flex; align-items:center; gap:12px;
+  padding:0; height:34px; text-align:left;
+}
+.rr-tick::before{
+  content:""; width:11px; height:11px; flex:none; border-radius:50%;
+  background:rgba(244,239,230,.22);
+  transform:scale(.55); transition:transform .45s var(--ease),background-color .45s var(--ease),box-shadow .45s var(--ease);
+}
+.rr-tick[data-on="past"]::before{background:var(--gold-dp)}
+.rr-tick[data-on="now"]::before{
+  background:var(--gold-lt); transform:scale(1);
+  box-shadow:0 0 0 4px rgba(255,215,163,.14),0 0 16px 3px rgba(255,215,163,.6);
+}
+.rr-tick span{
+  font-size:.62rem; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--c-38); white-space:nowrap; opacity:0; transform:translateX(-4px);
+  transition:opacity .4s var(--ease),transform .4s var(--ease),color .4s var(--ease);
+}
+.rr-tick[data-on="now"] span{opacity:1; transform:none; color:var(--gold-lt)}
+.rr-tick[data-on="past"] span{opacity:.5; transform:none}
+@media (hover:hover) and (pointer:fine){
+  .rr-tick:hover span{opacity:1; transform:none; color:var(--cream)}
+  .rr-tick:hover::before{background:var(--gold-lt)}
+}
+.rr-count{margin:10px 0 0 26px; color:var(--c-38)}
+@media (max-width:1200px){.rr-tick span{display:none}}
+
+.room-intro{
+  position:absolute; left:clamp(20px,5vw,88px); top:50%; z-index:5; width:min(100%,540px);
+  transform:translate3d(0,calc(-50% + var(--intro-y,0px)),0);
+  opacity:var(--intro-o,1); filter:blur(var(--intro-b,0px));
+  pointer-events:var(--intro-pe,auto);
+  will-change:transform,opacity,filter;
+}
+.room-intro h1{margin:18px 0 20px; font-size:clamp(2.1rem,4vw,3.5rem)}
+.room-intro .lede{max-width:42ch}
+.build-cue{
+  display:inline-flex; align-items:center; gap:12px; margin-top:28px;
+  font-size:.66rem; letter-spacing:.22em; text-transform:uppercase; color:var(--c-52);
+}
+.build-cue i{
+  width:22px; height:34px; border-radius:12px; flex:none; position:relative;
+  border:1px solid rgba(244,239,230,.24);
+}
+.build-cue i::after{
+  content:""; position:absolute; left:50%; top:7px; width:3px; height:6px; border-radius:2px;
+  background:var(--gold-lt); box-shadow:0 0 8px rgba(255,178,90,.7);
+  animation:cueDrop 2.1s var(--ease) infinite;
+}
+@keyframes cueDrop{
+  0%{transform:translate(-50%,0); opacity:0}22%{opacity:1}
+  70%{transform:translate(-50%,13px); opacity:0}100%{transform:translate(-50%,13px); opacity:0}
+}
+
+/* LOWER-LEFT, inboard of the rail. The pool sweeps left to right and ends
+   on the right wall, and both lamps are right of centre — so at p=1 the
+   lower left is the darkest quadrant in the room, which is where a panel
+   of text belongs. It must hold contrast with backdrop-filter OFF,
+   because that is gated at 1024px. */
+.room-read{
+  position:absolute; left:clamp(70px,7vw,116px); bottom:clamp(28px,6vh,72px); z-index:7;
+  width:min(400px,34vw); padding:clamp(18px,2vw,26px); border-radius:var(--r-lg);
+  border:1px solid var(--hair);
+  background:linear-gradient(155deg,rgba(16,22,32,.88),rgba(8,12,18,.92));
+  box-shadow:var(--shadow-float);
+  opacity:0; transform:translate3d(0,14px,0); pointer-events:none;
+  transition:opacity .7s var(--ease),transform .8s var(--ease);
+}
+@media (min-width:1024px){
+  .room-read{-webkit-backdrop-filter:blur(12px) saturate(130%); backdrop-filter:blur(12px) saturate(130%)}
+}
+.room-stage.reading .room-read{opacity:1; transform:none}
+.room-read>.mono{display:block; margin-bottom:12px; color:var(--gold)}
+.room-read h2{
+  margin:0 0 10px; font-family:var(--display); font-weight:400;
+  font-size:clamp(1.2rem,1.7vw,1.6rem); line-height:1.1; color:var(--cream);
+}
+.room-read #readSpec{margin:0 0 10px}
+.room-read #readLight{margin:0; font-size:.86rem; color:var(--c-52); font-style:italic; min-height:2.6em}
+/* the swap is a fade at both ends, 190ms against a .18s fade — the two
+   are one number, change either and change both */
+.room-read .swap{transition:opacity .18s var(--ease),transform .18s var(--ease)}
+.room-read.out .swap{opacity:0; transform:translateY(6px)}
+
+/* lifted clear of the pin's own bottom fade (z-6) — flush to the
+   corner it was being eaten by it */
+.title-block{
+  position:absolute; right:clamp(8px,1.4vw,20px); bottom:clamp(12px,3vh,30px); z-index:7; margin:0;
+  display:grid; grid-template-columns:repeat(4,minmax(0,1fr));
+  border:1px solid var(--draft-dim); border-radius:4px; overflow:hidden;
+  background:rgba(5,7,11,.5);
+}
+@media (min-width:1024px){
+  .title-block{-webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px)}
+}
+.title-block div{padding:7px 14px; border-right:1px solid var(--draft-dim)}
+.title-block div:last-child{border-right:0}
+.title-block dt{margin:0; font-size:.54rem; letter-spacing:.2em; text-transform:uppercase; color:var(--c-38)}
+.title-block dd{margin:3px 0 0; font-size:.72rem; color:var(--draft-lt); font-variant-numeric:tabular-nums}
+.title-block .tb-status dd{color:var(--gold-lt); text-shadow:0 0 14px rgba(255,178,90,.35)}
+@media (max-width:1024px){.title-block{display:none}}
+
+/* clip-path, NOT display:none — this is the page's real copy and it has
+   to stay in the accessibility tree and in the document. */
+.schedule{
+  position:absolute; width:1px; height:1px; margin:-1px; padding:0; border:0;
+  clip-path:inset(50%); overflow:hidden; white-space:nowrap;
+}
+
+/* nine transparent buttons over the pieces, on the same camera transform */
+.obj-layer{position:absolute; inset:0; z-index:4; pointer-events:none}
+.room-stage.armed .obj-layer{pointer-events:auto}
+.obj-hit{
+  position:absolute; padding:0; border:0; background:none; border-radius:6px;
+  opacity:0; pointer-events:auto;
+}
+.room-stage.armed .obj-hit{opacity:1; cursor:pointer}
+.obj-hit:focus-visible{outline:2px solid var(--gold-lt); outline-offset:3px}
+
+/* ── responsive ───────────────────────────────────────────────────────────
+   Below 861px — invest's breakpoint, not a new one — there is no pin, no
+   scroll driving and NO SCROLL LISTENER BOUND AT ALL. The section becomes
+   an ordinary revealed diagram of the finished room with the copy under
+   it. position:relative and not static, because .bp-grid inside is
+   absolute at inset:-20% and left to resolve against .room it hangs off
+   both edges and scrolls the page sideways — a bug this codebase has
+   already shipped twice. */
+/* ── clearing the rail ────────────────────────────────────────────────────
+   The rail's tick LABELS only exist above 1200px, and when they do they
+   run out to about 118px from the left edge. The intro and the reading
+   panel were both sitting inside that — measured at 1366 and at 2560,
+   "EMPTY" printed straight through "THE ROOM". Above the breakpoint both
+   start clear of the labels; below it the labels are gone and they can
+   come back in. Two rules, and they are the two halves of one number. */
+@media (min-width:1201px){
+  .room-intro{left:clamp(132px,10vw,190px)}
+  .room-read{left:clamp(132px,10vw,180px)}
+}
+@media (max-width:1200px){
+  .room-read{left:clamp(56px,6vw,80px); width:min(340px,42vw)}
+}
+@media (max-width:860px){
+  .room{height:auto}
+  .room-pin{
+    position:relative; height:auto; overflow:clip;
+    padding:clamp(96px,15vh,130px) var(--gutter) clamp(30px,6vh,50px);
+    grid-template-rows:none; gap:26px;
+  }
+  .room-pin::after{display:none}
+  .room-stage{height:auto; display:grid; gap:24px}
+  #roomSvg{height:auto; aspect-ratio:1120/800; border-radius:var(--r-lg)}
+  .room-intro{position:static; transform:none; opacity:1; filter:none; width:100%; order:-1}
+  .build-cue{display:none}
+  .room-rail,.room-skip{display:none}
+  .room-read{
+    position:static; width:100%; opacity:1; transform:none; pointer-events:auto;
+    background:linear-gradient(155deg,rgba(29,38,50,.4),rgba(11,16,24,.5));
+  }
+  .obj-layer{display:none}
+}
+
+@media (prefers-reduced-motion:reduce){
+  /* No scrubbing, no drifting, no sway. The room arrives finished — the
+     script writes every driver to its end state and binds no listener. */
+  .room{height:auto}
+  .room-pin{position:relative; height:auto; padding:clamp(96px,15vh,130px) var(--gutter) 40px;
+    grid-template-rows:none; gap:26px}
+  .room-pin::after{display:none}
+  .room-stage{height:auto; display:grid; gap:24px}
+  #roomSvg{height:auto; aspect-ratio:16/10}
+  .room-intro{position:static; transform:none; opacity:1; filter:none; width:100%; order:-1}
+  .build-cue,.room-rail,.room-skip,.obj-layer{display:none}
+  .room-read{position:static; width:100%; opacity:1; transform:none; pointer-events:auto}
+  .lf,#cam,.obj-layer,.dm{animation:none}
+}

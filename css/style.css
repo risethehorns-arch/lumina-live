@@ -56,6 +56,18 @@ button { cursor: pointer; border: none; background: none; font-family: var(--fon
 ul { list-style: none; }
 ::selection { background: var(--gold); color: var(--navy); }
 
+/* This sheet had no focus rule at all: every button, footer link and CTA
+   on the older pages fell back to whatever ring the browser draws, and
+   the form fields removed even that. The ring is the elevated cluster's,
+   hard-coded rather than tokenised — --gold here is #C2A35A, and a reader
+   crossing from the landing page should meet the same focus mark on both
+   sides of the site rather than the local palette's. */
+:focus-visible {
+  outline: 2px solid #FFB25A;
+  outline-offset: 3px;
+  box-shadow: 0 0 0 6px rgba(255, 178, 90, 0.12);
+}
+
 /* --- Layout --- */
 .container {
   max-width: var(--max-width);
@@ -311,9 +323,12 @@ p { font-size: 0.95rem; color: var(--ink-soft); line-height: 1.85; }
   font-size: 0.95rem;
   color: var(--ink);
   transition: border-color var(--transition);
-  outline: none;
   appearance: none;
 }
+/* `outline: none` used to sit in the rule above, which killed the ring in
+   every state including focus — on a light background a 1px bottom border
+   moving from #CDC7BD to #C2A35A is not a visible focus mark. The border
+   change stays as a secondary cue; the ring above is the primary one. */
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus { border-color: var(--gold); }

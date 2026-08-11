@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lumina Studio — websites, social and branding for real-estate firms</title>
+<meta name="description" content="Lumina Studio builds websites, social-media blueprints and brand identities for real-estate businesses in Jordan and the region. The site you are reading is the portfolio.">
+<meta name="theme-color" content="#05070B">
+
+<meta property="og:title" content="Lumina Studio — built by a brokerage, for brokerages">
+<meta property="og:description" content="Websites, social blueprints and branding for real-estate firms. This site is the sample.">
+<meta property="og:type" content="website">
+
+<link rel="icon" type="image/png" href="assets/lumina-logo.png" />
+<link rel="preload" as="font" type="font/woff2" href="assets/fonts/InstrumentSerif.woff2" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="assets/fonts/InstrumentSans.woff2" crossorigin>
+
+<link rel="stylesheet" href="css/elevated.css?v=2026-08-07b">
+<link rel="stylesheet" href="css/studio.css?v=2026-08-07k">
+
+<style>
+/* ═══════════════════════════════════════════════════════════
+   LUMINA — Studio
+   The fourth service, and the only one that is not about a
+   property. Shared shell in css/elevated.css; this block is the
+   hero, the proof strip and the three offerings.
+
+   WHAT IS REAL ON THIS PAGE
+   The capability, and this website as evidence of it. There are NO
+   client names, NO project counts, NO "50+ sites delivered", NO
+   prices and NO testimonials, because none of that has been
+   supplied and a studio page is exactly where invented credentials
+   get believed. What the page argues from instead is the one thing
+   that is verifiable while you read it: the site itself. Every
+   link in the proof strip goes to a real page of this build.
+
+   If real client work ever arrives, it replaces the proof strip —
+   it does not get added alongside invented numbers.
+   ═══════════════════════════════════════════════════════════ */
+
+.hero{
+  position:relative; z-index:2; overflow-x:clip;
+  padding:clamp(120px,17vh,190px) var(--gutter) clamp(40px,6vh,70px);
+  max-width:var(--max); margin-inline:auto;
+}
+.hero-in{max-width:840px}
+.hero h1{margin:20px 0 22px}
+.hero .lede{max-width:54ch}
+.hero-cta{display:flex; flex-wrap:wrap; gap:14px 18px; margin-top:clamp(28px,4vw,40px)}
+
+/* ── the proof strip ──────────────────────────────────────────
+   The argument of the whole page: you are already inside the
+   sample. Each tile links to a real set-piece on this build, so the
+   claim can be checked in one click rather than believed. */
+.proof{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+  gap:clamp(14px,1.6vw,22px)}
+.proof-item{
+  position:relative; display:flex; flex-direction:column; gap:8px;
+  padding:clamp(20px,2.2vw,28px); border-radius:var(--r-lg);
+  border:1px solid var(--hair);
+  background:linear-gradient(155deg,rgba(29,38,50,.36),rgba(11,16,24,.46));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
+  transition:transform .5s var(--ease),border-color .5s var(--ease),box-shadow .5s var(--ease);
+}
+@media (min-width:1024px){
+  .proof-item{-webkit-backdrop-filter:blur(12px) saturate(126%); backdrop-filter:blur(12px) saturate(126%)}
+}
+@media (hover:hover) and (pointer:fine){
+  .proof-item:hover{
+    transform:translateY(-5px); border-color:rgba(255,178,90,.3);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.09),0 26px 56px -32px rgba(255,178,90,.55);
+  }
+  .proof-item:hover .proof-go{transform:translateX(4px)}
+}
+.proof-item .mono{color:var(--gold)}
+.proof-item b{font-family:var(--display); font-weight:400; letter-spacing:-.015em;
+  font-size:clamp(1.1rem,1.5vw,1.34rem); line-height:1.12; color:var(--cream)}
+.proof-item span{font-size:.86rem; color:var(--c-52); line-height:1.55}
+.proof-go{
+  margin-top:6px; display:inline-flex; align-items:center; gap:8px;
+  font-size:.68rem; letter-spacing:.16em; text-transform:uppercase; color:var(--c-70);
+  transition:transform .45s var(--ease);
+}
+.proof-go svg{width:12px; height:12px}
+
+/* ── the three offerings ──────────────────────────────────── */
+.offer-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:clamp(16px,1.8vw,26px)}
+.offer .n{
+  display:block; margin-bottom:16px; font-family:var(--display); font-weight:400;
+  font-size:1.5rem; line-height:1; color:var(--gold);
+  text-shadow:0 0 22px rgba(255,178,90,.4);
+}
+.offer h3{margin:0 0 12px; font-family:var(--display); font-weight:400;
+  font-size:clamp(1.24rem,1.7vw,1.55rem); line-height:1.1; color:var(--cream)}
+.offer p{margin:0 0 16px; font-size:.94rem; color:var(--c-52)}
+.offer ul{margin:0; padding:0; list-style:none; display:grid; gap:9px}
+.offer li{position:relative; padding-left:18px; font-size:.87rem; color:var(--c-52)}
+.offer li::before{content:""; position:absolute; left:0; top:.62em; width:7px; height:1px;
+  background:var(--gold-dp)}
+</style>
+
+<link rel="stylesheet" href="css/mobile.css?v=2026-08-07d">
+</head>
+<body>
+
+<div class="boot" id="boot" aria-hidden="true">
+  <img src="assets/lumina-logo.png" alt="" width="669" height="181">
+</div>
+
+<div class="grain" aria-hidden="true"></div>
+<div class="glow" id="glow" aria-hidden="true"></div>
+
+<header class="bar" id="bar">
+  <a href="index.html" class="mark-img" aria-label="Lumina — home">
+    <img src="assets/lumina-logo.png" alt="Lumina" width="669" height="181">
+  </a>
+  <nav class="nav" aria-label="Primary">
+    <a href="index.html">Home</a>
+    <a href="listings.html">Properties</a>
+    <a href="services.html">Services</a>
+    <a href="areas.html">Areas</a>
+    <a href="team.html">Team</a>
+    <a href="index.html#contact">Contact</a>
+    <a href="https://wa.me/962771505250" class="chip" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
+        <path d="M21 11.5a8.4 8.4 0 0 1-12.3 7.4L3.5 20.5l1.7-5A8.4 8.4 0 1 1 21 11.5Z"/>
+        <path d="M8.6 9.2c.3 2.5 2.6 4.8 5.1 5.2.7.1 1.5-.4 1.6-1.1l.1-.6-2-.9-.9.9c-1-.4-1.9-1.3-2.3-2.3l.9-.9-.9-2-.6.1c-.7.1-1.1.9-1 1.6Z"/>
+      </svg>
+      WhatsApp
+    </a>
+  </nav>
+</header>
+
+<nav class="spine" id="spine" aria-label="Section navigation">
+  <span class="rail" aria-hidden="true"></span>
+  <span class="fill" id="fill" aria-hidden="true"></span>
+  <button type="button" data-to="build"><span class="tip">The build</span></button>
+  <button type="button" data-to="top"><span class="tip">Studio</span></button>
+  <button type="button" data-to="proof"><span class="tip">Why it matters</span></button>
+  <button type="button" data-to="what"><span class="tip">What is included</span></button>
+  <button type="button" data-to="how"><span class="tip">How it works</span></button>
+  <button type="button" data-to="terms"><span class="tip">Fees and terms</span></button>
+  <button type="button" data-to="start"><span class="tip">Get started</span></button>
+  <button type="button" data-to="more"><span class="tip">Also from Lumina</span></button>
+</nav>
+
+<main>
+
+<!-- ═══ THE BUILD — the page opens on it ════════════════════
+     420vh of pinned stage in which a brand, then a website, then a set
+     of posts build themselves. It is the argument of this whole page
+     performed rather than described: a studio that says it can build
+     you something should be able to build something while you read.
+
+     See the phase table at the top of css/studio.css for the score.
+     Every value is a pure function of the pin's 0…1 progress, which is
+     why scrolling back up un-builds it as carefully as scrolling down
+     built it. -->
+<section class="st" id="build" aria-label="A brand and a website building themselves as you scroll">
+  <div class="st-pin">
+    <div class="bp-grid" aria-hidden="true"></div>
+
+    <!-- FIRST in the pin: the very first Tab from the bar lands on the
+         way out. A four-viewport pin you cannot escape is a trap. -->
+    <button type="button" class="st-skip" id="stSkip">
+      Skip the build
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5l5 5 5-5"/></svg>
+    </button>
+
+    <div class="st-stage" id="stStage">
+
+      <!-- everything the camera moves as one -->
+      <div class="st-cam" id="stCam" aria-hidden="true">
+
+        <!-- ACT 1 · the brand -->
+        <div class="st-brand" id="stBrand">
+          <div class="st-mark">
+            <i class="st-ring" id="stRing"></i>
+            <i class="st-mono" id="stMono">A</i>
+          </div>
+          <div class="st-spec" id="stSpec1"><b>Instrument Serif</b><em>Display · 400</em></div>
+          <div class="st-spec two" id="stSpec2"><b>Instrument Sans</b><em>Body · 400–700</em></div>
+          <div class="st-chips">
+            <i class="st-chip a"></i><i class="st-chip b"></i><i class="st-chip c"></i>
+          </div>
+        </div>
+
+        <!-- ACT 2 · the site. Each block carries its own direction of
+             travel so no two arrive the same way, and every one holds a
+             wireframe layer, a skinned layer and a content layer that
+             crossfade rather than change colour. -->
+        <div class="st-win" id="stWin">
+          <div class="st-chrome">
+            <i class="st-dot"></i><i class="st-dot"></i><i class="st-dot"></i>
+            <span class="st-url" id="stUrl"><span>your-agency.jo</span></span>
+          </div>
+          <div class="st-page">
+            <i class="st-guides" id="stGuides"></i>
+
+            <div class="st-b" data-bar style="left:0; top:0; right:0; height:13%; --dx:0px; --dy:-16px">
+              <i class="st-wire"></i><i class="st-skin"></i>
+              <i class="st-content">
+                <i class="st-mark-mini"></i>
+                <i class="st-navdots"><i></i><i></i><i></i></i>
+              </i>
+            </div>
+
+            <div class="st-b" data-hero style="left:5%; top:18%; right:5%; height:38%; --dx:0px; --dy:26px">
+              <i class="st-wire"></i><i class="st-skin"></i>
+              <i class="st-content">
+                <i class="st-line big"></i>
+                <i class="st-line w1"></i>
+                <i class="st-line w2"></i>
+                <i class="st-line gold w4"></i>
+              </i>
+            </div>
+
+            <div class="st-b" style="left:5%; top:60%; width:28%; height:26%; --dx:-22px; --dy:10px">
+              <i class="st-wire"></i><i class="st-skin"></i>
+              <i class="st-content"><i class="st-line w1"></i><i class="st-line w3"></i><i class="st-price">JOD 480,000</i></i>
+            </div>
+            <div class="st-b" style="left:36%; top:60%; width:28%; height:26%; --dx:0px; --dy:22px">
+              <i class="st-wire"></i><i class="st-skin"></i>
+              <i class="st-content"><i class="st-line w1"></i><i class="st-line w2"></i><i class="st-price">JOD 320,000</i></i>
+            </div>
+            <div class="st-b" style="left:67%; top:60%; width:28%; height:26%; --dx:22px; --dy:10px">
+              <i class="st-wire"></i><i class="st-skin"></i>
+              <i class="st-content"><i class="st-line w1"></i><i class="st-line w3"></i><i class="st-price">JOD 610,000</i></i>
+            </div>
+
+            <div class="st-b" style="left:0; bottom:0; right:0; height:9%; --dx:0px; --dy:18px">
+              <i class="st-wire"></i><i class="st-skin"></i>
+              <i class="st-content"><i class="st-line w4"></i></i>
+            </div>
+          </div>
+          <i class="st-flash" id="stFlash"></i>
+        </div>
+
+        <!-- ACT 3 · the social -->
+        <div class="st-phone" id="stPhone">
+          <div class="st-posts">
+            <div class="st-post" style="--rot:-7deg"><i></i><i class="s"></i></div>
+            <div class="st-post" style="--rot:5deg"><i></i><i class="s"></i></div>
+            <div class="st-post" style="--rot:-4deg"><i></i><i class="s"></i></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="st-intro" id="stIntro">
+        <p class="kicker">Lumina Studio</p>
+        <h1 class="display">We would rather build one than describe one.</h1>
+        <p class="lede">So here is a brand, a website and a week of posts, made in that order — which is the order they have to be made in.</p>
+        <!-- the instruction lives HERE and not in the lede above, because
+             on phones and under reduced motion there is no scroll build
+             and studio.js's flat() rewrites this one line. A sentence
+             ending "Scroll." cannot be rewritten from JS without editing
+             prose from a script. -->
+        <p class="build-cue" id="stCue"><i aria-hidden="true"></i>Scroll to build it</p>
+      </div>
+
+      <nav class="st-rail" id="stRail" aria-label="Jump to a stage of the build"></nav>
+
+      <aside class="st-read" id="stRead" aria-hidden="true">
+        <span class="mono" id="stReadTag">01 / THE BRAND</span>
+        <div class="swap">
+          <h2 id="stReadName">A mark, a typeface, three colours</h2>
+          <p id="stReadNote">Everything downstream is decided here.</p>
+        </div>
+      </aside>
+
+      <dl class="st-sheet mono" aria-hidden="true">
+        <div><dt>Job</dt><dd>Brand + site</dd></div>
+        <div class="st-status"><dt>Stage</dt><dd id="stStatus">Brief</dd></div>
+        <div><dt>Act</dt><dd id="stStep">01 / 04</dd></div>
+      </dl>
+
+      <!-- THE COPY LIVES HERE, once. studio.js reads the reading panel's
+           text out of this list rather than holding its own array, so
+           there is one copy of the copy, it survives JS being blocked,
+           and a crawler sees it. clip-path, not display:none, so it
+           stays in the accessibility tree. -->
+      <ol class="st-schedule" id="stSchedule">
+        <li data-tag="01 / THE BRAND" data-name="A mark, a typeface, three colours">Everything downstream is decided here. Get the mark and the type right and the website mostly designs itself; get them wrong and no amount of layout rescues it.</li>
+        <li data-tag="02 / THE SITE" data-name="Wireframe first, decoration last">Boxes before colour, always. If the page does not work as grey rectangles it will not work in your brand either — it will just be a prettier version of the same problem.</li>
+        <li data-tag="03 / THE SOCIAL" data-name="Posts out of the same system">The feed is not a separate project. It uses the mark, the type and the colours already decided, which is why a blueprint your own team can run is worth more than us posting for you.</li>
+        <li data-tag="04 / HANDOVER" data-name="And then it is yours">Files, domain and accounts in your name. If you never speak to us again it keeps working — the only honest test of whether it was built properly.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<div class="rule"></div>
+
+<!-- ═══ HERO ════════════════════════════════════════════ -->
+<section class="hero" id="top">
+  <div class="hero-in">
+    <p class="kicker rv">Services · Lumina Studio</p>
+    <h1 class="display rv" style="--rvd:60ms">Most property websites are built by people who have never sold a property.</h1>
+    <p class="lede rv" style="--rvd:140ms">We are a brokerage first. We know what a listing page has to do at eleven at night when somebody is deciding whether to fly in — because we watch it happen. Lumina Studio builds websites, social-media blueprints and brand identities for other real-estate firms, on that basis.</p>
+
+    <!-- Same component and position as every other service page. -->
+    <div class="whofor rv" style="--rvd:200ms">
+      <p class="mono">Right for you if</p>
+      <ul>
+        <li>You are an agency or a developer whose site is a brochure, not a tool</li>
+        <li>Your listings live on a portal and nowhere you actually own</li>
+        <li>Your posts look like everyone else's because they use the same template</li>
+      </ul>
+      <p class="out">Looking for a property rather than a website? <a href="listings.html">The portfolio</a>. Buying to invest? <a href="invest.html">New buildings</a>.</p>
+    </div>
+
+    <div class="hero-cta rv" style="--rvd:280ms">
+      <a class="btn" href="#start">
+        Start a conversation
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:15px;height:15px"><path d="M4.8 11.2 11.2 4.8M6.1 4.8h5.1v5.1"/></svg>
+      </a>
+      <a class="btn-line" href="services.html">
+        All services
+        <i aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4.8 11.2 11.2 4.8M6.1 4.8h5.1v5.1"/></svg></i>
+      </a>
+    </div>
+  </div>
+</section>
+
+<div class="rule"></div>
+
+<!-- ═══ THE PROOF ═══════════════════════════════════════
+     The page's whole argument, and the reason it needs no invented
+     credentials: the reader is already inside the sample. Every tile
+     links to a real page of this build. -->
+<section class="sec" id="proof">
+  <div class="sec-head rv">
+    <p class="kicker">Why it matters</p>
+    <h2 class="display">You are already looking at the portfolio.</h2>
+    <p class="lede">This site is ours. Everything on it was designed and written and built in-house — no template, no page builder, no stock photography. Rather than describe what we do, here is what is on the other end of four links.</p>
+  </div>
+
+  <div class="proof rv" style="--rvd:80ms">
+    <a class="proof-item" href="room.html">
+      <span class="mono">Set-piece</span>
+      <b>A room that furnishes itself</b>
+      <span>An empty apartment drawn in perspective, filling with nine pieces as you scroll, while the light crosses the floor and hands over to a lamp.</span>
+      <span class="proof-go">Open it
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+      </span>
+    </a>
+    <a class="proof-item" href="invest.html">
+      <span class="mono">Set-piece</span>
+      <b>A building that goes up as you read</b>
+      <span>Eight floors assembling on a scroll, each arriving its own way, with a construction line riding the work and a title block that keeps score.</span>
+      <span class="proof-go">Open it
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+      </span>
+    </a>
+    <a class="proof-item" href="listings.html">
+      <span class="mono">The working part</span>
+      <b>A portfolio that is actually yours</b>
+      <span>Every residence on the book, filterable, each with its own gallery and its own shareable link — running off a spreadsheet the office already keeps.</span>
+      <span class="proof-go">Open it
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+      </span>
+    </a>
+    <a class="proof-item" href="areas.html">
+      <span class="mono">The quiet part</span>
+      <b>Local knowledge, made navigable</b>
+      <span>Nine districts on a plan that follows what you are reading, plus a five-tap quiz that tells a newcomer where to start looking.</span>
+      <span class="proof-go">Open it
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+      </span>
+    </a>
+  </div>
+
+  <p class="note rv" style="--rvd:140ms">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><circle cx="8" cy="8" r="6.4"/><path d="M8 7.2v4M8 4.9v.9"/></svg>
+    <span>There are no client logos or project counts on this page. We would rather show you one site you can click through than a wall of names you cannot check — and when we have work we are allowed to name, it will replace this section rather than sit beside a number.</span>
+  </p>
+</section>
+
+<div class="rule"></div>
+
+<!-- ═══ WHAT IS INCLUDED ════════════════════════════════ -->
+<section class="sec" id="what">
+  <div class="sec-head rv">
+    <p class="kicker">What is included</p>
+    <h2 class="display">Three things, and they are usually one job.</h2>
+    <p class="lede">You can take one. Most firms need the middle one and discover they needed the other two — a site with nothing to say and a feed with nothing to point at are the same problem twice.</p>
+  </div>
+
+  <div class="offer-grid">
+    <div class="float rv">
+      <div class="depth" style="--d:16px">
+        <div class="lev" style="--dur:12.6s;--amp:7px;--rot:.2deg;--delay:-1.4s">
+          <article class="card-g offer tilt">
+            <span class="spec" aria-hidden="true"></span>
+            <span class="n">01</span>
+            <h3>The website</h3>
+            <p>Not a brochure with a contact form. A place your listings actually live, that loads on a phone in a weak signal, and that you can update without ringing anybody.</p>
+            <ul>
+              <li>Designed and built from nothing — no template, no page builder</li>
+              <li>Listings driven by a spreadsheet your office already keeps</li>
+              <li>Every property with its own link, ready to send</li>
+              <li>Enquiries land in WhatsApp, where your clients already are</li>
+              <li>Yours outright: the files, the domain, the hosting account</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="float rv" style="--rvd:110ms">
+      <div class="depth" style="--d:24px">
+        <div class="lev" style="--dur:10.8s;--amp:9px;--rot:.26deg;--delay:-5.2s">
+          <article class="card-g offer tilt">
+            <span class="spec" aria-hidden="true"></span>
+            <span class="n">02</span>
+            <h3>The social blueprint</h3>
+            <p>Not us posting for you. A written system your own team can run — what to shoot, how to frame it, what to say underneath, and what to stop doing.</p>
+            <ul>
+              <li>A shooting guide for listings: angles, light, order, what to skip</li>
+              <li>Post formats that suit property rather than fashion</li>
+              <li>Templates in your typefaces and colours, not a stock pack</li>
+              <li>A weekly rhythm a two-person office can actually sustain</li>
+              <li>How a post gets someone to a listing page instead of a dead end</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="float rv" style="--rvd:220ms">
+      <div class="depth" style="--d:20px">
+        <div class="lev" style="--dur:14.1s;--amp:6px;--rot:.18deg;--delay:-8.3s">
+          <article class="card-g offer tilt">
+            <span class="spec" aria-hidden="true"></span>
+            <span class="n">03</span>
+            <h3>The brand</h3>
+            <p>The part that decides whether a stranger takes you seriously before you have said a word. Built to survive a phone screen, a signboard and a printed particulars sheet.</p>
+            <ul>
+              <li>Wordmark and marks, drawn rather than picked from a library</li>
+              <li>Typefaces and a colour set, with the reasoning written down</li>
+              <li>How a listing card, a sign and a document each look</li>
+              <li>A short book your team can follow without asking us</li>
+              <li>Every file in a format you can hand to anybody later</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="rule"></div>
+
+<!-- ═══ HOW IT WORKS ════════════════════════════════════ -->
+<section class="sec" id="how">
+  <div class="sec-head rv">
+    <p class="kicker">How it works</p>
+    <h2 class="display">Four stages, and you can stop after any of them.</h2>
+    <p class="lede">Nothing here requires a twelve-month contract. Each stage produces something you keep whether or not you carry on.</p>
+  </div>
+
+  <div class="points rv">
+    <div class="point">
+      <b>i</b>
+      <div>
+        <h4>A conversation, and a look at what you have</h4>
+        <p>What you sell, who to, and where it is going wrong. We go through your current site and your last month of posts and tell you what we would change first — that part costs nothing and is useful even if you stop there.</p>
+      </div>
+    </div>
+    <div class="point">
+      <b>ii</b>
+      <div>
+        <h4>A written proposal, with the price on it</h4>
+        <p>Scope, stages, what you provide, what we provide, and the fee. One document, one number, agreed before anything starts. No discovery phase that quietly bills for itself.</p>
+      </div>
+    </div>
+    <div class="point">
+      <b>iii</b>
+      <div>
+        <h4>Building, in the open</h4>
+        <p>You see it on a live link from the first week, not at a reveal. Changes are cheap early and expensive late, and a client who watches it happen catches the expensive ones while they are still cheap.</p>
+      </div>
+    </div>
+    <div class="point">
+      <b>iv</b>
+      <div>
+        <h4>Handover, meaning handover</h4>
+        <p>The files, the accounts, the domain and a written note on how to run it — in your name, not ours. If you never speak to us again the thing keeps working, which is the only honest test of whether it was built properly.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="rule"></div>
+
+<!-- ═══ TERMS ═══════════════════════════════════════════ -->
+<section class="sec" id="terms">
+  <div class="sec-head rv">
+    <p class="kicker">Fees and terms</p>
+    <h2 class="display">What it costs, and what you would be signing.</h2>
+    <p class="lede">The fee depends on how much of the three you take and how much of the content already exists. It is quoted once, in writing, before anything starts.</p>
+  </div>
+
+  <dl class="terms rv" style="--tc:3">
+    <div><dt>Who we work with</dt><dd>Property firms<small>Agencies, developers and management companies. It is the one industry we can claim to understand from the inside.</small></dd></div>
+    <div><dt>Where</dt><dd>Jordan and the region<small>Amman is home. The work travels — websites do not care where the office is.</small></dd></div>
+    <div><dt>Fee</dt><dd>Quoted per project<small>Set against the scope in a written proposal. No rate card, because a five-page site and a two-hundred-listing portfolio are not the same job.</small></dd></div>
+    <div><dt>Who owns it</dt><dd>You do<small>Files, domain, hosting and accounts in your name from the start. We do not hold anything hostage, and there is no licence to keep paying.</small></dd></div>
+    <div><dt>Competing firms</dt><dd>Said out loud<small>We are a brokerage as well as a studio. If you are a direct competitor in the same districts we will tell you before you brief us — and what you share with the studio stays with the studio.</small></dd></div>
+    <div><dt>After it ships</dt><dd>Optional, never locked<small>Keep us on for changes or take it in-house. It is built so a competent person can maintain it without us.</small></dd></div>
+  </dl>
+
+  <p class="note rv" style="--rvd:120ms">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><circle cx="8" cy="8" r="6.4"/><path d="M8 7.2v4M8 4.9v.9"/></svg>
+    <span><strong>On the obvious question:</strong> yes, we sell property and we are offering to build for firms that also sell property. We would rather put that at the top of the page than have you find it later. Where it is a genuine conflict we say so and decline — and everything a studio client tells us is kept away from the brokerage side.</span>
+  </p>
+</section>
+
+<div class="rule"></div>
+
+<!-- ═══ START ═══════════════════════════════════════════ -->
+<section class="sec" id="start">
+  <div class="sec-head rv">
+    <p class="kicker">Get started</p>
+    <h2 class="display">Tell us what you have and what is wrong with it.</h2>
+    <p class="lede">The second half of that sentence is the useful one, and most people can answer it in a line.</p>
+  </div>
+
+  <div class="reg">
+    <div class="reg-side rv">
+      <p>If you already have a site, send the address — we would rather look at the real thing than read a description of it. The first conversation is a look and an opinion, and it costs nothing whether or not it goes further.</p>
+      <ul class="ticks">
+        <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8.4l3.2 3.2L13 4.8"/></svg><span>A written proposal with the fee on it before any work starts.</span></li>
+        <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8.4l3.2 3.2L13 4.8"/></svg><span>Everything ends up in your name — files, domain, accounts.</span></li>
+        <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8.4l3.2 3.2L13 4.8"/></svg><span>If what you need is smaller than what we do, we will say so.</span></li>
+      </ul>
+    </div>
+
+    <form class="reg-form rv" style="--rvd:130ms" id="regForm">
+      <label class="field">
+        <span>Your name</span>
+        <input type="text" id="r-name" name="name" autocomplete="name" placeholder="Name">
+      </label>
+      <label class="field">
+        <span>Your firm</span>
+        <input type="text" id="r-firm" name="firm" autocomplete="organization" placeholder="Company name">
+      </label>
+      <label class="field">
+        <span>What you are after</span>
+        <select id="r-scope" name="scope">
+          <option selected>A website</option>
+          <option>A social blueprint</option>
+          <option>Branding</option>
+          <option>All three</option>
+          <option>Not sure yet — advise me</option>
+        </select>
+      </label>
+      <label class="field">
+        <span>Anything else</span>
+        <textarea id="r-note" name="note" placeholder="Your current site address, roughly how many listings, and what is not working."></textarea>
+      </label>
+      <a class="btn" id="regSend" href="https://wa.me/962771505250" target="_blank" rel="noopener">
+        Send on WhatsApp
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true" style="width:16px;height:16px">
+          <path d="M21 11.5a8.4 8.4 0 0 1-12.3 7.4L3.5 20.5l1.7-5A8.4 8.4 0 1 1 21 11.5Z"/>
+        </svg>
+      </a>
+      <p class="fine">Goes to +962 77 150 5250. Nothing is stored on this site.</p>
+    </form>
+  </div>
+</section>
+
+<div class="rule"></div>
+
+<!-- ═══ THE OTHERS ══════════════════════════════════════ -->
+<section class="sec" id="more">
+  <div class="sec-head rv" style="margin-bottom:clamp(28px,3.4vw,44px)">
+    <p class="kicker">Also from Lumina</p>
+    <h2 class="display">The property side.</h2>
+  </div>
+  <div class="more-grid rv" style="--rvd:90ms">
+    <a class="more-card" href="invest.html">
+      <span class="mono">For buyers</span>
+      <h3>Investment</h3>
+      <p>New buildings from one contractor, offered to our register before they are listed anywhere.</p>
+      <span class="more-go">Open
+        <i aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4.8 11.2 11.2 4.8M6.1 4.8h5.1v5.1"/></svg></i>
+      </span>
+    </a>
+    <a class="more-card" href="property-management.html">
+      <span class="mono">For owners</span>
+      <h3>Property management</h3>
+      <p>Tenants, rent, dues and repairs handled here while you are somewhere else, with one report a month.</p>
+      <span class="more-go">Open
+        <i aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4.8 11.2 11.2 4.8M6.1 4.8h5.1v5.1"/></svg></i>
+      </span>
+    </a>
+    <a class="more-card" href="property-evaluation.html">
+      <span class="mono">For sellers, buyers and lenders</span>
+      <h3>Property evaluation</h3>
+      <p>A written opinion of what a property is worth, with the comparable evidence attached to it.</p>
+      <span class="more-go">Open
+        <i aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4.8 11.2 11.2 4.8M6.1 4.8h5.1v5.1"/></svg></i>
+      </span>
+    </a>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="foot-in">
+    <div>
+      <a href="index.html" class="mark-img" aria-label="Lumina — home">
+        <img src="assets/lumina-logo.png" alt="Lumina" width="669" height="181">
+      </a>
+      <p class="fine" style="margin:12px 0 0">Private real estate advisory · Amman, Jordan</p>
+    </div>
+    <nav class="foot-nav" aria-label="Footer">
+      <a href="index.html">Home</a><a href="listings.html">Properties</a>
+      <a href="services.html">Services</a><a href="lumina-studio.html">Studio</a>
+      <a href="areas.html">Areas</a><a href="room.html">The room</a>
+      <a href="team.html">Team</a><a href="index.html#contact">Contact</a>
+    </nav>
+    <p class="fine">
+      <span>© <span id="yr">2026</span> Lumina Real Estate Advisory</span>
+      <span>Studio · websites, social and branding</span>
+      <span>Fees quoted per project</span>
+    </p>
+  </div>
+</footer>
+
+<script src="js/lumina.js?v=2026-08-07d" defer></script>
+<script src="js/nav-menu.js?v=2026-08-07b" defer></script>
+<script src="js/service-form.js?v=2026-08-07b" defer></script>
+<script src="js/studio.js?v=2026-08-07k" defer></script>
+</body>
+</html>

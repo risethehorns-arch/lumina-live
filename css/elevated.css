@@ -1,0 +1,693 @@
+/* ==========================================================================
+   LUMINA — elevated.css
+   The shared shell for the *elevated* cluster's newer pages:
+
+     services.html
+     property-management.html
+     property-evaluation.html
+
+   WHY THIS FILE EXISTS, AND WHAT IT IS NOT
+   ---------------------------------------
+   index.html and invest.html each carry their own copy of this block
+   inline. That was the right call for two pages and it is documented in
+   CLAUDE.md — extracting a shared sheet would have meant rewriting
+   index.html's entire inline stylesheet for no benefit.
+
+   Three more pages landed at once. Pasting four hundred identical lines
+   into each of them would have been indefensible, so the shell lives
+   here and those three link it. index.html and invest.html are NOT
+   touched and do NOT load this file: they still own their copies.
+
+   That means the tokens now exist in three places. If you change one,
+   change all three — index.html, invest.html, and here. The alternative
+   was six places.
+
+   This file is for the elevated cluster only. Do not load it on a page
+   that already loads css/style.css: the two systems disagree about
+   --gold (#FFB25A vs #C2A35A) and about the body font.
+
+   Load order on a page that uses it:
+     1. this file
+     2. the page's own <style> block
+     3. css/mobile.css   (the phone bar, last, as everywhere)
+   ========================================================================== */
+
+@font-face{
+  font-family:'Instrument Serif'; font-style:normal; font-weight:400;
+  font-display:swap; src:url('../assets/fonts/InstrumentSerif.woff2') format('woff2');
+}
+@font-face{
+  font-family:'Instrument Sans'; font-style:normal; font-weight:400 700;
+  font-display:swap; src:url('../assets/fonts/InstrumentSans.woff2') format('woff2');
+}
+
+:root{
+  --ink:#05070B;
+  --navy:#0B1018;
+  --navy-2:#121A24;
+  --navy-3:#1A2431;
+  --cream:#F7F2E9;
+  --gold:#FFB25A;
+  --gold-lt:#FFE0B0;
+  --gold-dp:#C07F3E;
+  --plinth:#7FD9E8;
+
+  --c-70:rgba(247,242,233,.72);
+  --c-52:rgba(247,242,233,.54);
+  --c-38:rgba(247,242,233,.40);
+  --hair:rgba(247,242,233,.11);
+
+  /* the drafting palette — line-work, dimension strings, annotations */
+  --draft:rgba(160,196,214,.30);
+  --draft-lt:rgba(180,214,232,.55);
+  --draft-dim:rgba(160,196,214,.13);
+
+  --display:"Instrument Serif",Georgia,"Times New Roman",serif;
+  --sans:"Instrument Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+
+  --r:10px;
+  --r-lg:18px;
+
+  --shadow-float:
+    0 34px 70px -26px rgba(0,0,0,.82),
+    0 10px 24px -12px rgba(0,0,0,.58),
+    0 0 0 1px rgba(255,255,255,.04);
+
+  --ease:cubic-bezier(.22,.68,.16,1);
+  --gutter:clamp(20px,5vw,88px);
+  --max:1440px;
+  --px:0; --py:0;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%; scroll-behavior:smooth}
+body{
+  margin:0; color:var(--cream);
+  background:
+    radial-gradient(95% 55% at 50% -8%,rgba(255,178,90,.075),transparent 48%),
+    radial-gradient(55% 40% at 100% 18%,rgba(127,217,232,.045),transparent 55%),
+    radial-gradient(50% 35% at 0% 70%,rgba(255,150,70,.03),transparent 50%),
+    var(--ink);
+  font-family:var(--sans); font-weight:400;
+  font-size:clamp(15px,.55vw + 13.4px,17px); line-height:1.62;
+  letter-spacing:-.005em;
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+}
+body::before{
+  content:""; position:fixed; inset:0; z-index:0; pointer-events:none;
+  background:radial-gradient(ellipse 90% 75% at 50% 45%,transparent 42%,rgba(2,3,6,.5) 100%);
+  mix-blend-mode:multiply; opacity:.7;
+}
+main{position:relative; z-index:2}
+img,svg{display:block; max-width:100%}
+a{color:inherit; text-decoration:none}
+button{font:inherit; color:inherit; border:0; background:none; cursor:pointer}
+:focus-visible{outline:2px solid var(--gold-lt); outline-offset:3px; border-radius:2px;
+  box-shadow:0 0 0 6px rgba(255,178,90,.12)}
+::selection{background:var(--gold); color:var(--ink)}
+
+/* ── type ─────────────────────────────────────────────────── */
+.display{font-family:var(--display); font-weight:400; line-height:.98;
+  letter-spacing:-.022em; text-wrap:balance}
+h1.display{font-size:clamp(2.5rem,5.1vw,4.55rem)}
+h2.display{font-size:clamp(2rem,3.9vw,3.5rem)}
+h3.display{font-size:clamp(1.32rem,1.7vw,1.72rem); line-height:1.1}
+.kicker{font-size:.68rem; font-weight:500; letter-spacing:.24em;
+  text-transform:uppercase; color:var(--gold); line-height:1;
+  text-shadow:0 0 22px rgba(255,178,90,.35)}
+.lede{font-size:clamp(1rem,.5vw + .9rem,1.16rem); color:var(--c-70); max-width:46ch}
+.fine{font-size:.8rem; color:var(--c-38); letter-spacing:.01em}
+.num{font-variant-numeric:tabular-nums; font-feature-settings:"tnum"}
+.mono{
+  font-size:.62rem; letter-spacing:.22em; text-transform:uppercase;
+  color:var(--draft-lt); font-variant-numeric:tabular-nums;
+}
+
+/* ── ambient ──────────────────────────────────────────────── */
+.grain{
+  position:fixed; inset:-50%; z-index:90; pointer-events:none; opacity:.045;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation:grain 6s steps(5,end) infinite; mix-blend-mode:overlay;
+}
+@keyframes grain{
+  0%{transform:translate(0,0)}20%{transform:translate(-3%,2%)}40%{transform:translate(2%,-3%)}
+  60%{transform:translate(-2%,-2%)}80%{transform:translate(3%,3%)}100%{transform:translate(0,0)}
+}
+.glow{
+  position:fixed; z-index:2; width:56vmax; height:56vmax; left:0; top:0;
+  margin:-28vmax 0 0 -28vmax; pointer-events:none; opacity:0;
+  background:
+    radial-gradient(circle at center,rgba(255,200,120,.18),rgba(255,178,90,.07) 32%,transparent 58%),
+    radial-gradient(circle at 58% 48%,rgba(127,217,232,.08),transparent 52%);
+  mix-blend-mode:screen; transition:opacity .7s var(--ease); filter:blur(.5px);
+}
+.glow.on{opacity:1}
+
+/* ── the float stack ──────────────────────────────────────────
+   FOUR elements, and every one of them is load-bearing. Each owns a
+   transform, and transforms do not compose on one element — the last
+   declaration simply wins:
+
+     .float.rv   the reveal (translate + scale + blur, once)
+     .depth      the cursor parallax
+     .lev        the levitation keyframes
+     the card    left free, because js/lumina.js's .tilt writes an
+                 INLINE transform on hover and would silently erase
+                 whichever of the other three shared its element
+
+   Collapsing any two kills the outer one with no error. See CLAUDE.md.
+   Keep --dur / --amp / --rot / --delay uncorrelated per card, or the
+   row pulses in unison and reads as a loading state. */
+.lev{animation:lev var(--dur,11s) var(--ease) var(--delay,0s) infinite}
+@keyframes lev{
+  0%,100%{transform:translate3d(0,calc(var(--amp,10px) * -1),0) rotate(calc(var(--rot,.25deg) * -1))}
+  50%{transform:translate3d(0,var(--amp,10px),0) rotate(var(--rot,.25deg))}
+}
+.depth{
+  transform:translate3d(calc(var(--px) * var(--d,14px)),calc(var(--py) * var(--d,14px)),0);
+  transition:transform .9s var(--ease); will-change:transform;
+}
+.float{height:100%}
+.float>.depth,.float>.depth>.lev{height:100%}
+
+/* the tracking sheen every card shares. js/lumina.js's .tilt writes
+   --sx/--sy as the pointer crosses the card, so the highlight follows
+   the cursor rather than sitting in a fixed corner. Give a new card a
+   <span class="spec"> as its first child and z-index its siblings. */
+.spec{
+  position:absolute; inset:0; z-index:1; opacity:0; pointer-events:none; border-radius:inherit;
+  background:radial-gradient(340px circle at var(--sx,50%) var(--sy,50%),
+    rgba(255,220,170,.16),rgba(127,217,232,.05) 44%,transparent 66%);
+  transition:opacity .5s var(--ease);
+}
+@media (hover:hover) and (pointer:fine){
+  .tilt:hover .spec{opacity:1}
+}
+/* Keyboard twin, outside the query: bindTilt never binds when the pointer
+   is not fine, so --sx/--sy keep their 50% defaults and the sheen lands
+   centred on the card — which is the right place for a focus ring anyway. */
+.tilt:focus-within .spec{opacity:1}
+
+.rv{opacity:0; transform:translate3d(0,26px,0) scale(.975); filter:blur(7px);
+  transition:opacity 1.05s var(--ease),transform 1.05s var(--ease),filter 1.05s var(--ease);
+  transition-delay:var(--rvd,0ms)}
+.rv.in{opacity:1; transform:none; filter:none}
+.ln-wrap{display:block; overflow:clip}
+.ln{display:block; will-change:transform,filter;
+  opacity:0; transform:translate3d(0,110%,0); filter:blur(16px);
+  transition:opacity .85s var(--ease),transform .95s var(--ease),filter .95s var(--ease);
+  transition-delay:var(--lnd,0ms)}
+.ln.in{opacity:1; transform:none; filter:none}
+
+/* ── bar / spine ──────────────────────────────────────────── */
+.bar{
+  position:fixed; inset:0 0 auto; z-index:70; display:flex; align-items:center;
+  gap:24px; padding:18px var(--gutter);
+  transition:padding .5s var(--ease);
+}
+.bar::after{
+  content:""; position:absolute; inset:0; z-index:-1; opacity:0;
+  background:linear-gradient(180deg,rgba(4,6,11,.92),rgba(4,6,11,.58));
+  -webkit-backdrop-filter:blur(20px) saturate(140%); backdrop-filter:blur(20px) saturate(140%);
+  border-bottom:1px solid rgba(255,178,90,.1);
+  box-shadow:0 12px 40px -20px rgba(0,0,0,.65);
+  transition:opacity .5s var(--ease);
+}
+.bar.stuck{padding-top:12px; padding-bottom:12px}
+.bar.stuck::after{opacity:1}
+.mark-img{display:block; line-height:0; padding:4px 0;
+  transition:filter .45s var(--ease),transform .5s var(--ease)}
+.mark-img img{display:block; height:clamp(26px,2.4vw,34px); width:auto;
+  filter:drop-shadow(0 2px 9px rgba(0,0,0,.55)) drop-shadow(0 0 20px rgba(255,178,90,.34))}
+@media (hover:hover) and (pointer:fine){
+  .mark-img:hover{transform:translateY(-1px); filter:drop-shadow(0 0 24px rgba(255,178,90,.62))}
+}
+.bar.stuck .mark-img img{height:clamp(23px,2vw,29px)}
+.nav{margin-left:auto; display:flex; align-items:center; gap:clamp(14px,2vw,34px)}
+.nav a{font-size:.9rem; color:var(--c-70); position:relative; padding:6px 0;
+  transition:color .35s var(--ease), text-shadow .35s var(--ease)}
+/* scaleX from the left edge gives the identical left-to-right wipe as
+   animating `right`, off the layout path. */
+.nav a::after{content:""; position:absolute; left:0; right:0; bottom:0; height:1px;
+  background:linear-gradient(90deg,var(--gold-lt),var(--gold));
+  transform:scaleX(0); transform-origin:left; transition:transform .45s var(--ease);
+  box-shadow:0 0 8px rgba(255,178,90,.55)}
+@media (hover:hover) and (pointer:fine){
+  .nav a:hover{color:var(--cream); text-shadow:0 0 18px rgba(255,210,150,.25)}
+  .nav a:hover::after{transform:scaleX(1)}
+}
+.nav a[aria-current="page"]{color:var(--cream)}
+.nav a[aria-current="page"]::after{transform:scaleX(1)}
+.chip{
+  display:inline-flex; align-items:center; gap:9px; padding:9px 17px;
+  border:1px solid rgba(255,178,90,.38); border-radius:999px;
+  font-size:.84rem; color:var(--cream); white-space:nowrap;
+  background:rgba(255,178,90,.04);
+  box-shadow:0 0 20px -8px rgba(255,178,90,.25), inset 0 1px 0 rgba(255,255,255,.06);
+  transition:border-color .4s var(--ease),background .4s var(--ease),transform .4s var(--ease),box-shadow .4s var(--ease);
+}
+@media (hover:hover) and (pointer:fine){
+  .chip:hover{border-color:var(--gold); background:rgba(255,178,90,.12); transform:translateY(-1px);
+    box-shadow:0 0 28px -4px rgba(255,178,90,.45), inset 0 1px 0 rgba(255,255,255,.1)}
+}
+/* The press is ungated on purpose — :active is the one pointer state a
+   touch device does report honestly, and it is the only feedback a tap
+   gets. Faster arriving than leaving, so the button reads as taking the
+   weight rather than lagging behind the finger. */
+.chip:active{transform:translateY(0) scale(.985); transition-duration:.12s}
+.chip svg{width:15px; height:15px; flex:none}
+
+.spine{position:fixed; right:clamp(18px,2.2vw,40px); top:50%; transform:translateY(-50%);
+  z-index:65; display:flex; flex-direction:column; align-items:center}
+.spine .rail{position:absolute; top:6px; bottom:6px; width:1px; background:var(--hair)}
+/* The fill spans the rail exactly (top and bottom, no height) and is
+   scaled rather than resized: js/lumina.js writes --prog-n as a 0-1 number
+   from inside the scroll loop, so this runs on the compositor instead of
+   re-resolving a height on a fixed element every frame the page moves.
+   A full-height gradient scaled to n renders identically to the same
+   gradient drawn inside an n-tall box. */
+.spine .fill{position:absolute; top:6px; bottom:6px; width:1px;
+  background:linear-gradient(180deg,var(--gold-lt),var(--gold),var(--plinth));
+  transform:scaleY(var(--prog-n,0)); transform-origin:top;
+  box-shadow:0 0 10px rgba(255,215,163,.65); transition:transform .12s var(--ease)}
+.spine button{position:relative; display:block; width:26px; height:38px}
+/* One 11px dot at rest scaled down, not a 6px dot that grows: the active
+   state is the smallest, most precise mark on the page and it should not
+   arrive by relayout. */
+.spine button::before{content:""; position:absolute; left:50%; top:50%; width:11px; height:11px;
+  transform:translate(-50%,-50%) scale(.545); border-radius:50%;
+  background:rgba(244,239,230,.28);
+  transition:transform .45s var(--ease),background-color .45s var(--ease),box-shadow .45s var(--ease)}
+.spine button[aria-current="true"]::before{background:var(--gold-lt);
+  transform:translate(-50%,-50%) scale(1);
+  box-shadow:0 0 0 4px rgba(255,215,163,.16),0 0 18px 4px rgba(255,215,163,.7)}
+.spine .tip{position:absolute; right:130%; top:50%; transform:translateY(-50%) translateX(6px);
+  font-size:.62rem; letter-spacing:.2em; text-transform:uppercase; color:var(--c-52);
+  white-space:nowrap; opacity:0; pointer-events:none;
+  transition:opacity .4s var(--ease),transform .4s var(--ease)}
+@media (hover:hover) and (pointer:fine){
+  .spine button:hover::before{background:var(--gold-lt)}
+  .spine button:hover .tip{opacity:1; transform:translateY(-50%)}
+}
+
+/* ── buttons ──────────────────────────────────────────────── */
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:10px;
+  padding:15px 27px; border-radius:var(--r);
+  background:linear-gradient(180deg,#ffc06e 0%,var(--gold) 48%,#e89840 100%); color:#14100A;
+  font-weight:600; font-size:.92rem; position:relative; overflow:hidden;
+  transition:transform .45s var(--ease),box-shadow .45s var(--ease);
+  box-shadow:0 14px 30px -12px rgba(255,178,90,.65),
+             0 0 28px -6px rgba(255,178,90,.4),
+             inset 0 1px 0 rgba(255,255,255,.45);
+}
+.btn::after{content:""; position:absolute; inset:0; transform:translateX(-102%);
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),transparent);
+  transition:transform .8s var(--ease)}
+@media (hover:hover) and (pointer:fine){
+  .btn:hover{transform:translateY(-2px)}
+  .btn:hover::after{transform:translateX(102%)}
+}
+/* #regSend and the hero CTA are the whole point of the site and had no
+   pressed state at all: the click either opened a tab you did not see or
+   was swallowed by a popup blocker, either way with nothing on screen
+   acknowledging it. */
+.btn:active{transform:translateY(0) scale(.985); transition-duration:.12s;
+  box-shadow:0 6px 16px -10px rgba(255,178,90,.6),
+             0 0 18px -6px rgba(255,178,90,.35),
+             inset 0 1px 0 rgba(255,255,255,.3)}
+/* The half-second after the click, waiting for its JS. js/service-form.js
+   and js/invest.js add .sent to #regSend and swap the label; this is what
+   makes the moment visible — the sweep runs once and the button holds lit
+   while the tab opens, so a blocked popup is not silence. Harmless until
+   the class is applied. */
+.btn.sent{transform:none;
+  box-shadow:0 10px 26px -12px rgba(255,178,90,.72),
+             0 0 36px -4px rgba(255,178,90,.5),
+             inset 0 1px 0 rgba(255,255,255,.5)}
+.btn.sent::after{transform:translateX(102%)}
+.btn-line{
+  display:inline-flex; align-items:center; gap:12px; padding:13px 13px 13px 24px;
+  border:1px solid rgba(244,239,230,.2); border-radius:999px; color:var(--cream);
+  font-size:.86rem; white-space:nowrap;
+  /* transform is in the list for the press state below — without it the
+     :active scale snaps in and out with no travel. */
+  transition:border-color .45s var(--ease),background-color .45s var(--ease),
+             box-shadow .45s var(--ease),transform .45s var(--ease);
+}
+.btn-line i{width:30px; height:30px; border-radius:50%; display:grid; place-items:center; flex:none;
+  border:1px solid rgba(244,239,230,.18);
+  transition:transform .45s var(--ease),border-color .45s var(--ease),background-color .45s var(--ease)}
+.btn-line svg{width:13px; height:13px}
+@media (hover:hover) and (pointer:fine){
+  .btn-line:hover{border-color:var(--gold); background:rgba(255,178,90,.1);
+    box-shadow:0 0 30px -10px rgba(255,178,90,.5)}
+  .btn-line:hover i{transform:translateX(3px); border-color:var(--gold); background:rgba(255,178,90,.16)}
+}
+.btn-line:active{transform:scale(.985); transition-duration:.12s;
+  border-color:var(--gold); background:rgba(255,178,90,.14)}
+.btn-line:active i{transform:translateX(3px); transition-duration:.12s}
+
+/* ── section shell ────────────────────────────────────────── */
+.sec{position:relative; padding:clamp(84px,11vh,150px) var(--gutter);
+  max-width:var(--max); margin-inline:auto; z-index:2}
+.sec-head{max-width:760px; margin-bottom:clamp(40px,5vw,68px)}
+.sec-head .kicker{margin-bottom:18px}
+.sec-head h2{margin:0 0 20px}
+.rule{height:1px; max-width:var(--max); margin:0 auto;
+  background:linear-gradient(90deg,transparent,rgba(255,178,90,.22),transparent)}
+
+/* the surveyor's grid: two gradients, one fine one coarse, drifting
+   very slowly so the field never reads as a static texture */
+.bp-grid{
+  position:absolute; inset:-20%; opacity:.5;
+  background-image:
+    linear-gradient(var(--draft-dim) 1px,transparent 1px),
+    linear-gradient(90deg,var(--draft-dim) 1px,transparent 1px),
+    linear-gradient(rgba(160,196,214,.06) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(160,196,214,.06) 1px,transparent 1px);
+  background-size:120px 120px,120px 120px,24px 24px,24px 24px;
+  -webkit-mask-image:radial-gradient(70% 62% at 50% 46%,#000,transparent 78%);
+  mask-image:radial-gradient(70% 62% at 50% 46%,#000,transparent 78%);
+  animation:bpDrift 64s linear infinite;
+}
+@keyframes bpDrift{to{transform:translate3d(120px,-120px,0)}}
+
+/* ── the generic card ─────────────────────────────────────────
+   The surface these pages build almost everything out of. backdrop
+   blur is gated at 1024px: it is the most expensive thing on the
+   page, and below that the translucent gradient carries the look. */
+.card-g{
+  position:relative; isolation:isolate; overflow:hidden; height:100%;
+  padding:clamp(24px,2.4vw,34px); border-radius:var(--r-lg);
+  border:1px solid var(--hair);
+  background:linear-gradient(155deg,rgba(29,38,50,.44),rgba(11,16,24,.54));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06),var(--shadow-float);
+  /* Asymmetric on purpose: the slow numbers are the *release*, and the
+     :hover block below overrides the duration so arrival is quick. A
+     border that takes half a second to appear reads as the page thinking;
+     a glow that leaves as fast as it came leaves no afterimage. The bloom
+     is deliberately the slowest thing in both directions. */
+  transition:border-color 520ms var(--ease),box-shadow 700ms var(--ease);
+}
+.card-g::before{
+  content:""; position:absolute; inset:0 0 auto; height:1px; z-index:3;
+  background:linear-gradient(90deg,transparent,rgba(255,210,150,.45) 24%,transparent);
+  opacity:.55; transition:opacity 520ms var(--ease);
+}
+/* Was ungated, and .card-g is the surface these pages are built out of —
+   on a phone a tap latched the gold border and the 68px bloom and held it
+   until the reader tapped elsewhere, so a grid of identical cards grew a
+   selection state that meant nothing. */
+@media (hover:hover) and (pointer:fine){
+  .card-g:hover{border-color:rgba(255,178,90,.3);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.09),0 30px 68px -30px rgba(255,178,90,.55);
+    transition-duration:190ms,560ms}
+  .card-g:hover::before{opacity:1; transition-duration:190ms}
+}
+/* The keyboard twin sits outside the query — bindTilt returns early when
+   the pointer is not fine, so without this a focused card is inert. */
+.card-g:focus-within{border-color:rgba(255,178,90,.3);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.09),0 30px 68px -30px rgba(255,178,90,.55);
+  transition-duration:190ms,560ms}
+.card-g:focus-within::before{opacity:1; transition-duration:190ms}
+.card-g>*:not(.spec){position:relative; z-index:2}
+.card-g .mono{display:block; margin-bottom:18px}
+.card-g h3{margin:0 0 12px}
+.card-g p{margin:0; font-size:.94rem; color:var(--c-52)}
+@media (min-width:1024px){
+  .card-g,.terms>div{
+    -webkit-backdrop-filter:blur(15px) saturate(132%);
+    backdrop-filter:blur(15px) saturate(132%);
+  }
+}
+
+/* ── the ledger grid ──────────────────────────────────────────
+   Explicit column counts, never auto-fit: the 1px gaps are the
+   container's own background showing through, so a row that does not
+   fill leaves a lit band across the empty half. Set --tc per page to
+   whatever divides the number of cells. */
+.terms{
+  display:grid; grid-template-columns:repeat(var(--tc,3),minmax(0,1fr));
+  gap:1px; background:var(--hair); border:1px solid var(--hair); border-radius:var(--r-lg);
+  overflow:hidden;
+}
+@media (max-width:1000px){.terms{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:600px){.terms{grid-template-columns:1fr}}
+.terms>div{position:relative; padding:clamp(22px,2.4vw,32px); background:rgba(11,16,24,.55);
+  transition:background-color 520ms var(--ease),box-shadow 700ms var(--ease)}
+.terms>div::before{
+  content:""; position:absolute; inset:0 0 auto; height:1px; opacity:0;
+  background:linear-gradient(90deg,transparent,rgba(255,210,150,.5) 35%,transparent);
+  transform:scaleX(0); transform-origin:left;
+  transition:opacity 520ms var(--ease),transform 560ms var(--ease);
+}
+/* #terms is where the commercial facts live and it had the flattest hover
+   on the site — a 6% background tint. It still cannot lift: the 1px gaps
+   are the container's own background showing through, and a translate
+   breaks the seam. So light it from inside instead, with an inset glow
+   that never leaves the box, and draw the hairline in from the left
+   rather than fading it up. */
+@media (hover:hover) and (pointer:fine){
+  .terms>div:hover{background:rgba(20,28,40,.62);
+    box-shadow:inset 0 0 0 1px rgba(255,178,90,.18),
+               inset 0 24px 48px -30px rgba(255,178,90,.35);
+    transition-duration:190ms,560ms}
+  .terms>div:hover::before{opacity:1; transform:scaleX(1); transition-duration:190ms,420ms}
+}
+.terms dt{margin:0 0 10px; font-size:.64rem; letter-spacing:.2em; text-transform:uppercase; color:var(--gold)}
+.terms dd{margin:0; font-family:var(--display); font-weight:400;
+  font-size:clamp(1.1rem,1.5vw,1.34rem); line-height:1.2; color:var(--cream)}
+.terms dd small{display:block; margin-top:9px; font-family:var(--sans);
+  font-size:.82rem; line-height:1.55; color:var(--c-52)}
+.note{
+  margin-top:clamp(22px,3vw,34px); padding:18px 22px; border-radius:var(--r);
+  border:1px dashed rgba(160,196,214,.26); background:rgba(11,16,24,.5);
+  font-size:.86rem; color:var(--c-52); display:flex; gap:14px; align-items:flex-start;
+}
+.note svg{width:17px; height:17px; flex:none; margin-top:2px; color:var(--draft-lt)}
+
+/* ── numbered point list ──────────────────────────────────── */
+.points{display:grid; gap:clamp(10px,1.1vw,14px)}
+.point{
+  display:grid; grid-template-columns:auto minmax(0,1fr); gap:16px; align-items:start;
+  padding:clamp(16px,1.8vw,22px) clamp(18px,2vw,26px); border-radius:var(--r);
+  border:1px solid var(--hair);
+  background:linear-gradient(155deg,rgba(29,38,50,.34),rgba(11,16,24,.44));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.045);
+  /* slow values are the release; :hover overrides the durations so it
+     arrives in 190ms — see the note on .card-g */
+  transition:transform 520ms var(--ease),border-color 520ms var(--ease),
+             box-shadow 700ms var(--ease),background-color 520ms var(--ease);
+}
+@media (min-width:1024px){
+  .point{-webkit-backdrop-filter:blur(12px) saturate(126%); backdrop-filter:blur(12px) saturate(126%)}
+}
+@media (hover:hover) and (pointer:fine){
+  .point:hover{
+    transform:translateX(6px); border-color:rgba(255,178,90,.26);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 22px 48px -30px rgba(255,178,90,.5);
+    transition-duration:190ms,190ms,560ms,190ms;
+  }
+  .point:hover b{border-color:var(--gold); background:rgba(255,178,90,.12); color:var(--gold-lt);
+    transition-duration:190ms}
+}
+.point b{
+  font-family:var(--display); font-weight:400; font-size:.92rem; color:var(--gold);
+  width:30px; height:30px; border-radius:50%; display:grid; place-items:center; flex:none;
+  border:1px solid rgba(255,178,90,.26); background:rgba(255,178,90,.05);
+  transition:border-color .5s var(--ease),background-color .5s var(--ease),color .5s var(--ease);
+}
+.point h4{margin:0 0 6px; font-size:1rem; font-weight:600; color:var(--cream)}
+.point p{margin:0; font-size:.92rem; color:var(--c-52)}
+
+/* ── "right for you if" ───────────────────────────────────────
+   Sits directly under every service page's headline. It is the
+   single most useful thing on the page: a reader who has landed
+   from a bubble, a search or a forwarded link needs to know in one
+   glance whether they are in the right place, and three plain lines
+   answer that faster than a paragraph of anything. Same component,
+   same position, same wording pattern on all three service pages. */
+.whofor{
+  margin-top:clamp(28px,4vw,42px); padding:clamp(20px,2.2vw,26px) clamp(22px,2.4vw,30px);
+  border-radius:var(--r-lg); border:1px solid var(--hair);
+  background:linear-gradient(155deg,rgba(29,38,50,.34),rgba(11,16,24,.44));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
+}
+@media (min-width:1024px){
+  .whofor{-webkit-backdrop-filter:blur(12px) saturate(126%); backdrop-filter:blur(12px) saturate(126%)}
+}
+.whofor>.mono{display:block; margin-bottom:14px; color:var(--gold)}
+.whofor ul{
+  margin:0; padding:0; list-style:none;
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:12px clamp(20px,2.6vw,36px);
+}
+.whofor li{
+  position:relative; padding-left:20px; font-size:.9rem; color:var(--c-70); line-height:1.5;
+}
+.whofor li::before{
+  content:""; position:absolute; left:0; top:.6em; width:9px; height:1px;
+  background:var(--gold); box-shadow:0 0 8px rgba(255,178,90,.6);
+}
+.whofor .out{margin:16px 0 0; font-size:.84rem; color:var(--c-38)}
+.whofor .out a{color:var(--gold-lt); border-bottom:1px solid rgba(255,224,176,.3)}
+@media (hover:hover) and (pointer:fine){
+  .whofor .out a:hover{border-bottom-color:var(--gold-lt)}
+}
+
+/* ── the other services ───────────────────────────────────────
+   Every service page ends with the other two, so the three are a
+   set rather than three dead ends. Cheaper than making the reader
+   go back up to services.html and hunt a bubble again. */
+.more-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:clamp(16px,1.8vw,24px)}
+.more-card{
+  position:relative; display:flex; flex-direction:column; gap:10px;
+  padding:clamp(24px,2.4vw,32px); border-radius:var(--r-lg);
+  border:1px solid var(--hair);
+  background:linear-gradient(155deg,rgba(29,38,50,.36),rgba(11,16,24,.46));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
+  transition:transform 520ms var(--ease),border-color 520ms var(--ease),box-shadow 700ms var(--ease);
+}
+@media (min-width:1024px){
+  .more-card{-webkit-backdrop-filter:blur(12px) saturate(126%); backdrop-filter:blur(12px) saturate(126%)}
+}
+@media (hover:hover) and (pointer:fine){
+  .more-card:hover{
+    transform:translateY(-5px); border-color:rgba(255,178,90,.3);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.09),0 28px 60px -32px rgba(255,178,90,.55);
+    transition-duration:190ms,190ms,560ms;
+  }
+  .more-card:hover .more-go i{transform:translateX(4px); border-color:var(--gold); background:rgba(255,178,90,.16)}
+}
+/* .more-card is the entire cross-navigation between the three service
+   pages and it is a real <a>. Its whole response lived inside the hover
+   query, so a reader on the keyboard got an outline and nothing else —
+   no sense of which tab stop is a destination. The twin lives outside. */
+.more-card:focus-visible{
+  transform:translateY(-5px); border-color:rgba(255,178,90,.3);
+  /* the 6px halo is repeated from the global :focus-visible rule, which
+     this selector would otherwise outrank and silently drop */
+  box-shadow:0 0 0 6px rgba(255,178,90,.12),
+             inset 0 1px 0 rgba(255,255,255,.09),
+             0 28px 60px -32px rgba(255,178,90,.55);
+  transition-duration:190ms,190ms,560ms;
+}
+.more-card:focus-visible .more-go i{transform:translateX(4px); border-color:var(--gold);
+  background:rgba(255,178,90,.16)}
+.more-card:active{transform:translateY(-2px) scale(.99); transition-duration:.12s}
+.more-card .mono{color:var(--gold)}
+.more-card h3{margin:0; font-family:var(--display); font-weight:400;
+  font-size:clamp(1.24rem,1.7vw,1.55rem); line-height:1.1; color:var(--cream)}
+.more-card p{margin:0; font-size:.92rem; color:var(--c-52)}
+.more-go{
+  display:inline-flex; align-items:center; gap:11px; margin-top:8px;
+  font-size:.76rem; letter-spacing:.14em; text-transform:uppercase; color:var(--c-70);
+}
+.more-go i{
+  width:28px; height:28px; border-radius:50%; display:grid; place-items:center; flex:none;
+  border:1px solid rgba(244,239,230,.18);
+  transition:transform .45s var(--ease),border-color .45s var(--ease),background-color .45s var(--ease);
+}
+.more-go svg{width:12px; height:12px}
+
+/* ── ticked list ──────────────────────────────────────────── */
+.ticks{margin:26px 0 0; padding:0; list-style:none; display:grid; gap:14px}
+.ticks li{display:grid; grid-template-columns:auto minmax(0,1fr); gap:13px;
+  font-size:.92rem; color:var(--c-52);
+  transition:transform .45s var(--ease),color .45s var(--ease)}
+.ticks svg{width:16px; height:16px; margin-top:4px; color:var(--gold); flex:none;
+  transition:filter .45s var(--ease)}
+@media (hover:hover) and (pointer:fine){
+  .ticks li:hover{transform:translateX(5px); color:var(--c-70)}
+  .ticks li:hover svg{filter:drop-shadow(0 0 8px rgba(255,178,90,.7))}
+}
+
+/* ── the enquiry form ─────────────────────────────────────── */
+.reg{
+  display:grid; grid-template-columns:minmax(0,1fr) minmax(0,460px);
+  gap:clamp(28px,4vw,66px); align-items:start;
+}
+@media (max-width:1080px){.reg{grid-template-columns:1fr}}
+.reg-form{
+  position:relative; padding:clamp(24px,2.6vw,36px); border-radius:var(--r-lg);
+  border:1px solid var(--hair);
+  background:linear-gradient(155deg,rgba(29,38,50,.46),rgba(11,16,24,.56));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07),var(--shadow-float);
+}
+.reg-form::before{
+  content:""; position:absolute; inset:0 0 auto; height:1px; border-radius:inherit;
+  background:linear-gradient(90deg,transparent,rgba(255,210,150,.45) 30%,transparent);
+}
+@media (min-width:1024px){
+  .reg-form{-webkit-backdrop-filter:blur(15px) saturate(132%); backdrop-filter:blur(15px) saturate(132%)}
+}
+.field{display:block; margin-bottom:16px}
+.field span{display:block; margin-bottom:8px; font-size:.7rem; letter-spacing:.18em;
+  text-transform:uppercase; color:var(--c-52)}
+.field input,.field select,.field textarea{
+  width:100%; padding:13px 15px; border-radius:var(--r); color:var(--cream);
+  background:rgba(5,7,11,.55); border:1px solid var(--hair);
+  font:inherit; font-size:.92rem;
+  transition:border-color .4s var(--ease),box-shadow .4s var(--ease);
+}
+.field textarea{resize:vertical; min-height:92px}
+.field input:focus,.field select:focus,.field textarea:focus{
+  outline:none; border-color:var(--gold); box-shadow:0 0 0 4px rgba(255,178,90,.12);
+}
+.field select{appearance:none; -webkit-appearance:none;
+  background-image:linear-gradient(45deg,transparent 50%,var(--c-52) 50%),
+                   linear-gradient(135deg,var(--c-52) 50%,transparent 50%);
+  background-position:calc(100% - 20px) calc(50% + 2px),calc(100% - 15px) calc(50% + 2px);
+  background-size:5px 5px,5px 5px; background-repeat:no-repeat;
+}
+.field option{background:var(--navy-2); color:var(--cream)}
+.reg-form .btn{width:100%; margin-top:8px}
+.reg-form .fine{margin:14px 0 0; text-align:center}
+.reg-side p{color:var(--c-70)}
+
+/* ── footer / loader ──────────────────────────────────────── */
+footer.foot{position:relative; z-index:2; padding:clamp(46px,6vh,74px) var(--gutter) 40px;
+  border-top:1px solid var(--hair)}
+.foot-in{max-width:var(--max); margin-inline:auto; display:flex; flex-wrap:wrap; gap:32px;
+  align-items:center; justify-content:space-between}
+.foot-nav{display:flex; flex-wrap:wrap; gap:8px 26px; font-size:.88rem; color:var(--c-52)}
+@media (hover:hover) and (pointer:fine){
+  .foot-nav a:hover{color:var(--gold-lt); text-shadow:0 0 12px rgba(255,210,150,.25)}
+}
+.foot .fine{width:100%; margin-top:26px; padding-top:22px;
+  border-top:1px solid rgba(244,239,230,.07);
+  display:flex; flex-wrap:wrap; gap:8px 24px; justify-content:space-between}
+.boot{
+  position:fixed; inset:0; z-index:200; display:grid; place-items:center;
+  transition:opacity .9s var(--ease),transform .9s var(--ease),visibility .9s var(--ease);
+  background:radial-gradient(60% 50% at 50% 45%,rgba(255,178,90,.06),transparent 60%),var(--ink);
+}
+/* Lift away rather than dissolve — the same upward exit the invest title
+   makes, so the first frame of the page speaks the site's own language
+   instead of a default crossfade. Reduced motion collapses both to an
+   instant cut via the global .001ms override. */
+.boot.done{opacity:0; visibility:hidden; transform:translate3d(0,-4%,0)}
+.boot img{height:clamp(40px,6vw,56px); width:auto;
+  animation:pulse 2.2s var(--ease) infinite;
+  filter:drop-shadow(0 0 18px rgba(255,178,90,.35))}
+@keyframes pulse{0%,100%{opacity:.55}50%{opacity:1}}
+
+@media (max-width:860px){
+  .spine{display:none}
+}
+
+/* ── reduced motion ───────────────────────────────────────────
+   Everything drifting, revealing or levitating stops. Pages that add
+   their own motion must extend this block in their own <style>. */
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{
+    animation-duration:.001ms !important; animation-iteration-count:1 !important;
+    transition-duration:.001ms !important; scroll-behavior:auto !important;
+  }
+  .rv,.ln{opacity:1; transform:none; filter:none}
+  .lev,.bp-grid,.grain{animation:none}
+  .depth{transform:none}
+}

@@ -1,0 +1,859 @@
+/* ==========================================================================
+   LUMINA — team.css
+   The roster on team.html.
+
+   The team card is still the property card underneath: team.html loads
+   css/property-ui.css and builds each person with the same
+   .prop-float → .depth → .lev → .card shell, so the reveal, the
+   levitation, the cursor parallax and the pointer-tracked specular
+   highlight are the same code the listings grid runs. Nothing here
+   forks that.
+
+   What changed on 2026-08-04, and why:
+
+   - The plate used to be `.card-media.no-photo` — the site's honest
+     empty-frame treatment for listings with no photography, diagonal
+     hatch and all. On a listing that reads as "no photo yet". Under a
+     person's name it reads as "this person is missing", which is the
+     opposite of friendly. The plate is now its own surface: a warm
+     field, a slowly turning gold ring and the initials set in the
+     display face. No stock faces, still no invented photography.
+   - Each card carries a cast shadow that grows as the card falls and
+     shrinks as it rises, animated off the same --dur/--delay. The
+     levitation was always there; without something on the ground under
+     it, it read as a wobble rather than a float.
+   - Section furniture (heads, principles, tier rules, the closing
+     panel) now reveals on scroll like everything else on the site. It
+     was the only part of the page that arrived fully formed.
+
+   The float variables are declared on .prop-float in the markup, not
+   on .lev, so both .lev and the cast shadow inherit the same numbers.
+   .lev reads them exactly as before.
+
+   Tokens come from property-ui.css, which scopes them under
+   .grid-props / .prop-float. Sections outside a card need their own
+   copy — that is what .tm-scope is for.
+   ========================================================================== */
+
+.tm-scope {
+  --lum-ink: #05070B;
+  --lum-navy: #0B1018;
+  --lum-navy-2: #121A24;
+  --lum-navy-3: #1A2431;
+  --lum-cream: #F7F2E9;
+  --lum-gold: #FFB25A;
+  --lum-gold-lt: #FFE0B0;
+  --lum-c-70: rgba(247, 242, 233, .72);
+  --lum-c-52: rgba(247, 242, 233, .54);
+  --lum-c-38: rgba(247, 242, 233, .40);
+  --lum-hair: rgba(247, 242, 233, .11);
+  --lum-display: "Instrument Serif", Georgia, "Times New Roman", serif;
+  --lum-sans: "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --lum-ease: cubic-bezier(.22, .68, .16, 1);
+  --lum-r: 18px;
+}
+
+body.tm-body { background: #05070B; color: #F7F2E9; }
+
+/* ==========================================================================
+   REVEAL
+   .rv is what js/property-card.js observes — it adds .in to every .rv in
+   scope, not only the cards. .tm-rv is the look, since property-ui.css
+   only dresses .prop-float.rv.
+   ========================================================================== */
+
+.tm-rv {
+  opacity: 0;
+  transform: translate3d(0, 16px, 0);
+  filter: blur(6px);
+  transition: opacity .95s var(--lum-ease),
+              transform .95s var(--lum-ease),
+              filter .95s var(--lum-ease);
+  transition-delay: var(--rvd, 0ms);
+}
+
+.tm-rv.in { opacity: 1; transform: none; filter: none; }
+
+/* A headline line rising out of a clipped box.
+
+   The .rv marker goes on the WRAPPER, not on the line. The line starts
+   translated 108% down, which puts it entirely outside the wrapper's
+   overflow:hidden box — so an IntersectionObserver watching the line
+   itself measures an intersection of zero, never fires, and the
+   headline stays invisible forever. The wrapper is always in flow and
+   always measurable. */
+.tm-lw { display: block; overflow: hidden; padding-bottom: .08em; }
+
+.tm-line {
+  display: block;
+  opacity: 0;
+  transform: translate3d(0, 108%, 0);
+  transition: opacity .9s var(--lum-ease), transform 1.05s var(--lum-ease);
+  transition-delay: var(--rvd, 0ms);
+}
+
+.tm-lw.in .tm-line { opacity: 1; transform: none; }
+
+/* ==========================================================================
+   HERO
+   Lifted out of team.html's inline <style> so the whole page reads from
+   one file. The plate is its own element rather than a background on the
+   section, because a background-position drift is a paint and a
+   transform on an element is not.
+   ========================================================================== */
+
+/* The layers stack with positive z-index, not negative. `isolation`
+   makes .tm-hero a stacking context, and a negative z-index child of a
+   stacking context paints *behind that element's own background* — the
+   ink fill below would have hidden the photograph completely. */
+.tm-hero {
+  position: relative;
+  padding: 190px 0 88px;
+  overflow: hidden;
+  background: var(--lum-ink);
+  isolation: isolate;
+}
+
+.tm-hero > .container { position: relative; z-index: 2; }
+
+.tm-hero-bg {
+  position: absolute;
+  inset: -4%;
+  z-index: 0;
+  /* Not assets/images/hero-luxury-villa.jpg, which this page used to
+     point at: that file is a flat navy-to-gold gradient placeholder,
+     not a photograph, so the hero read as mud under the veil.
+     hero-lumina.jpg is the client's own supplied render — warm, amber
+     lit, already cropped free of the baked-in UI (see CLAUDE.md) and
+     unused since the pod hero replaced it on the landing page. */
+  background: url('../assets/hero-lumina.jpg') center 46% / cover no-repeat;
+  transform: scale(1.06);
+  animation: tm-drift 34s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+@keyframes tm-drift {
+  from { transform: scale(1.06) translate3d(-1.1%, -.6%, 0); }
+  to   { transform: scale(1.13) translate3d(1.1%,  .6%, 0); }
+}
+
+.tm-hero-veil {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    radial-gradient(78% 62% at 22% 34%, rgba(255, 178, 90, .13), transparent 62%),
+    linear-gradient(180deg, rgba(5, 7, 11, .58) 0%, rgba(5, 7, 11, .90) 64%, rgba(5, 7, 11, .99) 100%);
+}
+
+.tm-hero::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  z-index: 3;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 178, 90, .55), transparent);
+}
+
+.tm-hero .label {
+  font-family: var(--lum-sans);
+  color: var(--lum-c-38);
+  font-size: .62rem;
+  letter-spacing: .26em;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.tm-hero h1 {
+  font-family: var(--lum-display);
+  font-size: clamp(2.4rem, 5.4vw, 4.2rem);
+  font-weight: 400;
+  line-height: 1.06;
+  letter-spacing: -.02em;
+  color: var(--lum-cream);
+  margin: 18px 0 0;
+  max-width: 16ch;
+}
+
+.tm-hero h1 em {
+  font-style: normal;
+  color: rgba(247, 242, 233, .44);
+}
+
+.tm-hero .tm-lede {
+  font-family: var(--lum-sans);
+  color: var(--lum-c-52);
+  font-size: 1.02rem;
+  line-height: 1.9;
+  font-weight: 300;
+  max-width: 620px;
+  margin: 22px 0 0;
+}
+
+/* Three warm facts under the lede. Not statistics — each one is
+   already stated as fact elsewhere on the site. */
+.tm-hero-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 34px;
+  margin-top: 34px;
+}
+
+.tm-fact {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-family: var(--lum-sans);
+}
+
+.tm-fact b {
+  font-family: var(--lum-display);
+  font-size: 1.6rem;
+  font-weight: 400;
+  line-height: 1;
+  color: var(--lum-gold);
+  text-shadow: 0 0 24px rgba(255, 178, 90, .28);
+}
+
+.tm-fact span {
+  font-size: .68rem;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--lum-c-38);
+}
+
+/* ==========================================================================
+   SECTION SHELLS
+   ========================================================================== */
+
+.tm-how,
+.tm {
+  background: var(--lum-ink);
+  position: relative;
+}
+
+.tm-how { padding: 92px 0 78px; }
+.tm { padding: 88px 0 104px; overflow: hidden; }
+
+/* The same warm bloom the landing page puts behind its panels. */
+.tm::before {
+  content: '';
+  position: absolute;
+  top: -220px;
+  left: 50%;
+  width: 1000px;
+  height: 620px;
+  transform: translateX(-50%);
+  background: radial-gradient(ellipse at center, rgba(255, 178, 90, .09) 0%, transparent 66%);
+  pointer-events: none;
+}
+
+.tm-inner { position: relative; z-index: 1; }
+
+.tm-sec-head h2 {
+  font-family: var(--lum-display);
+  font-size: clamp(1.8rem, 3.4vw, 2.7rem);
+  font-weight: 400;
+  color: var(--lum-cream);
+  margin: 0 0 14px;
+  line-height: 1.15;
+  letter-spacing: -.01em;
+}
+
+.tm-sec-head p {
+  font-family: var(--lum-sans);
+  color: var(--lum-c-52);
+  font-size: .98rem;
+  line-height: 1.92;
+  max-width: 640px;
+  margin: 0;
+}
+
+/* ==========================================================================
+   HOW WE WORK
+   ========================================================================== */
+
+.tm-how-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(252px, 1fr));
+  gap: 1px;
+  margin-top: 48px;
+  background: var(--lum-hair);
+  border: 1px solid var(--lum-hair);
+  border-radius: var(--lum-r);
+  overflow: hidden;
+}
+
+.tm-principle {
+  position: relative;
+  background: var(--lum-navy);
+  padding: 36px 30px 34px;
+  transition: background-color .6s var(--lum-ease);
+}
+
+.tm-principle::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  background: radial-gradient(120% 100% at 50% 0%, rgba(255, 178, 90, .11), transparent 70%);
+  transition: opacity .6s var(--lum-ease);
+}
+
+/* A gold edge that draws down the left as you hover. transform only. */
+.tm-principle::after {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, var(--lum-gold), rgba(255, 178, 90, 0));
+  transform: scaleY(0);
+  transform-origin: top center;
+  transition: transform .7s var(--lum-ease);
+}
+
+.tm-principle:hover::before { opacity: 1; }
+.tm-principle:hover::after  { transform: scaleY(1); }
+
+.tm-principle-n {
+  display: block;
+  position: relative;
+  font-family: var(--lum-display);
+  font-size: 1.2rem;
+  line-height: 1;
+  color: var(--lum-gold);
+  margin-bottom: 18px;
+  transition: transform .6s var(--lum-ease);
+}
+
+.tm-principle:hover .tm-principle-n { transform: translateX(4px); }
+
+.tm-principle h3 {
+  position: relative;
+  font-family: var(--lum-display);
+  font-size: 1.28rem;
+  font-weight: 400;
+  color: var(--lum-cream);
+  margin: 0 0 11px;
+  line-height: 1.25;
+}
+
+.tm-principle p {
+  position: relative;
+  font-family: var(--lum-sans);
+  font-size: .88rem;
+  line-height: 1.85;
+  color: var(--lum-c-52);
+  margin: 0;
+}
+
+/* ==========================================================================
+   TIERS
+   ========================================================================== */
+
+.tm-tier { margin-top: 54px; }
+.tm-tier:first-of-type { margin-top: 42px; }
+
+.tm-tier-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.tm-tier-head h3 {
+  flex-shrink: 0;
+  font-family: var(--lum-sans);
+  font-size: .62rem;
+  font-weight: 500;
+  letter-spacing: .26em;
+  text-transform: uppercase;
+  color: var(--lum-gold);
+  margin: 0;
+}
+
+.tm-tier-head span {
+  flex: 1 1 auto;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(255, 178, 90, .34), transparent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 1.4s var(--lum-ease) .18s;
+}
+
+.tm-tier-head.in span { transform: scaleX(1); }
+
+/* ==========================================================================
+   THE CARD
+   ========================================================================== */
+
+/* The cast shadow needs somewhere to hang from. .depth is the parallax
+   wrapper; giving it a positioning context does not touch its transform. */
+.tm-grid .depth { position: relative; }
+
+.tm-cast {
+  position: absolute;
+  left: 50%;
+  bottom: -22px;
+  width: 74%;
+  height: 34px;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, .82) 0%, rgba(0, 0, 0, .34) 46%, transparent 72%);
+  transform: translateX(-50%) scale(.9);
+  opacity: .34;
+  /* Counter-phase to lum-lev: the card is at its highest at 0% and
+     100%, so the shadow is tightest and faintest there. Same --dur and
+     --delay, inherited from .prop-float, or the two drift apart. */
+  animation: tm-cast var(--dur, 11s) var(--lum-ease) var(--delay, 0s) infinite;
+}
+
+@keyframes tm-cast {
+  0%, 100% { transform: translateX(-50%) scale(.86); opacity: .28; }
+  50%      { transform: translateX(-50%) scale(1.05); opacity: .52; }
+}
+
+/* ---- THE PLATE ----
+   No portraits exist and stock faces under real names are not an
+   option, so this is a monogram. It is deliberately NOT the listings
+   `.no-photo` frame any more — see the note at the top of this file. */
+
+.tm-plate {
+  position: relative;
+  aspect-ratio: 16 / 8.4;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background:
+    radial-gradient(72% 96% at 50% 108%, rgba(255, 178, 90, .16), transparent 62%),
+    linear-gradient(158deg, var(--lum-navy-3) 0%, var(--lum-navy) 72%);
+  /* a rim light along the top edge, so the plate reads as a surface
+     rather than a hole cut in the card */
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .055);
+}
+
+/* Fine warm dot field. Texture without the "missing asset" read a
+   diagonal hatch carries. */
+.tm-plate::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(247, 242, 233, .07) 1px, transparent 1px);
+  background-size: 13px 13px;
+  -webkit-mask-image: radial-gradient(84% 84% at 50% 50%, #000 12%, transparent 78%);
+          mask-image: radial-gradient(84% 84% at 50% 50%, #000 12%, transparent 78%);
+  opacity: .9;
+}
+
+/* Light sweeping across the plate on hover. */
+.tm-plate::after {
+  content: '';
+  position: absolute;
+  inset: -30% -60%;
+  background: linear-gradient(100deg, transparent 38%, rgba(255, 224, 176, .14) 50%, transparent 62%);
+  transform: translate3d(-62%, 0, 0);
+  transition: transform 1.05s var(--lum-ease);
+  pointer-events: none;
+}
+
+.prop-float .card:hover .tm-plate::after,
+.prop-float .card:focus-within .tm-plate::after { transform: translate3d(62%, 0, 0); }
+
+/* The turning ring. A conic gradient masked to an annulus — one
+   element, transform-only animation, no SVG and no filter. */
+/* Centred with margins rather than a translate, because the animation
+   owns `transform` — a translate here would be overwritten the moment
+   the rotation starts. */
+.tm-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 128px;
+  height: 128px;
+  margin: -64px 0 0 -64px;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg,
+    rgba(255, 178, 90, 0) 0deg,
+    rgba(255, 178, 90, .55) 62deg,
+    rgba(255, 224, 176, .85) 96deg,
+    rgba(255, 178, 90, .18) 150deg,
+    rgba(255, 178, 90, 0) 240deg,
+    rgba(255, 178, 90, 0) 360deg);
+  -webkit-mask: radial-gradient(circle, transparent 0 45.5%, #000 46.5% 49.5%, transparent 50.5%);
+          mask: radial-gradient(circle, transparent 0 45.5%, #000 46.5% 49.5%, transparent 50.5%);
+  opacity: .55;
+  animation: tm-turn 26s linear infinite;
+  transition: opacity .7s var(--lum-ease);
+  pointer-events: none;
+}
+
+@keyframes tm-turn { to { transform: rotate(360deg); } }
+
+.prop-float .card:hover .tm-ring,
+.prop-float .card:focus-within .tm-ring { opacity: 1; }
+
+/* The monogram disc. A circle under a name reads as a person; the
+   16/6.5 empty rectangle it replaced read as a missing photograph. */
+.tm-disc {
+  position: relative;
+  z-index: 2;
+  width: 94px;
+  height: 94px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 178, 90, .26);
+  background:
+    radial-gradient(100% 100% at 50% 8%, rgba(255, 224, 176, .12), transparent 64%),
+    linear-gradient(168deg, rgba(26, 36, 49, .96), rgba(11, 16, 24, .96));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .07),
+    0 18px 34px -18px rgba(0, 0, 0, .9);
+  transition: transform .8s var(--lum-ease),
+              border-color .6s var(--lum-ease),
+              box-shadow .6s var(--lum-ease);
+}
+
+.prop-float .card:hover .tm-disc,
+.prop-float .card:focus-within .tm-disc {
+  transform: translateY(-3px) scale(1.045);
+  border-color: rgba(255, 178, 90, .58);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .1),
+    0 22px 44px -18px rgba(0, 0, 0, .95),
+    0 0 42px -12px rgba(255, 178, 90, .5);
+}
+
+.tm-mono {
+  font-family: var(--lum-display);
+  font-size: 2.05rem;
+  line-height: 1;
+  letter-spacing: .05em;
+  /* gradient-filled type; the fallback colour is what shows if
+     background-clip:text is unsupported, so it has to be legible */
+  color: rgba(247, 242, 233, .74);
+  background: linear-gradient(168deg, #FFE0B0 0%, #FFB25A 58%, #B8763A 100%);
+  -webkit-background-clip: text;
+          background-clip: text;
+  -webkit-text-fill-color: transparent;
+  transition: filter .7s var(--lum-ease);
+}
+
+.prop-float .card:hover .tm-mono,
+.prop-float .card:focus-within .tm-mono {
+  filter: drop-shadow(0 0 16px rgba(255, 178, 90, .42));
+}
+
+.tm-num {
+  position: absolute;
+  top: 14px;
+  left: 18px;
+  z-index: 3;
+  font-family: var(--lum-sans);
+  font-size: .58rem;
+  font-weight: 500;
+  letter-spacing: .26em;
+  text-transform: uppercase;
+  color: var(--lum-c-38);
+  transition: color .5s var(--lum-ease);
+}
+
+.prop-float .card:hover .tm-num,
+.prop-float .card:focus-within .tm-num { color: var(--lum-gold); }
+
+/* ---- CARD BODY ----
+   .kicker and h3 come straight from property-ui.css, so the role and
+   name match a listing's area-kicker and title exactly. */
+
+.tm-say {
+  font-family: var(--lum-sans);
+  font-size: .84rem;
+  line-height: 1.78;
+  color: var(--lum-c-52);
+  margin: -4px 0 18px;
+}
+
+/* Two layers: a hairline that is always there, and the gold that draws
+   across it on hover. The previous version scaled the only layer from
+   zero, so at rest the card had a 1px band of nothing between the
+   descriptor and the links — a gap that read as a mistake. */
+.tm-rule {
+  position: relative;
+  height: 1px;
+  margin: 2px 0 0;
+  background: var(--lum-hair);
+}
+
+.tm-rule::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, var(--lum-gold), rgba(255, 178, 90, .05));
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform .7s var(--lum-ease);
+}
+
+.prop-float .card:hover .tm-rule::after,
+.prop-float .card:focus-within .tm-rule::after { transform: scaleX(1); }
+
+.tm-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: auto;
+  padding-top: 20px;
+}
+
+.tm-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 13px;
+  border: 1px solid var(--lum-hair);
+  border-radius: 999px;
+  font-family: var(--lum-sans);
+  font-size: .6rem;
+  font-weight: 500;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--lum-c-52);
+  text-decoration: none;
+  transition: color .3s var(--lum-ease), border-color .3s var(--lum-ease),
+              background-color .3s var(--lum-ease), transform .3s var(--lum-ease);
+}
+
+/* The three warm up left to right rather than all at once. The links
+   are always visible and always tappable — only the colour is staged,
+   so nothing is hidden behind a hover a touch device cannot perform. */
+.prop-float .card:hover .tm-link {
+  border-color: rgba(255, 178, 90, .30);
+  color: var(--lum-c-70);
+  transition-delay: calc(var(--li, 0) * 70ms);
+}
+
+.tm-link svg {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Direct hover on the pill itself always wins, with no stagger delay. */
+.prop-float .card .tm-link:hover,
+.tm-link:hover {
+  color: #0A0E14;
+  background: var(--lum-gold);
+  border-color: var(--lum-gold);
+  transform: translateY(-1px);
+  transition-delay: 0ms;
+}
+
+.tm-link:focus-visible {
+  outline: 2px solid var(--lum-gold);
+  outline-offset: 2px;
+}
+
+/* The QR that opens this person's card on the site. */
+.tm-link--qr {
+  border-color: rgba(255, 178, 90, .34);
+  color: var(--lum-gold);
+}
+
+/* ---- ARRIVED FROM A QR ----
+   A scanned card lands on team.html#<slug>. The ring says "this one",
+   then gets out of the way. */
+.prop-float.tm-arrived .card {
+  border-color: rgba(255, 178, 90, .55);
+  box-shadow: var(--lum-shadow-lift), 0 0 74px -18px rgba(255, 178, 90, .5);
+}
+
+.prop-float.tm-arrived .tm-rule::after { transform: scaleX(1); }
+.prop-float.tm-arrived .tm-ring { opacity: 1; }
+.prop-float.tm-arrived .tm-disc { border-color: rgba(255, 178, 90, .58); }
+
+/* ==========================================================================
+   CLOSING
+   ========================================================================== */
+
+.tm-close {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--lum-hair);
+  border-radius: var(--lum-r);
+  background: linear-gradient(150deg, var(--lum-navy-2), var(--lum-navy) 74%);
+  box-shadow: 0 42px 84px -30px rgba(0, 0, 0, .9);
+  padding: 48px 40px;
+  margin-top: 62px;
+  text-align: center;
+}
+
+.tm-close::before {
+  content: '';
+  position: absolute;
+  top: -160px;
+  left: 50%;
+  width: 620px;
+  height: 320px;
+  transform: translateX(-50%);
+  background: radial-gradient(ellipse at center, rgba(255, 178, 90, .13), transparent 68%);
+  pointer-events: none;
+}
+
+.tm-close h3 {
+  position: relative;
+  font-family: var(--lum-display);
+  font-size: clamp(1.55rem, 3vw, 2.15rem);
+  font-weight: 400;
+  color: var(--lum-cream);
+  margin: 0 0 12px;
+}
+
+.tm-close p {
+  position: relative;
+  font-family: var(--lum-sans);
+  font-size: .9rem;
+  line-height: 1.85;
+  color: var(--lum-c-52);
+  max-width: 560px;
+  margin: 0 auto 26px;
+}
+
+.tm-close .btn-gold {
+  position: relative;
+  background: var(--lum-gold);
+  border-color: var(--lum-gold);
+  color: #0A0E14;
+  border-radius: 999px;
+  font-family: var(--lum-sans);
+  letter-spacing: .18em;
+  transition: background .4s var(--lum-ease), transform .3s var(--lum-ease);
+}
+
+.tm-close .btn-gold:hover {
+  background: var(--lum-gold-lt);
+  border-color: var(--lum-gold-lt);
+  transform: translateY(-2px);
+}
+
+/* ==========================================================================
+   WHATSAPP FLOAT
+   The pill was only ever declared inside listings.html's inline
+   <style>, so every other page using this markup fell back to the round
+   green base button with its label overflowing. It belongs in style.css
+   eventually, next to the base .whatsapp-float.
+   ========================================================================== */
+
+.whatsapp-float.advisor-float {
+  width: auto;
+  height: 52px;
+  padding: 0 18px;
+  gap: 10px;
+  border-radius: 999px;
+  background: #FFB25A;
+  color: #0A0E14;
+  box-shadow: 0 10px 36px rgba(0, 0, 0, .45);
+  font-family: "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: transform .3s cubic-bezier(.22, .68, .16, 1),
+              background-color .3s cubic-bezier(.22, .68, .16, 1),
+              box-shadow .3s cubic-bezier(.22, .68, .16, 1);
+}
+
+.whatsapp-float.advisor-float:hover {
+  background: #FFE0B0;
+  box-shadow: 0 14px 44px rgba(0, 0, 0, .55);
+  transform: translateY(-2px);
+}
+
+.whatsapp-float.advisor-float svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   NARROW
+   ========================================================================== */
+
+@media (max-width: 860px) {
+  .tm-hero { padding: 148px 0 66px; }
+  .tm { padding: 66px 0 82px; }
+  .tm-how { padding: 68px 0 60px; }
+  .tm-hero-facts { gap: 12px 26px; margin-top: 28px; }
+  .tm-fact b { font-size: 1.35rem; }
+
+  /* Nothing below 11.5px on a phone — the floor the mobile pass set.
+     These are all uppercase and tracked, which is where it bites: at
+     9.3px with .26em of letter-spacing a roman numeral is a smudge. */
+  .tm-hero .label,
+  .tm-tier-head h3,
+  .tm-num,
+  .tm-fact span { font-size: .72rem; }
+
+  .tm-close .btn-gold { font-size: .74rem; }
+  .whatsapp-float.advisor-float {
+    height: 46px;
+    padding: 0 14px;
+    font-size: .62rem;
+  }
+}
+
+@media (max-width: 560px) {
+  .tm-close { padding: 34px 24px; }
+  .tm-plate { aspect-ratio: 16 / 9.2; }
+  .tm-disc { width: 82px; height: 82px; }
+  .tm-ring { width: 112px; height: 112px; margin: -56px 0 0 -56px; }
+  .tm-mono { font-size: 1.8rem; }
+  /* The cast shadow sits below the card; in a one-column grid that gap
+     is the grid gap, so pull it in or consecutive cards overlap. */
+  .tm-cast { bottom: -14px; height: 26px; }
+}
+
+/* ==========================================================================
+   REDUCED MOTION
+   property-ui.css already stops the levitation and the card reveal;
+   this covers everything declared in this file.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .tm-hero-bg { animation: none; transform: scale(1.06); }
+  .tm-ring { animation: none; }
+  .tm-cast { animation: none; opacity: .38; }
+
+  .tm-rv,
+  .tm-line {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    transition-duration: .01ms !important;
+    transition-delay: 0ms !important;
+  }
+
+  .tm-rule::after,
+  .tm-tier-head span { transform: scaleX(1); }
+  .tm-principle::after { transform: scaleY(1); }
+  .tm-plate::after { display: none; }
+
+  .tm-mono,
+  .tm-disc,
+  .tm-num,
+  .tm-link,
+  .tm-principle,
+  .tm-principle::before,
+  .tm-principle-n,
+  .whatsapp-float.advisor-float {
+    transition-duration: .01ms !important;
+  }
+}

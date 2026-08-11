@@ -1,0 +1,601 @@
+/* ==========================================================================
+   LUMINA — filter-ui.css
+   The listings filter bar: type, areas, floor, bedrooms, budget.
+
+   Tokens are redeclared here for the same reason property-ui.css
+   redeclares them — listings.html's inline block and css/style.css
+   disagree with the card system about what "gold" is (#C6A76E against
+   #FFB25A). The bar sits directly on top of the cards, so it follows the
+   cards, not the older page chrome.
+
+   Loaded after property-ui.css. Several selectors here restate ones from
+   the inline <style> block at equal specificity and rely on source order
+   to win; keep this link last in <head>.
+   ========================================================================== */
+
+.filter-bar {
+  --lum-ink: #05070B;
+  --lum-navy: #0B1018;
+  --lum-navy-2: #121A24;
+  --lum-navy-3: #1A2431;
+  --lum-cream: #F7F2E9;
+  --lum-gold: #FFB25A;
+  --lum-gold-lt: #FFE0B0;
+  --lum-c-70: rgba(247, 242, 233, .72);
+  --lum-c-52: rgba(247, 242, 233, .54);
+  --lum-c-38: rgba(247, 242, 233, .40);
+  --lum-hair: rgba(247, 242, 233, .11);
+  --lum-glow-gold: rgba(255, 178, 90, .55);
+  --lum-sans: "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --lum-ease: cubic-bezier(.22, .68, .16, 1);
+}
+
+/* ---- THE BAR ---- */
+
+.filter-bar {
+  background: linear-gradient(180deg, #0A0E14 0%, #080B10 100%);
+  border-bottom: 1px solid var(--lum-hair);
+  padding: 16px 0 14px;
+  position: sticky;
+  /* The brand bar is position:fixed, so a bar stuck at top:0 parks its first
+     row underneath it — the type pills were invisible the moment the page
+     scrolled. js/listings.js measures the header and publishes --bar-h; the
+     fallback is the bar's own resting height. */
+  top: var(--bar-h, 64px);
+  z-index: 60;
+}
+
+/* The same hairline the page header carries, so the bar reads as part of
+   the same object rather than a toolbar bolted underneath it. */
+.filter-bar::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--lum-glow-gold), transparent);
+  opacity: .45;
+  pointer-events: none;
+}
+
+.filter-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: stretch;
+}
+
+.fx-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.filter-label {
+  font-family: var(--lum-sans);
+  font-size: .58rem;
+  font-weight: 500;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--lum-c-38);
+  margin: 0 4px 0 0;
+  flex-shrink: 0;
+}
+
+.filter-count {
+  margin-left: auto;
+  font-family: var(--lum-sans);
+  font-size: .68rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--lum-c-38);
+  flex-shrink: 0;
+}
+
+.filter-count span {
+  display: inline-block;
+  font-weight: 600;
+  color: var(--lum-gold);
+}
+
+/* Fires whenever the number changes. Without it a filter that removes
+   three of a hundred cards looks like nothing happened. */
+.filter-count span.bump { animation: fxBump .52s var(--lum-ease); }
+
+@keyframes fxBump {
+  0%   { transform: scale(1);    color: var(--lum-gold); }
+  28%  { transform: scale(1.26); color: var(--lum-gold-lt); }
+  100% { transform: scale(1);    color: var(--lum-gold); }
+}
+
+/* ---- PILLS (property type, bedrooms) ----
+   .type-pill is the existing markup; .fx-pill is the bedroom set. Same
+   object, so they are styled as one and only the click semantics differ
+   — type is a single choice, bedrooms toggle independently. */
+
+.filter-bar .type-pill,
+.filter-bar .fx-pill {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  padding: 9px 19px;
+  border: 1px solid var(--lum-hair);
+  border-radius: 999px;
+  background: transparent;
+  font-family: var(--lum-sans);
+  font-size: .64rem;
+  font-weight: 500;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--lum-c-52);
+  cursor: pointer;
+  transition: color .32s var(--lum-ease), border-color .32s var(--lum-ease);
+}
+
+/* The fill sweeps in from the left rather than switching on. transform
+   only — see the animation rule in CLAUDE.md. */
+.filter-bar .type-pill::before,
+.filter-bar .fx-pill::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(115deg, var(--lum-gold) 0%, var(--lum-gold-lt) 100%);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform .44s var(--lum-ease);
+}
+
+.filter-bar .type-pill:hover,
+.filter-bar .fx-pill:hover {
+  color: var(--lum-cream);
+  border-color: rgba(255, 178, 90, .42);
+}
+
+.filter-bar .type-pill:focus-visible,
+.filter-bar .fx-pill:focus-visible,
+.filter-bar .fx-trigger:focus-visible,
+.filter-bar .filter-select:focus-visible,
+.filter-bar .fx-clear:focus-visible {
+  outline: 2px solid var(--lum-gold);
+  outline-offset: 2px;
+}
+
+.filter-bar .type-pill.active,
+.filter-bar .fx-pill.active {
+  color: #0A0E14;
+  border-color: transparent;
+}
+
+.filter-bar .type-pill.active::before,
+.filter-bar .fx-pill.active::before { transform: scaleX(1); }
+
+/* The label has to outrank ::before's stacking context. */
+.filter-bar .type-pill > span,
+.filter-bar .fx-pill > span {
+  position: relative;
+  z-index: 1;
+}
+
+.fx-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.fx-group-label {
+  font-family: var(--lum-sans);
+  font-size: .58rem;
+  font-weight: 500;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--lum-c-38);
+  flex-shrink: 0;
+}
+
+.fx-pills {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.type-pills {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
+/* ---- TRIGGER ----
+   The multi-select buttons and the native budget select have to be
+   indistinguishable, or the bar looks like two controls from two
+   different sites sitting next to each other. */
+
+.filter-bar .fx-trigger,
+.filter-bar .filter-select {
+  font-family: var(--lum-sans);
+  font-size: .74rem;
+  font-weight: 400;
+  letter-spacing: .04em;
+  color: var(--lum-cream);
+  background-color: rgba(247, 242, 233, .028);
+  border: 1px solid var(--lum-hair);
+  border-radius: 12px;
+  padding: 11px 15px;
+  min-width: 176px;
+  cursor: pointer;
+  outline: none;
+  transition: border-color .34s var(--lum-ease),
+              background-color .34s var(--lum-ease),
+              box-shadow .34s var(--lum-ease);
+}
+
+.filter-bar .fx-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  text-align: left;
+}
+
+.filter-bar .filter-select {
+  appearance: none;
+  padding-right: 38px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23FFB25A' stroke-width='1.3' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+}
+
+/* The native dropdown list is drawn by the OS and inherits nothing, so
+   set it explicitly or it renders as white-on-white on some platforms. */
+.filter-bar .filter-select option {
+  background: #121A24;
+  color: #F7F2E9;
+}
+
+.filter-bar .fx-trigger:hover,
+.filter-bar .filter-select:hover {
+  border-color: rgba(255, 178, 90, .40);
+  background-color: rgba(247, 242, 233, .05);
+}
+
+.filter-bar .fx-ms.open .fx-trigger,
+.filter-bar .fx-trigger.on,
+.filter-bar .filter-select.active {
+  border-color: rgba(255, 178, 90, .58);
+  box-shadow: 0 0 0 3px rgba(255, 178, 90, .09);
+}
+
+.fx-trigger-label {
+  flex: 1 1 auto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fx-caret {
+  flex-shrink: 0;
+  width: 10px;
+  height: 6px;
+  stroke: var(--lum-gold);
+  stroke-width: 1.3;
+  fill: none;
+  stroke-linecap: round;
+  transition: transform .38s var(--lum-ease);
+}
+
+.fx-ms.open .fx-caret { transform: rotate(180deg); }
+
+/* Count of what is selected, so a collapsed panel still says how much is
+   on. Overshoots slightly on the way in. */
+.fx-badge {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  min-width: 19px;
+  height: 19px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--lum-gold);
+  color: #0A0E14;
+  font-size: .6rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  transform: scale(0);
+  transition: transform .38s cubic-bezier(.34, 1.56, .64, 1);
+}
+
+.fx-badge.on { transform: scale(1); }
+/* display:grid outranks the UA [hidden] rule — restate it. */
+.fx-badge[hidden] { display: none; }
+
+/* ---- PANEL ---- */
+
+.fx-ms {
+  position: relative;
+  display: inline-block;
+}
+
+.fx-panel {
+  position: absolute;
+  top: calc(100% + 9px);
+  left: 0;
+  z-index: 80;
+  width: max(252px, 100%);
+  padding: 7px;
+  border: 1px solid rgba(255, 178, 90, .22);
+  border-radius: 15px;
+  background: linear-gradient(180deg, var(--lum-navy-2) 0%, var(--lum-navy) 100%);
+  box-shadow: 0 28px 64px rgba(0, 0, 0, .62), 0 2px 8px rgba(0, 0, 0, .5);
+  opacity: 0;
+  transform: translateY(-9px) scale(.97);
+  transform-origin: top left;
+  transition: opacity .3s var(--lum-ease), transform .36s var(--lum-ease);
+  pointer-events: none;
+}
+
+.fx-panel[hidden] { display: none; }
+
+.fx-ms.open .fx-panel {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+.fx-scroll {
+  max-height: 306px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 178, 90, .3) transparent;
+}
+
+.fx-scroll::-webkit-scrollbar { width: 6px; }
+.fx-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 178, 90, .28);
+  border-radius: 999px;
+}
+
+.fx-opt {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 11px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: var(--lum-sans);
+  font-size: .76rem;
+  color: var(--lum-c-70);
+  /* Each row arrives just after the one above it. --i is set in JS and
+     capped, so a twelve-area list does not out-wait the reader. */
+  opacity: 0;
+  transform: translateY(7px);
+  transition: opacity .3s var(--lum-ease), transform .34s var(--lum-ease),
+              background-color .26s var(--lum-ease), color .26s var(--lum-ease);
+  transition-delay: 0s;
+}
+
+.fx-ms.open .fx-opt {
+  opacity: 1;
+  transform: none;
+  transition-delay: calc(var(--i, 0) * 26ms);
+}
+
+.fx-opt:hover {
+  background: rgba(255, 178, 90, .08);
+  color: var(--lum-cream);
+}
+
+/* Hidden but still focusable — the arrow-key navigation moves focus
+   between these, and a zero-sized box is skipped by some browsers. */
+.fx-opt input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.fx-box {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 17px;
+  height: 17px;
+  border: 1px solid rgba(247, 242, 233, .26);
+  border-radius: 5px;
+  transition: background-color .3s var(--lum-ease),
+              border-color .3s var(--lum-ease),
+              transform .3s var(--lum-ease);
+}
+
+.fx-opt:active .fx-box { transform: scale(.86); }
+
+.fx-opt input:checked ~ .fx-box {
+  background: var(--lum-gold);
+  border-color: var(--lum-gold);
+}
+
+.fx-opt input:focus-visible ~ .fx-box {
+  outline: 2px solid var(--lum-gold);
+  outline-offset: 2px;
+}
+
+/* The tick draws itself rather than appearing. */
+.fx-box svg {
+  width: 11px;
+  height: 11px;
+  fill: none;
+  stroke: #0A0E14;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 16;
+  stroke-dashoffset: 16;
+  transition: stroke-dashoffset .34s var(--lum-ease) .05s;
+}
+
+.fx-opt input:checked ~ .fx-box svg { stroke-dashoffset: 0; }
+
+.fx-opt-l {
+  flex: 1 1 auto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fx-opt input:checked ~ .fx-opt-l { color: var(--lum-cream); }
+
+.fx-opt-n {
+  flex-shrink: 0;
+  font-size: .66rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--lum-c-38);
+  transition: color .26s var(--lum-ease);
+}
+
+.fx-opt:hover .fx-opt-n,
+.fx-opt input:checked ~ .fx-opt-n { color: var(--lum-gold); }
+
+.fx-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-top: 5px;
+  padding: 8px 6px 3px;
+  border-top: 1px solid var(--lum-hair);
+}
+
+.fx-foot button {
+  font-family: var(--lum-sans);
+  font-size: .6rem;
+  font-weight: 500;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  padding: 5px 2px;
+  transition: color .28s var(--lum-ease);
+}
+
+.fx-foot .fx-none { color: var(--lum-c-38); }
+.fx-foot .fx-none:hover { color: var(--lum-cream); }
+.fx-foot .fx-done { color: var(--lum-gold); }
+.fx-foot .fx-done:hover { color: var(--lum-gold-lt); }
+
+/* ---- CLEAR ALL ----
+   Only present when something is on. With five filters it is otherwise
+   easy to end up on an empty grid and not see why. */
+
+.fx-clear {
+  font-family: var(--lum-sans);
+  font-size: .6rem;
+  font-weight: 500;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  /* At 40% cream this read as a disabled label rather than the way out
+     of a filter that has emptied the grid. It is the one control the
+     reader needs when they are lost. */
+  color: var(--lum-c-70);
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid rgba(247, 242, 233, .22);
+  margin-left: 4px;
+  padding: 4px 2px;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(-3px);
+  transition: opacity .32s var(--lum-ease), transform .32s var(--lum-ease),
+              color .28s var(--lum-ease), border-color .28s var(--lum-ease);
+}
+
+.fx-clear.on {
+  opacity: 1;
+  transform: none;
+}
+
+.fx-clear:hover {
+  color: var(--lum-gold);
+  border-bottom-color: var(--lum-gold);
+}
+
+.fx-clear[hidden] { display: none; }
+
+/* Desktop only: the blur is a compositor cost and CLAUDE.md puts the
+   ceiling at roughly twelve glass panels, which the landing page already
+   spends. Two panels, and only one can be open at a time. */
+@media (min-width: 1024px) {
+  .fx-panel {
+    background: linear-gradient(180deg, rgba(18, 26, 36, .92) 0%, rgba(11, 16, 24, .95) 100%);
+    backdrop-filter: blur(14px) saturate(1.1);
+    -webkit-backdrop-filter: blur(14px) saturate(1.1);
+  }
+}
+
+/* ---- NARROW ---- */
+
+@media (max-width: 860px) {
+  .filter-bar { padding: 14px 0 12px; }
+  .filter-count { margin-left: 0; }
+  .filter-bar .fx-trigger,
+  .filter-bar .filter-select { min-width: 152px; }
+}
+
+@media (max-width: 680px) {
+  /* Stacked, the bar is around 240px tall. Sticky, that is a third of a
+     phone screen permanently spent on controls, leaving a viewport that
+     shows one and a half cards. It scrolls away here — position stays
+     relative because ::after is the hairline and is absolute to it. */
+  .filter-bar {
+    position: relative;
+    top: auto;
+  }
+
+  /* One row that scrolls sideways rather than three wrapped rows. The
+     cut-off pill at the right edge is what says it scrolls. */
+  .type-pills {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .type-pills::-webkit-scrollbar { display: none; }
+  .filter-bar .type-pill { flex: 0 0 auto; }
+
+  .fx-row { gap: 8px; }
+  /* .fx-mount is the flex child; .fx-ms is inside it. Putting the
+     full-width rule on .fx-ms left both dropdowns sitting at their
+     content width, side by side, on a 390px screen. */
+  .fx-mount { flex: 1 1 100%; }
+  .fx-mount .fx-ms { display: block; width: 100%; }
+  .filter-bar .fx-trigger,
+  .filter-bar .filter-select {
+    width: 100%;
+    min-width: 0;
+  }
+  .fx-panel { width: 100%; }
+  .fx-group { flex: 1 1 100%; }
+  .filter-bar .type-pill,
+  .filter-bar .fx-pill { padding: 8px 15px; font-size: .6rem; }
+  .fx-scroll { max-height: 244px; }
+}
+
+/* ---- REDUCED MOTION ----
+   Non-negotiable, per CLAUDE.md. Everything still works; nothing moves. */
+
+@media (prefers-reduced-motion: reduce) {
+  .filter-bar *,
+  .filter-bar *::before,
+  .filter-bar *::after {
+    transition-duration: .01ms !important;
+    transition-delay: 0ms !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+  .fx-panel { transform: none; }
+  .fx-opt { opacity: 1; transform: none; }
+}

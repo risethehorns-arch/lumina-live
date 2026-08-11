@@ -1,0 +1,525 @@
+/* ==========================================================================
+   LUMINA — studio.css
+   The scroll-built brand-and-site. Loaded after css/elevated.css.
+
+   ┌──────────────────────────────────────────────────────────────────────┐
+   │ WHAT THIS IS, AND WHY IT IS NOT A THIRD COPY OF THE OTHER TWO        │
+   │                                                                      │
+   │ invest.html assembles a BUILDING in elevation. room.html furnishes a │
+   │ ROOM in one-point perspective. Both are architectural line-work seen │
+   │ from outside or inside a space.                                      │
+   │                                                                      │
+   │ This one is a SCREEN, and it is deliberately made of DOM rather than │
+   │ SVG — a website mock built out of real elements is the honest        │
+   │ material, and it is also what the studio actually delivers. The      │
+   │ subject is interface: a browser frame, a wireframe, a brand, and     │
+   │ then the thing going live.                                           │
+   │                                                                      │
+   │ THREE ACTS, matching the three things the page sells, in the order   │
+   │ the work is really done:                                             │
+   │     1  THE BRAND   a mark, a typeface, three colours                 │
+   │     2  THE SITE    wireframe → skinned in that brand → content       │
+   │     3  THE SOCIAL  posts fanning out of the same system              │
+   │ and then it is handed over.                                          │
+   │                                                                      │
+   │ THE ONE TRICK WORTH KNOWING: nothing here animates a colour. Every   │
+   │ block carries a wireframe layer and a skinned layer stacked on top   │
+   │ of each other, and the "skin" is an opacity crossfade between them.  │
+   │ Animating background-color from a scroll handler is a paint on every │
+   │ frame; crossfading two static layers is a composite. Same reasoning  │
+   │ as the four stacked skies in css/room.css.                           │
+   └──────────────────────────────────────────────────────────────────────┘
+
+   ┌──────────────────────────────────────────────────────────────────────┐
+   │ THE TIMELINE. p is the pin's 0…1 progress, derived exactly as        │
+   │ invest.js and room.js derive it. Every value is a pure function of   │
+   │ p — nothing holds a timer — so scrolling back up un-builds it as     │
+   │ carefully as scrolling down built it.                                │
+   │                                                                      │
+   │  .000–.075  BRIEF. The title sits on an empty sheet, then leaves.    │
+   │             (invest.html's exact exit numbers, deliberately)         │
+   │  .050–.150  THE SHEET. A blank browser frame draws itself: chrome    │
+   │             first, then the setting-out grid inside it.              │
+   │                                                                      │
+   │  ── ACT 1 · THE BRAND ──                                             │
+   │  .130–.200  MARK. The ring scales in and turns to true.              │
+   │  .170–.230  MONOGRAM lands inside it.                                │
+   │  .200–.270  TYPE. Two specimens set, one after the other.            │
+   │  .240–.320  COLOUR. Three chips drop with a settle.                  │
+   │                                                                      │
+   │  ── ACT 2 · THE SITE ──                                              │
+   │  .300–.460  WIREFRAME. Six blocks land in reading order — bar,      │
+   │             hero, three cards, footer — each from its own direction. │
+   │  .440–.560  SKIN. The brand crossfades over the wireframe, block by  │
+   │             block, left to right and top to bottom.                  │
+   │  .540–.660  CONTENT. Type, a photograph and prices arrive.           │
+   │  .640–.700  ── the only silence in the piece ──                      │
+   │  .680–.730  LIVE. The address bar fills, the guides go, one flash.   │
+   │                                                                      │
+   │  ── ACT 3 · THE SOCIAL ──                                            │
+   │  .720–.860  The phone rises and three posts fan out of the same      │
+   │             system, each rotated a little further than the last.     │
+   │                                                                      │
+   │  .840–.930  HANDOVER. The keys line, and the frame settles.          │
+   │  .100–.780  CAMERA. Pulls back from the frame to the whole desk.     │
+   │             STILL from .78 — stillness at the end is what makes a    │
+   │             finished thing feel finished.                            │
+   │  ≥ .200     .reading   the panel narrates                            │
+   │  ≥ .940     .armed     the three acts become controls                │
+   └──────────────────────────────────────────────────────────────────────┘
+
+   NO `filter` on anything that moves under the camera, for the same
+   reason as room.css: a filter inside a scaling ancestor re-rasters its
+   region every frame. Glows are gradients on real elements.
+   ========================================================================== */
+
+/* ── the stage ────────────────────────────────────────────────────────── */
+.st{position:relative; height:420vh}
+
+/* grid-template-rows + align-items:stretch, NOT place-items:center — the
+   same trap invest.html and room.html each hit: with an auto row and a
+   centred item the row is content-sized, the stage's height:100% has
+   nothing definite to resolve against, and it grows past a pin that
+   clips. */
+.st-pin{
+  /* ── the five numbers that keep the desk from colliding with itself ──
+     The pin holds six fixed objects (skip, brand, frame, phone, notes,
+     rail) plus TWO things it does not own: the page's fixed .bar across
+     the top and its fixed #spine down the right. Every one of the
+     collisions below was invisible to instrumentation and obvious in a
+     screenshot, so the clearances are declared here, once, and every
+     rule reads them rather than restating a number.
+
+       --pin-top   the header's own height. .st-skip is absolute in this
+                   element, and abspos resolves against the PADDING box —
+                   `top:0` is the border edge, i.e. underneath .bar.
+       --read-w    the notes panel's width, and
+       --flank-l   the room the camera leaves for it. The frame is
+                   centred in .st-cam's CONTENT box, so padding is what
+                   moves it clear; at flank 0 the panel printed over the
+                   first of the three cards.
+       --phone-w   the phone's width, needed as a token because
+       --flank-r   is derived from it. The right flank has to be WIDER
+                   than the phone, or the phone's right edge lands on
+                   the frame's right edge and it covers the third of the
+                   three cards — the cards are a set and a half-hidden
+                   one reads as a rendering fault. Widening it makes the
+                   frame narrower; that is the trade, taken knowingly.
+       --sheet-h   the title block's height, ENFORCED not assumed, so
+                   the notes panel can sit on top of it. */
+  --pin-top:clamp(84px,11vh,120px);
+  --read-w:min(360px,32vw);
+  --flank-l:calc(var(--read-w) + clamp(26px,2.6vw,44px));
+  --phone-w:clamp(96px,10vw,124px);
+  --flank-r:calc(var(--phone-w) + clamp(28px,2.4vw,40px));
+  --sheet-h:48px;
+  position:sticky; top:0; height:100vh; height:100svh; overflow:clip;
+  display:grid; grid-template-rows:minmax(0,1fr); align-items:stretch; justify-items:center;
+  padding:var(--pin-top) var(--gutter) clamp(28px,5vh,56px);
+}
+.st-pin .bp-grid{
+  opacity:.26; animation-duration:150s;
+  translate:0 calc(var(--cam-y,0px) * -.3);
+}
+/* z-index 1, BEHIND the stage — it fades the blueprint grid into the
+   ink, it is not a scrim over the work. At 8 it sat on top of the whole
+   stage and dimmed the title block and the act rail, which are the two
+   things at the foot of the frame that have to stay readable. */
+.st-pin::after{
+  content:""; position:absolute; inset:auto 0 0; height:14vh; z-index:1;
+  pointer-events:none; background:linear-gradient(180deg,transparent,var(--ink));
+}
+.st-stage{position:relative; z-index:2; width:100%; height:100%}
+
+/* the desk: everything the camera moves as one.
+   The padding is the flanking, and only the FRAME feels it — .st-brand
+   and .st-phone are absolutely positioned and so resolve against this
+   element's padding box, which the padding does not move. That is why
+   .st-phone reads --flank-r itself. */
+.st-cam{
+  position:absolute; inset:0; display:grid; place-items:center;
+  padding:0 var(--flank-r,0px) 0 var(--flank-l,0px);
+  transform:translate3d(var(--cam-x,0px),var(--cam-y,0px),0) scale(var(--cam-z,1));
+  will-change:transform;
+}
+
+/* ── the browser frame ────────────────────────────────────────────────── */
+.st-win{
+  position:relative;
+  width:min(100%,var(--win-w,860px)); aspect-ratio:16/10;
+  border-radius:12px; overflow:hidden;
+  border:1px solid rgba(180,214,232,.34);
+  background:linear-gradient(160deg,rgba(16,22,32,.9),rgba(8,12,18,.94));
+  box-shadow:0 40px 90px -40px rgba(0,0,0,.95), inset 0 1px 0 rgba(255,255,255,.07);
+  opacity:var(--win-o,0);
+  transform:scale(calc(.94 + var(--win-o,0) * .06));
+}
+.st-chrome{
+  position:relative; z-index:3; display:flex; align-items:center; gap:10px;
+  height:clamp(26px,3.4vh,34px); padding:0 12px;
+  border-bottom:1px solid rgba(180,214,232,.2);
+  background:rgba(10,14,21,.7);
+}
+.st-dot{width:7px; height:7px; border-radius:50%; background:rgba(180,214,232,.3); flex:none}
+.st-url{
+  flex:1; height:16px; border-radius:999px; margin-left:6px;
+  border:1px solid rgba(180,214,232,.2); background:rgba(6,9,14,.6);
+  display:flex; align-items:center; padding:0 9px; overflow:hidden;
+}
+.st-url span{
+  font-size:8.5px; letter-spacing:.1em; color:var(--gold-lt); white-space:nowrap;
+  /* typed on by a wipe rather than by changing text — one transform,
+     and it reverses exactly when the reader scrolls back */
+  display:block; transform-origin:left center;
+  transform:scaleX(var(--url,0));
+}
+
+/* the page inside the frame */
+.st-page{position:absolute; inset:clamp(26px,3.4vh,34px) 0 0; overflow:hidden}
+.st-guides{
+  position:absolute; inset:0; opacity:var(--guides,0); pointer-events:none;
+  background-image:
+    linear-gradient(90deg,rgba(160,196,214,.16) 1px,transparent 1px),
+    linear-gradient(rgba(160,196,214,.1) 1px,transparent 1px);
+  background-size:calc(100% / 12) 100%, 100% 34px;
+}
+
+/* ── a block: two stacked layers, crossfaded ──────────────────────────── */
+.st-b{
+  position:absolute; border-radius:5px; overflow:hidden;
+  opacity:var(--p,0);
+  transform:translate3d(calc(var(--dx,0px) * (1 - var(--p,0))),
+                        calc(var(--dy,14px) * (1 - var(--p,0))),0)
+            scale(calc(.96 + var(--p,0) * .04));
+}
+/* wireframe: hatched grey, the way a block is drawn before it is a thing */
+.st-wire{
+  position:absolute; inset:0;
+  border:1px solid rgba(160,196,214,.34);
+  background:
+    repeating-linear-gradient(58deg,rgba(160,196,214,.09) 0 1px,transparent 1px 7px),
+    rgba(120,150,175,.05);
+}
+/* skinned: the same block wearing the brand */
+.st-skin{
+  position:absolute; inset:0; opacity:var(--skin,0);
+  border:1px solid rgba(255,178,90,.26);
+  background:linear-gradient(150deg,rgba(38,50,66,.9),rgba(14,20,29,.92));
+}
+.st-b[data-hero] .st-skin{
+  background:
+    radial-gradient(120% 150% at 22% 12%,rgba(255,178,90,.24),transparent 58%),
+    linear-gradient(150deg,rgba(44,58,76,.95),rgba(12,18,26,.95));
+}
+.st-b[data-bar] .st-skin{background:linear-gradient(90deg,rgba(30,40,54,.95),rgba(16,22,32,.95))}
+
+/* content: type, a photograph, a price — the third layer */
+.st-content{position:absolute; inset:0; opacity:var(--content,0); padding:7%}
+.st-line{
+  display:block; height:4px; border-radius:2px; margin-bottom:6px;
+  background:rgba(247,242,233,.36);
+}
+.st-line.w1{width:78%} .st-line.w2{width:52%} .st-line.w3{width:64%} .st-line.w4{width:38%}
+.st-line.gold{background:var(--gold); height:5px}
+.st-line.big{height:8px; width:66%; background:rgba(247,242,233,.62); margin-bottom:9px}
+.st-price{
+  position:absolute; left:7%; bottom:8%;
+  font-size:9px; letter-spacing:.08em; color:var(--gold-lt);
+}
+.st-navdots{position:absolute; right:8px; top:50%; transform:translateY(-50%); display:flex; gap:7px}
+.st-navdots i{display:block; width:14px; height:3px; border-radius:2px; background:rgba(247,242,233,.4)}
+.st-mark-mini{
+  position:absolute; left:9px; top:50%; transform:translateY(-50%);
+  width:12px; height:12px; border-radius:50%;
+  border:1px solid var(--gold); background:rgba(255,178,90,.18);
+}
+
+/* ── the brand panel, left of the frame ───────────────────────────────── */
+/* top:0, NOT top:50% — the left column is a stack of three, brand board
+   above notes above title block, and a vertically-centred board reached
+   down into the notes panel by up to 54px (measured at 1280). Anchoring
+   it to the head of the column is what makes the column a column. */
+.st-brand{
+  position:absolute; left:0; top:0; z-index:4;
+  width:clamp(150px,15vw,196px);
+  transform:translate3d(var(--brand-x,-24px),0,0);
+  opacity:var(--brand-o,0);
+}
+.st-mark{position:relative; width:74px; height:74px; margin-bottom:16px}
+.st-ring{
+  position:absolute; inset:0; border-radius:50%;
+  border:1px solid var(--gold);
+  box-shadow:0 0 26px -6px rgba(255,178,90,.6), inset 0 0 18px -6px rgba(255,178,90,.5);
+  opacity:var(--ring,0);
+  /* it arrives turning: a mark being struck rather than appearing */
+  transform:rotate(calc((1 - var(--ring,0)) * -120deg)) scale(calc(.4 + var(--ring,0) * .6));
+}
+.st-mono{
+  position:absolute; inset:0; display:grid; place-items:center;
+  font-family:var(--display); font-size:1.9rem; color:var(--gold-lt);
+  opacity:var(--mono,0);
+  transform:scale(calc(.7 + var(--mono,0) * .3));
+  text-shadow:0 0 20px rgba(255,178,90,.45);
+}
+.st-spec{
+  overflow:hidden; margin-bottom:9px;
+  /* the specimen sets left to right, like type being set */
+  transform:scaleX(var(--t1,0)); transform-origin:left center;
+}
+.st-spec.two{transform:scaleX(var(--t2,0))}
+.st-spec b{
+  display:block; font-family:var(--display); font-weight:400; font-size:1.32rem;
+  line-height:1.1; color:var(--cream); white-space:nowrap;
+}
+.st-spec em{
+  display:block; font-style:normal; font-size:.68rem; letter-spacing:.1em;
+  color:var(--c-52); white-space:nowrap;
+}
+.st-chips{display:flex; gap:7px; margin-top:14px}
+.st-chip{
+  width:26px; height:26px; border-radius:6px; flex:none;
+  border:1px solid rgba(255,255,255,.14);
+  opacity:var(--c,0);
+  transform:translateY(calc((1 - var(--c,0)) * -22px)) scale(calc(.6 + var(--c,0) * .4));
+}
+.st-chip.a{background:linear-gradient(150deg,#FFD7A3,#FFB25A)}
+.st-chip.b{background:linear-gradient(150deg,#1D2632,#0D1219)}
+.st-chip.c{background:linear-gradient(150deg,#A8CBDC,#7FD9E8)}
+
+/* ── the phone, right of the frame ────────────────────────────────────── */
+/* The right offset puts its LEFT edge on the frame's right edge, less
+   18px so it leans on the frame rather than floating beside it — the
+   frame is centred in .st-cam's content box, so the box's right padding
+   IS the frame's right edge. Both live inside the camera, so the lean
+   survives the zoom. bottom:13% keeps it off the act rail along the foot. */
+.st-phone{
+  position:absolute; z-index:5;
+  right:calc(var(--flank-r,0px) - var(--phone-w) + 18px); bottom:13%;
+  width:var(--phone-w); aspect-ratio:9/19;
+  border-radius:14px; border:1px solid rgba(180,214,232,.36);
+  background:linear-gradient(160deg,rgba(18,25,36,.96),rgba(8,12,18,.98));
+  box-shadow:0 30px 60px -30px rgba(0,0,0,.95), inset 0 1px 0 rgba(255,255,255,.08);
+  opacity:var(--phone,0);
+  transform:translate3d(0,calc((1 - var(--phone,0)) * 60px),0) scale(calc(.9 + var(--phone,0) * .1));
+}
+.st-phone::before{
+  content:""; position:absolute; left:50%; top:6px; width:26px; height:3px;
+  margin-left:-13px; border-radius:2px; background:rgba(180,214,232,.3);
+}
+.st-posts{position:absolute; inset:16px 9px 10px; display:grid; gap:6px; align-content:start}
+.st-post{
+  position:relative; border-radius:6px; overflow:hidden; aspect-ratio:4/3;
+  border:1px solid rgba(255,178,90,.24);
+  background:
+    radial-gradient(120% 140% at 24% 14%,rgba(255,178,90,.24),transparent 60%),
+    linear-gradient(150deg,rgba(38,50,66,.95),rgba(12,18,26,.95));
+  opacity:var(--o,0);
+  /* each post lands rotated a little further than the one before, so the
+     stack reads as a set coming off one system rather than three
+     unrelated squares */
+  transform:translate3d(calc((1 - var(--o,0)) * 26px),calc((1 - var(--o,0)) * 16px),0)
+            rotate(calc((1 - var(--o,0)) * var(--rot,4deg)));
+}
+.st-post i{
+  position:absolute; left:8%; bottom:12%; display:block;
+  width:56%; height:2.5px; border-radius:2px; background:rgba(247,242,233,.42);
+}
+.st-post i.s{width:34%; bottom:5%; background:var(--gold)}
+
+/* ── the flash, when it ships ─────────────────────────────────────────── */
+.st-flash{
+  position:absolute; inset:-8%; z-index:6; pointer-events:none; border-radius:22px;
+  background:radial-gradient(closest-side,rgba(255,215,163,.5),transparent 72%);
+  opacity:var(--flash,0);
+}
+
+/* ── chrome ───────────────────────────────────────────────────────────── */
+.st-intro{
+  position:absolute; left:0; top:50%; z-index:7; width:min(100%,540px);
+  transform:translate3d(0,calc(-50% + var(--intro-y,0px)),0);
+  opacity:var(--intro-o,1); filter:blur(var(--intro-b,0px));
+  pointer-events:var(--intro-pe,auto);
+  will-change:transform,opacity,filter;
+}
+.st-intro h1{margin:18px 0 20px; font-size:clamp(2rem,3.7vw,3.2rem)}
+.st-intro .lede{max-width:42ch}
+
+/* it stacks ON the title block, not over it — --sheet-h is enforced on
+   .st-sheet below so this arithmetic cannot go stale */
+.st-read{
+  position:absolute; left:0; bottom:calc(var(--sheet-h,0px) + clamp(10px,2.2vh,24px)); z-index:9;
+  width:var(--read-w); padding:clamp(16px,1.8vw,24px); border-radius:var(--r-lg);
+  border:1px solid var(--hair);
+  background:linear-gradient(155deg,rgba(16,22,32,.9),rgba(8,12,18,.93));
+  box-shadow:var(--shadow-float);
+  opacity:0; transform:translate3d(0,14px,0); pointer-events:none;
+  transition:opacity .7s var(--ease),transform .8s var(--ease);
+}
+@media (min-width:1024px){
+  .st-read{-webkit-backdrop-filter:blur(12px) saturate(130%); backdrop-filter:blur(12px) saturate(130%)}
+}
+.st-stage.reading .st-read{opacity:1; transform:none}
+.st-read>.mono{display:block; margin-bottom:11px; color:var(--gold)}
+.st-read h2{
+  margin:0 0 9px; font-family:var(--display); font-weight:400;
+  font-size:clamp(1.14rem,1.6vw,1.44rem); line-height:1.1; color:var(--cream);
+}
+.st-read p{margin:0; font-size:.86rem; color:var(--c-52); line-height:1.55; min-height:4.2em}
+.st-read .swap{transition:opacity .18s var(--ease),transform .18s var(--ease)}
+.st-read.out .swap{opacity:0; transform:translateY(6px)}
+
+/* The act rail — four acts, not ten stages.
+   It runs ALONG THE FOOT, not down the right edge, and that is not a
+   style preference: every elevated page carries js/lumina.js's fixed
+   #spine down the right, so a vertical rail here put two columns of
+   dots side by side and a reader could not tell which one they were
+   scrolling. Horizontal also frees the right flank for the phone.
+   The labels are opacity-driven, never display-driven, so the four
+   ticks hold their positions as the acts light up. */
+.st-rail{
+  position:absolute; right:0; bottom:0; z-index:9;
+  display:flex; flex-direction:row; align-items:center; gap:clamp(13px,1.5vw,26px);
+  height:var(--sheet-h,42px);
+}
+.st-tick{
+  position:relative; display:flex; align-items:center; gap:9px;
+  padding:0; height:100%;
+}
+.st-tick::before{
+  content:""; width:11px; height:11px; flex:none; border-radius:50%;
+  background:rgba(244,239,230,.22);
+  transform:scale(.55);
+  transition:transform .45s var(--ease),background-color .45s var(--ease),box-shadow .45s var(--ease);
+}
+.st-tick[data-on="past"]::before{background:var(--gold-dp)}
+.st-tick[data-on="now"]::before{
+  background:var(--gold-lt); transform:scale(1);
+  box-shadow:0 0 0 4px rgba(255,215,163,.14),0 0 16px 3px rgba(255,215,163,.6);
+}
+.st-tick span{
+  font-size:.62rem; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--c-38); white-space:nowrap; opacity:.24; transform:translateX(-3px);
+  transition:opacity .4s var(--ease),transform .4s var(--ease),color .4s var(--ease);
+}
+.st-tick[data-on="now"] span{opacity:1; transform:none; color:var(--gold-lt)}
+.st-tick[data-on="past"] span{opacity:.5; transform:none}
+@media (hover:hover) and (pointer:fine){
+  .st-tick:hover span{opacity:1; transform:none; color:var(--cream)}
+  .st-tick:hover::before{background:var(--gold-lt)}
+}
+
+/* --pin-top, not 0: this is absolute in .st-pin, and abspos resolves
+   against the padding box — at top:0 it printed straight over the fixed
+   bar's WhatsApp chip. right is inset by the gutter for the same reason. */
+.st-skip{
+  position:absolute; right:var(--gutter); top:var(--pin-top); z-index:9;
+  display:inline-flex; align-items:center; gap:9px;
+  padding:9px 15px; border-radius:999px;
+  border:1px solid var(--hair); background:rgba(11,16,24,.6);
+  font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; color:var(--c-70);
+  transition:border-color .4s var(--ease),color .4s var(--ease),background-color .4s var(--ease);
+}
+.st-skip svg{width:13px; height:13px}
+@media (hover:hover) and (pointer:fine){
+  .st-skip:hover{border-color:var(--gold); color:var(--cream); background:rgba(255,178,90,.1)}
+}
+
+/* the height is DECLARED, because .st-read stacks on top of it and
+   reads the same token — leave it to content and the two drift apart
+   the first time a font metric changes */
+.st-sheet{
+  position:absolute; left:0; bottom:0; z-index:8; margin:0;
+  height:var(--sheet-h);
+  display:grid; grid-template-columns:repeat(3,minmax(0,1fr));
+  border:1px solid var(--draft-dim); border-radius:4px; overflow:hidden;
+  background:rgba(5,7,11,.5);
+}
+@media (min-width:1024px){
+  .st-sheet{-webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px)}
+}
+/* flex-centred inside a stretched cell, so the dividers still run the
+   block's full height now that the height is fixed */
+.st-sheet div{
+  display:flex; flex-direction:column; justify-content:center;
+  padding:0 14px; border-right:1px solid var(--draft-dim);
+}
+.st-sheet div:last-child{border-right:0}
+.st-sheet dt{margin:0; font-size:.54rem; letter-spacing:.2em; text-transform:uppercase; color:var(--c-38)}
+.st-sheet dd{margin:3px 0 0; font-size:.72rem; color:var(--draft-lt); font-variant-numeric:tabular-nums}
+.st-sheet .st-status dd{color:var(--gold-lt); text-shadow:0 0 14px rgba(255,178,90,.35)}
+
+/* the accessible copy, and the only copy — see js/studio.js */
+.st-schedule{
+  position:absolute; width:1px; height:1px; margin:-1px; padding:0; border:0;
+  clip-path:inset(50%); overflow:hidden; white-space:nowrap;
+}
+
+/* ── responsive ───────────────────────────────────────────────────────────
+   Above 1200 the brand panel and the phone sit either side of the frame.
+   Between 861 and 1200 there is not the width for three objects, so the
+   frame narrows and the two flankers tuck against its edges. Below 861 —
+   invest's breakpoint, not a new one — there is no pin at all. */
+@media (max-width:1400px){
+  .st-pin{--read-w:min(300px,28vw)}
+}
+@media (max-width:1200px){
+  .st-brand{width:120px}
+  .st-mark{width:56px; height:56px}
+  .st-mono{font-size:1.4rem}
+  /* the title block goes, so --sheet-h goes to 0 and the notes panel
+     drops to the floor of its own accord. The act rail keeps a height
+     of its own because it is still there. */
+  .st-pin{--read-w:min(280px,34vw); --sheet-h:0px}
+  .st-sheet{display:none}
+  .st-rail{height:38px}
+  .st-tick span{display:none}
+}
+@media (max-width:1000px){
+  /* the brand panel goes rather than shrink into illegibility; the act
+     rail and the reading panel still carry the narration. The left
+     flank stays — it is the notes panel's room, not the brand's. */
+  .st-pin{--read-w:min(240px,30vw)}
+  .st-brand{display:none}
+}
+@media (max-width:860px){
+  .st{height:auto}
+  /* position:relative, not static — .bp-grid inside is absolute at
+     inset:-20% and left to resolve against .st it hangs off both edges
+     and scrolls the page sideways. This codebase has shipped that bug
+     twice already. */
+  .st-pin{
+    /* no camera, no flanking: the objects stack in document order and
+       .st-cam's padding would just inset the whole column */
+    --flank-l:0px; --flank-r:0px; --sheet-h:0px;
+    position:relative; height:auto; overflow:clip;
+    padding:clamp(96px,15vh,130px) var(--gutter) clamp(30px,6vh,50px);
+    grid-template-rows:none; gap:26px;
+  }
+  .st-pin::after{display:none}
+  .st-stage{height:auto; display:grid; gap:24px}
+  .st-cam{position:static; transform:none; display:grid; gap:22px; place-items:stretch}
+  .st-win{width:100%; margin-inline:auto}
+  .st-intro{position:static; transform:none; opacity:1; filter:none; width:100%; order:-1}
+  .st-phone{position:static; width:120px; margin-inline:auto}
+  .st-rail,.st-skip,.st-sheet{display:none}
+  .st-read{
+    position:static; width:100%; opacity:1; transform:none; pointer-events:auto;
+    background:linear-gradient(155deg,rgba(29,38,50,.4),rgba(11,16,24,.5));
+  }
+}
+
+@media (prefers-reduced-motion:reduce){
+  .st{height:auto}
+  .st-pin{--flank-l:0px; --flank-r:0px; --sheet-h:0px;
+    position:relative; height:auto; grid-template-rows:none; gap:26px;
+    padding:clamp(96px,15vh,130px) var(--gutter) 40px}
+  .st-pin::after{display:none}
+  .st-stage{height:auto; display:grid; gap:24px}
+  .st-cam{position:static; transform:none; display:grid; gap:22px; place-items:stretch}
+  .st-win{width:100%}
+  .st-intro{position:static; transform:none; opacity:1; filter:none; width:100%; order:-1}
+  .st-phone{position:static; width:120px; margin-inline:auto}
+  .st-brand{position:static; transform:none; width:100%}
+  .st-rail,.st-skip,.st-sheet{display:none}
+  .st-read{position:static; width:100%; opacity:1; transform:none; pointer-events:auto}
+}

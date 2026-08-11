@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>List Your Property — Lumina Real Estate Amman</title>
   <meta name="description" content="Thinking of selling? Lumina presents exceptional properties to a private network of qualified buyers in Jordan and the Gulf. Request a discreet valuation." />
   <meta name="robots" content="index, follow" />
@@ -18,9 +18,9 @@
   <meta property="og:locale" content="en_JO" />
 
   <!-- Favicon -->
-  <link rel="icon" type="image/png" href="/assets/lumina-logo.png" />
+  <link rel="icon" type="image/png" href="../assets/lumina-logo.png" />
 
-  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/style.css?v=2026-08-07b" />
   <style>
     .page-hero {
       background: var(--navy-deep);
@@ -136,20 +136,33 @@
       .process-grid { grid-template-columns: 1fr; }
     }
   </style>
+  <!-- the landing page's brand bar, shared -->
+
+  <link rel="stylesheet" href="../css/nav.css?v=2026-08-07b" />
+
+  <!-- last: phone-only overrides -->
+  <link rel="stylesheet" href="../css/mobile.css?v=2026-08-07d" />
 </head>
 <body>
 
 <!-- NAV -->
-<nav class="nav" id="nav">
-  <a href="/index.html" class="nav-logo" aria-label="Lumina — home"><img src="/assets/lumina-logo.png" alt="Lumina" width="669" height="181"></a>
-  <div class="nav-links">
-    <a href="/listings.html">Properties</a>
-    <a href="/index.html#locations">Locations</a>
-    <a href="/pages/list-property.html" class="active" style="color:var(--gold);">List Property</a>
-    <a href="/index.html#team">Advisors</a>
-    <a href="/index.html#contact" class="nav-cta btn">Inquire Now</a>
-  </div>
-</nav>
+<header class="bar stuck" id="bar">
+  <a href="../index.html" class="mark-img" aria-label="Lumina — home">
+    <img src="../assets/lumina-logo.png" alt="Lumina" width="669" height="181">
+  </a>
+  <nav class="nav" aria-label="Primary">
+    <a href="../index.html">Home</a>
+    <a href="../listings.html" class="keep">Properties</a>
+    <a href="../areas-abdoun.html">Areas</a>
+    <a href="../insights/best-areas-in-amman.html">Insights</a>
+    <a href="../team.html">Team</a>
+    <a href="../pages/list-property.html" class="active-link" aria-current="page">Sell With Us</a>
+    <a href="https://wa.me/962771505250" class="chip keep" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-12.3 7.4L3.5 20.5l1.7-5A8.4 8.4 0 1 1 21 11.5Z"/><path d="M8.6 9.2c.3 2.5 2.6 4.8 5.1 5.2.7.1 1.5-.4 1.6-1.1l.1-.6-2-.9-.9.9c-1-.4-1.9-1.3-2.3-2.3l.9-.9-.9-2-.6.1c-.7.1-1.1.9-1 1.6Z"/></svg>
+      WhatsApp
+    </a>
+  </nav>
+</header>
 
 <!-- HERO -->
 <section class="page-hero">
@@ -158,7 +171,7 @@
     <span class="gold-line gold-line-center" style="margin: 20px auto 28px;"></span>
     <h1>Your Property Deserves<br>the Right Audience.</h1>
     <p>We do not mass-market. We present your property privately to a curated network of qualified buyers in Jordan and across the Gulf — with a level of care and discretion that classified portals cannot offer.</p>
-    <p style="margin-top:28px; font-size:0.82rem; color:rgba(255,255,255,0.42);">This is a demo test run, not final live inventory. Availability, pricing, and media require verification before public launch.</p>
+    <p style="margin-top:28px; font-size:0.82rem; color:rgba(255,255,255,0.42);">No obligation at this stage, and nothing is published without your written approval.</p>
   </div>
 </section>
 
@@ -233,11 +246,11 @@
       <h2>Request a Private Valuation</h2>
       <p>Share your property details and we will arrange a confidential meeting at a time that suits you. There is no commitment at this stage — only a conversation.</p>
       <div class="contact-actions">
-        <a href="https://wa.me/9627XXXXXXXX?text=Hello%2C%20I%27d%20like%20to%20discuss%20listing%20my%20property%20with%20Lumina."
+        <a href="https://wa.me/962771505250?text=Hello%2C%20I%27d%20like%20to%20discuss%20listing%20my%20property%20with%20Lumina."
            class="btn btn-gold" target="_blank" rel="noopener noreferrer">
           WhatsApp Us
         </a>
-        <a href="mailto:lumina@qutaifan.com?subject=Property%20Valuation%20Request" class="btn btn-outline-gold">
+        <a href="mailto:info@qutaifan.com?subject=Property%20Valuation%20Request" class="btn btn-outline-gold">
           Email Us
         </a>
       </div>
@@ -250,43 +263,48 @@
   <div class="container">
     <div class="footer-grid">
       <div>
-        <div class="footer-logo"><img src="/assets/lumina-logo.png" alt="Lumina" width="669" height="181"></div>
-        <p class="footer-desc">Private real estate advisory for Amman's most considered addresses.</p>
+        <div class="footer-logo"><img src="../assets/lumina-logo.png" alt="Lumina" width="669" height="181"></div>
+        <p class="footer-desc">A private property advisory in Amman. We represent a small number of residences at a time and introduce them quietly.</p>
       </div>
       <div class="footer-col">
-        <h4>Properties</h4>
+        <h4>Browse</h4>
         <ul>
-          <li><a href="/listings.html?type=apartment">Apartments</a></li>
-          <li><a href="/listings.html?type=villa">Villas</a></li>
-          <li><a href="/listings.html?type=penthouse">Penthouses</a></li>
+          <li><a href="../listings.html">All properties</a></li>
+          <li><a href="../listings.html?type=apartment">Apartments</a></li>
+          <li><a href="../listings.html?type=villa">Villas</a></li>
+          <li><a href="../listings.html?budget=for-sale">For sale</a></li>
         </ul>
       </div>
       <div class="footer-col">
-        <h4>Locations</h4>
+        <h4>Areas</h4>
         <ul>
-          <li><a href="/listings.html?location=abdoun">Abdoun</a></li>
-          <li><a href="/listings.html?location=dabouq">Dabouq</a></li>
-          <li><a href="/listings.html?location=dair-ghbar">Dair Ghbar</a></li>
-          <li><a href="/listings.html?location=um-uthaina">Um Uthaina</a></li>
-          <li><a href="/listings.html?location=abdali">Abdali</a></li>
+          <li><a href="../areas-abdoun.html">Abdoun</a></li>
+          <li><a href="../areas-swefieh.html">Swefieh</a></li>
+          <li><a href="../areas-circles.html">The Circles</a></li>
+          <li><a href="../insights/best-areas-in-amman.html">Choosing an area</a></li>
         </ul>
       </div>
       <div class="footer-col">
-        <h4>Contact</h4>
+        <h4>Lumina</h4>
         <ul>
-          <li><a href="https://wa.me/9627XXXXXXXX" target="_blank" rel="noopener noreferrer">WhatsApp</a></li>
-          <li><a href="mailto:lumina@qutaifan.com">lumina@qutaifan.com</a></li>
+          <li><a href="../team.html">The team</a></li>
+        <li><a href="../pages/list-property.html">Sell with us</a></li>
+          <li><a href="../pages/valuation.html">Request a valuation</a></li>
+          <li><a href="https://wa.me/962771505250" target="_blank" rel="noopener noreferrer">WhatsApp</a></li>
+        <li><a href="mailto:Lumina@lumina-jo.com">Lumina@lumina-jo.com</a></li>
+          <li><span>+962 77 150 5250</span></li>
         </ul>
       </div>
     </div>
     <div class="footer-bottom">
-      <p>&copy; 2026 Lumina Real Estate. Private real estate advisory, Amman, Jordan.</p>
+      <span>© 2026 Lumina Real Estate Advisory · Amman</span>
+      <span>Particulars confirmed with the owner before viewing</span>
     </div>
   </div>
 </footer>
 
 <!-- WhatsApp Float -->
-<a href="https://wa.me/9627XXXXXXXX?text=Hello%2C%20I%27d%20like%20to%20discuss%20listing%20my%20property%20with%20Lumina."
+<a href="https://wa.me/962771505250?text=Hello%2C%20I%27d%20like%20to%20discuss%20listing%20my%20property%20with%20Lumina."
    class="whatsapp-float" target="_blank" aria-label="Chat on WhatsApp" rel="noopener noreferrer">
   <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
@@ -294,6 +312,7 @@
   </svg>
 </a>
 
-<script src="../js/site.js"></script>
+<script src="../js/site.js?v=2026-08-07b"></script>
+<script src="../js/nav-menu.js?v=2026-08-07b" defer></script>
 </body>
 </html>

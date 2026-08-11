@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Services — Lumina Real Estate Advisory, Amman</title>
+<meta name="description" content="What Lumina does: investment introductions to new high-specification buildings, property management for owners abroad, written property evaluations, and Lumina Studio — websites, social blueprints and branding for other real-estate firms. Amman, Jordan.">
+<meta name="theme-color" content="#05070B">
+
+<meta property="og:title" content="Lumina — services">
+<meta property="og:description" content="Investment, property management, property evaluation, and Lumina Studio. Amman, Jordan.">
+<meta property="og:type" content="website">
+
+<link rel="icon" type="image/png" href="assets/lumina-logo.png" />
+<link rel="preload" as="font" type="font/woff2" href="assets/fonts/InstrumentSerif.woff2" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="assets/fonts/InstrumentSans.woff2" crossorigin>
+
+<!-- The elevated cluster's shared shell — tokens, type, bar, spine,
+     buttons, cards, footer. See the header of that file for why it
+     exists and which pages may load it. -->
+<link rel="stylesheet" href="css/elevated.css?v=2026-08-07b">
+
+<style>
+/* ═══════════════════════════════════════════════════════════
+   LUMINA — Services
+   ───────────────────────────────────────────────────────────
+   Everything here is the bubble field. The rest of the page is
+   built from css/elevated.css.
+
+   THE FIELD, IN ONE PARAGRAPH
+   Each service is a link. Without JavaScript, below 900px, or under
+   reduced motion, the links are a plain responsive grid and the page
+   is entirely usable — that is the base state and it is what the
+   markup describes. When js/services.js decides it can run, it adds
+   .live to the field, which switches the links to absolute
+   positioning and takes over their transforms from a single rAF.
+   Nothing in this stylesheet positions a live bubble; nothing in the
+   script styles one.
+
+   WHY THE SHAPE MOVES WITHOUT ANIMATING A SHAPE
+   The site's rule is transform and opacity only. A morphing blob
+   normally means animating border-radius, which repaints. Instead
+   each bubble's shell has a *static* irregular border-radius and
+   rotates very slowly — rotating an irregular outline makes the
+   silhouette genuinely change, and it is a compositor transform. The
+   halo behind it counter-rotates at a different rate, so the two
+   outlines drift in and out of phase and never repeat visibly. The
+   content sits in a separate, upright layer and never turns.
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── the stage ────────────────────────────────────────────── */
+.svc{
+  position:relative; z-index:2;
+  /* overflow-x:clip, not hidden — clip does not make a scroll container
+     and leaves the vertical axis visible. Each bubble's halo sits at
+     inset:-16%, so in the phone grid the outermost halos reach about
+     27px past the column and pushed the document 14px sideways at
+     390. Measured. The few clipped pixels are the outer fade of a
+     blurred glow and are not visible. */
+  overflow-x:clip;
+  /* The foot is deeper than it looks it needs to be. `.sec` below opens
+     on clamp(84px,11vh,150px) of its own padding, so at 36px here the
+     divider between them sat a third of the way down the gap and read
+     as the field's underline rather than as the next section's start.
+     These two numbers are a pair — change one, look at the other. */
+  min-height:100svh; padding:clamp(88px,11vh,126px) var(--gutter) clamp(56px,8vh,96px);
+  display:grid; grid-template-rows:auto minmax(0,1fr); gap:clamp(20px,3vh,38px);
+  max-width:var(--max); margin-inline:auto;
+}
+/* Wide enough and the title moves beside the field instead of above it.
+   Stacked, the head ate 250px of a 100svh section and the ring was left
+   with a 120px vertical radius — a ring that flat is an ellipse on its
+   side, and the hub in the middle of it collided with every bubble that
+   passed the centre line. Side by side the field gets the full column
+   height and the ellipse has room to be a ring. */
+@media (min-width:1200px){
+  .svc{
+    grid-template-columns:minmax(0,clamp(340px,29vw,440px)) minmax(0,1fr);
+    grid-template-rows:minmax(0,1fr);
+    gap:clamp(30px,4vw,64px);
+    /* stretch, NOT align-items:center. Centring the items stops the
+       field stretching to its row, so it falls back to its own
+       min-height — 340px inside a 720px row, measured. The head is
+       centred on its own instead. */
+    align-items:stretch;
+  }
+  .svc-head{align-self:center}
+}
+.svc-head{max-width:640px}
+.svc-head h1{margin:16px 0 16px; font-size:clamp(2.1rem,3.7vw,3.3rem)}
+.svc-head .lede{max-width:46ch}
+
+/* ── the field ────────────────────────────────────────────────
+   BASE STATE — a grid. This is what a browser with no JS renders,
+   and it is a perfectly good services page on its own. */
+.svc-field{
+  position:relative;
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+  gap:clamp(18px,2.4vw,32px); align-content:center;
+}
+
+/* LIVE STATE — the script has taken over. The grid rules are dropped,
+   the links go absolute, and every transform on them is written by
+   the rAF loop. */
+/* No tall min-height here. The field is the 1fr row of a 100svh
+   section, so the row already gives it every pixel that is left; a
+   min-height taller than that row is a floor the grid cannot honour,
+   and it pushed the whole ring below the fold. 340px is only a floor
+   for a very short window. */
+.svc-field.live{display:block; min-height:340px}
+.svc-field.live .bub{
+  position:absolute; left:0; top:0; width:var(--sz); height:var(--sz);
+  margin:0; will-change:transform,opacity;
+}
+
+/* ── a bubble ─────────────────────────────────────────────────
+   --br is the irregular outline, authored per service so no two are
+   the same shape. --tint is the accent it carries. --sz is its
+   diameter, written by the script in the live state and by the
+   stylesheet in the grid state. */
+.bub{
+  --sz:clamp(150px,15vw,196px);
+  --tint:255,178,90;
+  position:relative; display:block; aspect-ratio:1; width:100%; max-width:var(--sz);
+  margin-inline:auto; isolation:isolate;
+  color:var(--cream); text-align:center;
+  -webkit-tap-highlight-color:transparent;
+}
+.svc-field.live .bub{max-width:none; aspect-ratio:auto}
+
+/* the halo: a soft coloured cloud behind the glass, blurred and
+   counter-rotating. This is where almost all of the "fluffy" comes
+   from — the glass shell on its own reads as a hard lens. */
+.bub-halo{
+  position:absolute; inset:-19%; z-index:0; pointer-events:none;
+  border-radius:var(--br2,50%);
+  background:radial-gradient(closest-side,rgba(var(--tint),.5),rgba(var(--tint),.14) 58%,transparent 76%);
+  filter:blur(17px);
+  animation:bubTurn var(--spinB,74s) linear infinite reverse;
+  /* the DEPARTURE timing — see the chosen-state block for arrival */
+  transition:opacity .85s var(--ease);
+  opacity:.9;
+}
+/* the glass shell: irregular, slowly turning, and the only element
+   on the page carrying a backdrop blur outside the bar */
+.bub-shell{
+  position:absolute; inset:0; z-index:1; pointer-events:none;
+  border-radius:var(--br,50%);
+  border:1px solid rgba(255,255,255,.2);
+  /* Three layers, in the order a soap bubble has them: the light
+     source high and left, the tint pooling low and right where the
+     surface curves away, and a very thin dark body so the thing has
+     a volume. Keeping the body light is what stops it reading as a
+     dark sphere with a shine painted on. */
+  background:
+    radial-gradient(115% 92% at 27% 19%,rgba(255,255,255,.3),rgba(255,255,255,.06) 38%,transparent 60%),
+    radial-gradient(95% 85% at 76% 86%,rgba(var(--tint),.34),transparent 62%),
+    linear-gradient(158deg,rgba(var(--tint),.1),rgba(11,16,24,.3) 72%);
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,.4),
+    inset 0 -30px 56px -30px rgba(var(--tint),.85),
+    inset 0 0 40px -12px rgba(255,255,255,.12),
+    0 0 66px -20px rgba(var(--tint),.5),
+    0 34px 66px -32px rgba(0,0,0,.9);
+  animation:bubTurn var(--spinA,58s) linear infinite;
+  transition:border-color .6s var(--ease),box-shadow .6s var(--ease);
+}
+@keyframes bubTurn{to{transform:rotate(360deg)}}
+/* Off screen, or on a backgrounded tab, the six rotations stop costing
+   frames. PAUSED, not cancelled: a cancelled rotation restarts at
+   phase 0 and all three shells would come back turning together, which
+   is the one thing the per-bubble --spinA/--spinB values exist to
+   prevent. Same rule the property cards use (.rest on .prop-float).
+   js/services.js toggles it whether or not the field is live, because
+   below the live breakpoint these rotations are the only motion on the
+   page — and the shell's backdrop blur has to re-sample everything
+   behind it on every frame it turns. */
+.svc-field.rest .bub-shell,
+.svc-field.rest .bub-halo,
+.svc-field.rest .hub-ring{animation-play-state:paused}
+@media (min-width:1024px){
+  .bub-shell{-webkit-backdrop-filter:blur(13px) saturate(135%); backdrop-filter:blur(13px) saturate(135%)}
+}
+/* the specular. The script writes --sx/--sy from the pointer — these
+   bubbles deliberately do NOT use js/lumina.js's .tilt, because that
+   handler writes an inline transform and the rAF loop owns this
+   element's transform. */
+.bub-sheen{
+  position:absolute; inset:0; z-index:2; pointer-events:none; opacity:0;
+  border-radius:var(--br,50%);
+  background:radial-gradient(58% 58% at var(--sx,50%) var(--sy,50%),
+    rgba(255,255,255,.3),rgba(var(--tint),.14) 42%,transparent 68%);
+  transition:opacity .55s var(--ease);
+}
+/* The focus ring, and ONLY the focus ring. It does not turn with the
+   shell, so when it was also doing duty as the chosen-state rim the
+   two outlines sat out of phase and the bubble grew a visible second
+   edge. The chosen rim now lives on the shell itself, below, where it
+   is guaranteed to follow the shape. An offset outline on focus is
+   conventional and reads as a focus ring rather than as part of the
+   object, so the mismatch is correct there. */
+.bub-ring{
+  position:absolute; inset:-4px; z-index:0; pointer-events:none; opacity:0;
+  border-radius:var(--br,50%);
+  border:1px solid transparent;
+  transform:scale(.94);
+  transition:opacity .5s var(--ease),transform .6s var(--ease);
+}
+
+.bub-body{
+  position:absolute; inset:0; z-index:3;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:10px; padding:14% 16%;
+}
+.bub-ico{
+  width:clamp(26px,2.6vw,34px); height:clamp(26px,2.6vw,34px);
+  color:rgba(var(--tint),1); flex:none;
+  filter:drop-shadow(0 0 12px rgba(var(--tint),.5));
+  transition:transform .6s var(--ease);
+}
+.bub-ico svg{width:100%; height:100%}
+.bub-name{
+  font-family:var(--display); font-weight:400; line-height:1.06;
+  font-size:clamp(1.02rem,1.35vw,1.3rem); letter-spacing:-.015em; text-wrap:balance;
+}
+.bub-go{
+  display:inline-flex; align-items:center; gap:6px; margin-top:2px;
+  font-size:.58rem; letter-spacing:.2em; text-transform:uppercase;
+  color:rgba(var(--tint),.9);
+  opacity:0; transform:translateY(5px);
+  transition:opacity .5s var(--ease),transform .5s var(--ease);
+}
+.bub-go svg{width:11px; height:11px}
+
+/* ── chosen state ─────────────────────────────────────────────
+   One class, set by the script on hover, focus or touch, so a
+   keyboard tab and a mouse hover produce exactly the same thing.
+
+   ARRIVAL IS STAGED, AND IT IS NOT THE REVERSE OF DEPARTURE.
+   Every one of these used to land on the same duration and the same
+   curve, so the bubble jumped in size and then all of its light
+   caught up half a second later as one slab. On a real lit object the
+   specular arrives first, because it is a reflection; the rim second,
+   because it is the edge catching the same light; the ambient bloom
+   last and slowest, because it is the air around it. That ordering is
+   most of what sells "this is glass". Light also leaves lazily, which
+   is why the base rules above carry the longer, undifferentiated
+   times and only the arrival is choreographed here. */
+/* listed in the order they land */
+.bub.on .bub-sheen{opacity:1; transition:opacity .16s cubic-bezier(.3,.9,.4,1)}
+.bub.on .bub-shell{
+  border-color:rgba(var(--tint),.7);
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,.55),
+    inset 0 -30px 56px -26px rgba(var(--tint),1),
+    inset 0 0 44px -10px rgba(255,255,255,.2),
+    0 0 90px -14px rgba(var(--tint),.72),
+    0 34px 66px -32px rgba(0,0,0,.9);
+  transition:border-color .26s var(--ease),box-shadow .34s var(--ease);
+}
+/* the one overshoot on the page: a small pop on the mark, which is the
+   only part of the bubble small enough to take one without wobbling
+   the whole silhouette */
+.bub.on .bub-ico{transform:translateY(-2px) scale(1.08);
+  transition:transform .38s cubic-bezier(.34,1.4,.5,1)}
+.bub.on .bub-go{opacity:1; transform:none;
+  transition:opacity .4s var(--ease) .1s,transform .46s var(--ease) .1s}
+.bub.on .bub-halo{opacity:1; transition:opacity .7s var(--ease) .06s}
+.bub:focus-visible{outline:none}
+.bub:focus-visible .bub-ring{opacity:1; transform:scale(1);
+  border-color:var(--gold-lt); box-shadow:0 0 0 3px rgba(255,178,90,.28),0 0 34px -4px rgba(255,178,90,.6)}
+
+/* ── the hub ──────────────────────────────────────────────────
+   The still point the bubbles orbit, and the page's reading
+   position: it names whichever service is currently chosen and
+   falls back to the count. Live state only — in the grid fallback
+   there is nothing to orbit and the copy is already on the cards
+   below. */
+.svc-hub{display:none}
+.svc-field.live .svc-hub{
+  display:grid; place-items:center; gap:12px; text-align:center;
+  position:absolute; left:50%; top:50%; z-index:1;
+  width:min(300px,30vw); transform:translate(-50%,-50%);
+  pointer-events:none;
+}
+.hub-ring{
+  position:absolute; left:50%; top:50%; width:min(300px,30vw); aspect-ratio:1;
+  transform:translate(-50%,-50%); border-radius:50%;
+  border:1px dashed rgba(160,196,214,.2);
+  animation:bubTurn 150s linear infinite;
+}
+.hub-ring::after{
+  content:""; position:absolute; inset:14%; border-radius:50%;
+  border:1px solid rgba(255,178,90,.09);
+  background:radial-gradient(closest-side,rgba(255,178,90,.09),transparent 74%);
+}
+/* Below 1200 the head sits above the field and the ellipse is flat
+   enough that a bubble crossing the centre line lands on the hub's
+   text, so the copy goes. That used to leave a live orbit with a mute
+   reading line between 901 and 1199 — every data-note on the page
+   unreachable, hovering worth a rim and the word Open. The script's
+   own threshold is now 1200 too, so the two agree and this rule only
+   still exists as the guard if the orbit is ever taken lower. */
+@media (max-width:1199px){.svc-field.live .hub-in{display:none}}
+.hub-in{position:relative; z-index:1; transition:opacity .32s var(--ease),transform .32s var(--ease)}
+.svc-field.swapping .hub-in{opacity:0; transform:translateY(6px)}
+.hub-in .mono{display:block; margin-bottom:9px}
+.hub-in h2{
+  margin:0 0 8px; font-family:var(--display); font-weight:400;
+  font-size:clamp(1.3rem,2vw,1.85rem); line-height:1.05; color:var(--cream);
+}
+.hub-in p{margin:0 auto; max-width:26ch; font-size:.84rem; color:var(--c-52); line-height:1.5}
+
+/* ── the written list ─────────────────────────────────────────
+   The same four services as prose, under the field. It is the
+   accessible and indexable copy of what the bubbles say, and it is
+   where someone who does not want to play with a toy goes. */
+.svc-list{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:clamp(16px,1.8vw,26px)}
+.svc-card{display:flex; flex-direction:column}
+.svc-card .svc-ic{
+  width:38px; height:38px; border-radius:11px; display:grid; place-items:center;
+  margin-bottom:18px; color:rgba(var(--tint,255 178 90),1);
+  border:1px solid rgba(var(--tint),.3); background:rgba(var(--tint),.07);
+}
+.svc-card .svc-ic svg{width:19px; height:19px}
+/* the "For buyers / For owners" line is the fastest thing on the card
+   to read, so it sits tight under the mark and above the name */
+.svc-card .svc-ic{margin-bottom:15px}
+.svc-card .mono{display:block; margin-bottom:7px; color:var(--gold)}
+.svc-card h3{margin:0 0 10px; font-family:var(--display); font-weight:400;
+  font-size:clamp(1.24rem,1.7vw,1.55rem); line-height:1.1; color:var(--cream)}
+.svc-card p{margin:0 0 18px}
+.svc-card ul{margin:0 0 22px; padding:0; list-style:none; display:grid; gap:8px}
+.svc-card li{position:relative; padding-left:17px; font-size:.87rem; color:var(--c-52)}
+.svc-card li::before{content:""; position:absolute; left:0; top:.64em; width:6px; height:1px;
+  background:rgba(var(--tint),.8)}
+.svc-card .go{margin-top:auto; align-self:flex-start}
+
+/* ── responsive ───────────────────────────────────────────────
+   The script refuses to go live below 1200px, or without a fine
+   pointer — an orbit inside a 390px column is a puzzle rather than a
+   menu, and between 901 and 1199 the hub that carries its content is
+   hidden anyway. So the grid is the real layout on a phone, on a
+   tablet and in a narrow desktop window, not a fallback: three
+   properly sized bubbles above the same four services in prose. */
+@media (max-width:900px){
+  .svc{min-height:0; grid-template-rows:auto auto}
+  .svc-field{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+  .bub{--sz:clamp(140px,42vw,190px)}
+}
+@media (max-width:420px){
+  .svc-field{grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px}
+  .bub .bub-go{display:none}
+}
+
+@media (prefers-reduced-motion:reduce){
+  /* No orbit, no drift, no turning shells. The shapes stay irregular
+     — that is a border-radius, not a motion — and the grid is the
+     layout. The script never adds .live in this mode. */
+  .bub-shell,.bub-halo,.hub-ring{animation:none}
+}
+</style>
+
+<!-- The phone bar and its menu sheet. Loaded last, as on every page. -->
+<link rel="stylesheet" href="css/mobile.css?v=2026-08-07d">
+</head>
+<body>
+
+<div class="boot" id="boot" aria-hidden="true">
+  <img src="assets/lumina-logo.png" alt="" width="669" height="181">
+</div>
+
+<div class="grain" aria-hidden="true"></div>
+<div class="glow" id="glow" aria-hidden="true"></div>
+
+<!-- ═══ brand bar ═══════════════════════════════════════ -->
+<header class="bar" id="bar">
+  <a href="index.html" class="mark-img" aria-label="Lumina — home">
+    <img src="assets/lumina-logo.png" alt="Lumina" width="669" height="181">
+  </a>
+  <nav class="nav" aria-label="Primary">
+    <a href="index.html">Home</a>
+    <a href="listings.html">Properties</a>
+    <a href="services.html" aria-current="page">Services</a>
+    <a href="areas.html">Areas</a>
+    <a href="team.html">Team</a>
+    <a href="index.html#contact">Contact</a>
+    <a href="https://wa.me/962771505250" class="chip" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
+        <path d="M21 11.5a8.4 8.4 0 0 1-12.3 7.4L3.5 20.5l1.7-5A8.4 8.4 0 1 1 21 11.5Z"/>
+        <path d="M8.6 9.2c.3 2.5 2.6 4.8 5.1 5.2.7.1 1.5-.4 1.6-1.1l.1-.6-2-.9-.9.9c-1-.4-1.9-1.3-2.3-2.3l.9-.9-.9-2-.6.1c-.7.1-1.1.9-1 1.6Z"/>
+      </svg>
+      WhatsApp
+    </a>
+  </nav>
+</header>
+
+<!-- ═══ spine ═══════════════════════════════════════════ -->
+<nav class="spine" id="spine" aria-label="Section navigation">
+  <span class="rail" aria-hidden="true"></span>
+  <span class="fill" id="fill" aria-hidden="true"></span>
+  <button type="button" data-to="field"><span class="tip">Services</span></button>
+  <button type="button" data-to="detail"><span class="tip">All four</span></button>
+  <button type="button" data-to="ask"><span class="tip">Get started</span></button>
+</nav>
+
+<main>
+
+<!-- ═══ THE FIELD ═══════════════════════════════════════
+     Three links and a heading. The orbit is an enhancement on top
+     of that, and everything below still works without it. -->
+<section class="svc" id="field">
+  <div class="svc-head">
+    <p class="kicker rv">Services</p>
+    <h1 class="display rv" style="--rvd:60ms">Buy well. Hold it properly. Know what it is worth.</h1>
+    <p class="lede rv" style="--rvd:140ms">Four services, one firm, no referral chain. Three are about a property; the fourth builds the website, the social plan and the brand for other firms in this industry. Most people arrive for one and pick up another later.</p>
+  </div>
+
+  <div class="svc-field" id="svcField">
+    <!-- The hub names whichever bubble is chosen, and invites a choice
+         otherwise. It stays aria-hidden permanently: it is a panel of
+         text that silently rewrites itself on every hover, which is
+         either noise or a live region to get wrong — and below 1200 it
+         is display:none, so it could never have been the route to this
+         copy anyway. Each bubble carries its own note in aria-label
+         instead, where it is read as part of the link. -->
+    <div class="svc-hub" id="hub" aria-hidden="true">
+      <span class="hub-ring"></span>
+      <span class="hub-in" id="hubIn">
+        <span class="mono" id="hubTag">Lumina</span>
+        <h2 id="hubName">Pick one to read it</h2>
+        <p id="hubNote">Point at a bubble for what it is. Click to open the page.</p>
+      </span>
+    </div>
+
+    <!-- data-a / data-r place each bubble by hand. The angle is measured
+         on the ellipse: +90 is the FRONT of the ring — nearest the
+         reader, so biggest and brightest — and -90 is the back. Invest
+         sits at front-centre because it is the service the page leads
+         with. A fourth service added later can leave both off and the
+         script will space it evenly.
+
+         The other two are deliberately NOT mirrored. They used to sit
+         at 332 and 208, which have the same sine — so identical depth,
+         identical scale, identical opacity, identical z-index, same
+         radius, same size: two objects reflected about the vertical
+         with a larger one below them. That is a symmetric triangle,
+         which is the composition you get when you have not made one,
+         and it gives the eye no order to travel in. Pushing them apart
+         in DEPTH rather than in angle gives the opening frame a
+         foreground, a middle and a background, and the eye reads
+         Invest → Management → Evaluation, which is the order the prose
+         list below them uses. The speeds differ per index so the
+         arrangement re-composes continuously anyway; this is only
+         about the frame the reader lands on, which is why it matters.
+
+         The aria-label on each carries the same note the hub shows on
+         hover — that copy is the actual content of this section, and
+         the hub is not in the accessibility tree. -->
+    <a class="bub" href="invest.html"
+       aria-label="Invest — new builds, before they are listed. For buyers: one contractor, one engineer, one standard, and first sight of what they finish."
+       data-tag="Buying" data-name="New builds, before they are listed"
+       data-note="For buyers. One contractor, one engineer, one standard — and first sight of what they finish."
+       data-a="90" data-r=".80" data-size="1.16"
+       style="--tint:255,178,90;
+              --br:63% 37% 44% 56% / 38% 58% 42% 62%;
+              --br2:41% 59% 66% 34% / 61% 39% 61% 39%;
+              --spinA:64s; --spinB:88s">
+      <span class="bub-halo" aria-hidden="true"></span>
+      <span class="bub-shell" aria-hidden="true"></span>
+      <span class="bub-ring" aria-hidden="true"></span>
+      <span class="bub-sheen" aria-hidden="true"></span>
+      <span class="bub-body">
+        <span class="bub-ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 20h16"/><path d="M6 20V9l6-4 6 4v11"/>
+            <path d="M10 20v-4h4v4"/><path d="M9.5 11.5h1.2M13.3 11.5h1.2"/>
+          </svg>
+        </span>
+        <span class="bub-name">Invest</span>
+        <span class="bub-go">Open
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.8 11.2 11.2 4.8M6.1 4.8h5.1v5.1"/></svg>
+        </span>
+      </span>
+    </a>
+
+    <a class="bub" href="property-management.html"
+       aria-label="Property management — run properly while you are away. For owners: tenants, rent, dues and repairs handled here, one contact and one report a month."
+       data-tag="Owning" data-name="Run properly while you are away"
+       data-note="For owners. Tenants, rent, dues and repairs handled here — one contact, one report a month."
+       data-a="2" data-r=".94" data-size="1.04"
+       style="--tint:127,217,232;
+              --br:38% 62% 65% 35% / 57% 33% 67% 43%;
+              --br2:67% 33% 38% 62% / 42% 64% 36% 58%;
+              --spinA:79s; --spinB:104s">
+      <span class="bub-halo" aria-hidden="true"></span>
+      <span class="bub-shell" aria-hidden="true"></span>
+      <span class="bub-ring" aria-hidden="true"></span>
+      <span class="bub-sheen" aria-hidden="true"></span>
+      <span class="bub-body">
+        <span class="bub-ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 10.5 12 4l9 6.5"/><path d="M5 9.8V20h14V9.8"/>
+            <path d="M9.6 20v-5.2h4.8V20"/><circle cx="12" cy="11" r="1.1"/>
+          </svg>
+        </span>
+        <span class="bub-name">Property<br>management</span>
+        <span class="bub-go">Open
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.8 11.2 11.2 4.8M6.1 4.8h5.1v5.1"/></svg>
+        </span>
+      </span>
+    </a>
+
+    <a class="bub" href="property-evaluation.html"
+       aria-label="Property evaluation — what it is worth, in writing. For anyone who needs a defensible number: inspected in person, priced off real sales, issued as a document."
+       data-tag="Pricing" data-name="What it is worth, in writing"
+       data-note="For anyone who needs a defensible number. Inspected in person, priced off real sales, issued as a document."
+       data-a="182" data-r=".94" data-size=".98"
+       style="--tint:176,208,230;
+              --br:56% 44% 33% 67% / 64% 41% 59% 36%;
+              --br2:33% 67% 60% 40% / 37% 63% 37% 63%;
+              --spinA:71s; --spinB:95s">
+      <span class="bub-halo" aria-hidden="true"></span>
+      <span class="bub-shell" aria-hidden="true"></span>
+      <span class="bub-ring" aria-hidden="true"></span>
+      <span class="bub-sheen" aria-hidden="true"></span>
+      <span class="bub-body">
+        <span class="bub-ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 4v16"/><path d="M5 8h14"/>
+            <path d="M5 8 2.8 13.4h4.4L5 8Z"/><path d="M19 8l-2.2 5.4h4.4L19 8Z"/>
+            <path d="M9 20h6"/>
+          </svg>
+        </span>
+        <span class="bub-name">Property<br>evaluation</span>
+        <span class="bub-go">Open
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.8 11.2 11.2 4.8M6.1 4.8h5.1v5.1"/></svg>
+        </span>
+      </span>
+    </a>
+
+    <!-- The fourth, and the odd one out: the only service that is not
+         about a property.
+
+         Adding it turned three hand-placed angles into four, and the
+         first attempt (a=150) put it on top of evaluation — both ended
+         up on the left because their x is cos(a) and 150 and 216 are
+         only 0.1 apart there. The four now sit on a diamond: 90 front,
+         2 right, 182 left, 270 back. Rest-frame separation is measured
+         at 1280, 1440 and 1600 — if you move one, measure all four,
+         because two bubbles can be 60 degrees apart and still land in
+         the same place.
+
+         Its --spinA/--spinB again share no factor with the other three,
+         or the four outlines fall back into formation every few
+         minutes. -->
+    <a class="bub" href="lumina-studio.html"
+       aria-label="Lumina Studio — websites, social blueprints and branding for other real-estate firms. Built by a brokerage, for brokerages."
+       data-tag="Building" data-name="Websites, social and branding"
+       data-note="For other property firms. Built by a brokerage that knows what a listing page has to do."
+       data-a="270" data-r=".86" data-size="1.02"
+       style="--tint:255,224,176;
+              --br:47% 53% 61% 39% / 35% 62% 38% 65%;
+              --br2:59% 41% 36% 64% / 63% 34% 66% 37%;
+              --spinA:83s; --spinB:67s">
+      <span class="bub-halo" aria-hidden="true"></span>
+      <span class="bub-shell" aria-hidden="true"></span>
+      <span class="bub-ring" aria-hidden="true"></span>
+      <span class="bub-sheen" aria-hidden="true"></span>
+      <span class="bub-body">
+        <span class="bub-ico" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2.6" y="4.2" width="18.8" height="13" rx="1.6"/>
+            <path d="M2.6 8.1h18.8"/><path d="M5.4 6.2h.01M7.6 6.2h.01"/>
+            <path d="M8.4 20.6h7.2"/><path d="M12 17.2v3.4"/>
+          </svg>
+        </span>
+        <span class="bub-name">Lumina<br>Studio</span>
+        <span class="bub-go">Open
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.8 11.2 11.2 4.8M6.1 4.8h5.1v5.1"/></svg>
+        </span>
+      </span>
+    </a>
+  </div>
+</section>
+
+<div class="rule"></div>
+
+<!-- ═══ IN WRITING ══════════════════════════════════════
+     The same four services as prose. This is the indexable,
+     screen-readable, no-nonsense version of the field above, and it
+     is not optional decoration — a services page that only exists as
+     a toy is not a services page. -->
+<section class="sec" id="detail">
+  <div class="sec-head rv">
+    <p class="kicker">All four services</p>
+    <h2 class="display">What each one is, and who it is for.</h2>
+    <p class="lede">The same four as plain text, with a link straight through to each. If one of the lines below describes you, that is your page.</p>
+  </div>
+
+  <div class="svc-list">
+    <div class="float rv">
+      <div class="depth" style="--d:16px">
+        <div class="lev" style="--dur:12.5s;--amp:7px;--rot:.2deg;--delay:-1.2s">
+          <article class="card-g svc-card tilt" style="--tint:255,178,90">
+            <span class="spec" aria-hidden="true"></span>
+            <span class="svc-ic" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 20h16"/><path d="M6 20V9l6-4 6 4v11"/><path d="M10 20v-4h4v4"/>
+              </svg>
+            </span>
+            <span class="mono">For buyers</span>
+            <h3>Investment</h3>
+            <p>New buildings from one contractor, built to one specification under one lead engineer. They own them and they sell them; we introduce them — and they reach our register before they are listed anywhere.</p>
+            <ul>
+              <li>A single residence, a whole floor, or the whole building</li>
+              <li>Come in early and the layout and finish are still open</li>
+              <li>Our commission is competitive, and it is in writing</li>
+            </ul>
+            <a class="btn-line go" href="invest.html">
+              See what is available
+              <i aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4.8 11.2 11.2 4.8M6.1 4.8h5.1v5.1"/></svg></i>
+            </a>
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="float rv" style="--rvd:110ms">
+      <div class="depth" style="--d:24px">
+        <div class="lev" style="--dur:10.4s;--amp:9px;--rot:.28deg;--delay:-4.6s">
+          <article class="card-g svc-card tilt" style="--tint:127,217,232">
+            <span class="spec" aria-hidden="true"></span>
+            <span class="svc-ic" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 10.5 12 4l9 6.5"/><path d="M5 9.8V20h14V9.8"/><path d="M9.6 20v-5.2h4.8V20"/>
+              </svg>
+            </span>
+            <span class="mono">For owners</span>
+            <h3>Property management</h3>
+            <p>Your property run from here while you are somewhere else. Tenants found and checked, rent and dues collected, repairs arranged and supervised, and the place inspected four times a year whether or not anything is wrong.</p>
+            <ul>
+              <li>One named contact here, not a department</li>
+              <li>A statement every month, a condition report every quarter</li>
+              <li>Nothing is spent without your yes</li>
+            </ul>
+            <a class="btn-line go" href="property-management.html">
+              See how it works
+              <i aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4.8 11.2 11.2 4.8M6.1 4.8h5.1v5.1"/></svg></i>
+            </a>
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="float rv" style="--rvd:220ms">
+      <div class="depth" style="--d:20px">
+        <div class="lev" style="--dur:14.2s;--amp:6px;--rot:.18deg;--delay:-7.9s">
+          <article class="card-g svc-card tilt" style="--tint:176,208,230">
+            <span class="spec" aria-hidden="true"></span>
+            <span class="svc-ic" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 4v16"/><path d="M5 8h14"/><path d="M5 8 2.8 13.4h4.4L5 8Z"/><path d="M19 8l-2.2 5.4h4.4L19 8Z"/>
+              </svg>
+            </span>
+            <span class="mono">For sellers, buyers and lenders</span>
+            <h3>Property evaluation</h3>
+            <p>A written opinion of what a property is worth, with the evidence attached. Before you list, before you offer, or because someone has already given you a number and you would like a second one.</p>
+            <ul>
+              <li>Priced off real transactions, not portal asking prices</li>
+              <li>Every comparable named, and how it was adjusted</li>
+              <li>Yours to show anyone — no obligation to sell with us</li>
+            </ul>
+            <a class="btn-line go" href="property-evaluation.html">
+              See what you get
+              <i aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4.8 11.2 11.2 4.8M6.1 4.8h5.1v5.1"/></svg></i>
+            </a>
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="float rv" style="--rvd:330ms">
+      <div class="depth" style="--d:26px">
+        <div class="lev" style="--dur:11.7s;--amp:8px;--rot:.24deg;--delay:-3.1s">
+          <article class="card-g svc-card tilt" style="--tint:255,224,176">
+            <span class="spec" aria-hidden="true"></span>
+            <span class="svc-ic" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2.6" y="4.2" width="18.8" height="13" rx="1.6"/>
+                <path d="M2.6 8.1h18.8"/><path d="M8.4 20.6h7.2"/><path d="M12 17.2v3.4"/>
+              </svg>
+            </span>
+            <span class="mono">For other property firms</span>
+            <h3>Lumina Studio</h3>
+            <p>The one service that is not about a property. We build the website, the social-media blueprint and the brand identity for other agencies and developers — as a brokerage that knows what a listing page has to do at eleven at night.</p>
+            <ul>
+              <li>Built from nothing, not from a template or a page builder</li>
+              <li>Listings driven by the spreadsheet your office already keeps</li>
+              <li>Files, domain and accounts in your name from the start</li>
+            </ul>
+            <a class="btn-line go" href="lumina-studio.html">
+              See the portfolio
+              <i aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4.8 11.2 11.2 4.8M6.1 4.8h5.1v5.1"/></svg></i>
+            </a>
+          </article>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="note rv" style="--rvd:120ms">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><circle cx="8" cy="8" r="6.4"/><path d="M8 7.2v4M8 4.9v.9"/></svg>
+    <span><strong>On fees:</strong> all four are quoted per instruction and confirmed in writing before any work starts. There is no rate card on this site, for the same reason there are no prices on the listings — a figure that has to be qualified in the next sentence is not information.</span>
+  </p>
+</section>
+
+<div class="rule"></div>
+
+<!-- ═══ ASK ═════════════════════════════════════════════ -->
+<section class="sec" id="ask">
+  <div class="sec-head rv">
+    <p class="kicker">Get started</p>
+    <h2 class="display">Not sure which one you need?</h2>
+    <p class="lede">Say what you have and what you are trying to do with it. We will tell you which of the four it is — and if the answer is that you do not need us, we will say that too.</p>
+  </div>
+
+  <div class="reg">
+    <div class="reg-side rv">
+      <p>Every enquiry goes to a person, not a queue. The property three overlap more often than they look like they do: an evaluation frequently turns into a management instruction, and a management client is usually the first to hear about a new building.</p>
+      <ul class="ticks">
+        <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8.4l3.2 3.2L13 4.8"/></svg><span>No obligation, and no marketing list.</span></li>
+        <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8.4l3.2 3.2L13 4.8"/></svg><span>Fees quoted in writing before anything begins.</span></li>
+        <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8.4l3.2 3.2L13 4.8"/></svg><span>We work in West Amman, and we say so when something is outside it.</span></li>
+        <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8.4l3.2 3.2L13 4.8"/></svg><span>You can also go straight to a page above and use the form on it.</span></li>
+      </ul>
+    </div>
+
+    <!-- Same handoff as the rest of the site: no backend. The button is
+         a real wa.me link without JS; the script only rewrites the href
+         with a composed message just before the browser follows it. -->
+    <form class="reg-form rv" style="--rvd:130ms" id="askForm">
+      <label class="field">
+        <span>Your name</span>
+        <input type="text" id="a-name" name="name" autocomplete="name" placeholder="Name">
+      </label>
+      <label class="field">
+        <span>What you are after</span>
+        <select id="a-svc" name="service">
+          <option>Investment — new buildings</option>
+          <option>Property management</option>
+          <option>Property evaluation</option>
+          <option>Lumina Studio — website, social or branding</option>
+          <option>More than one of these</option>
+          <option>Not sure yet</option>
+        </select>
+      </label>
+      <label class="field">
+        <span>Anything else</span>
+        <textarea id="a-note" name="note" placeholder="District, property type, timing — whatever is useful."></textarea>
+      </label>
+      <a class="btn" id="askSend" href="https://wa.me/962771505250" target="_blank" rel="noopener">
+        Send on WhatsApp
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true" style="width:16px;height:16px">
+          <path d="M21 11.5a8.4 8.4 0 0 1-12.3 7.4L3.5 20.5l1.7-5A8.4 8.4 0 1 1 21 11.5Z"/>
+        </svg>
+      </a>
+      <p class="fine">Goes to +962 77 150 5250. Nothing is stored on this site.</p>
+    </form>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="foot-in">
+    <div>
+      <a href="index.html" class="mark-img" aria-label="Lumina — home">
+        <img src="assets/lumina-logo.png" alt="Lumina" width="669" height="181">
+      </a>
+      <p class="fine" style="margin:12px 0 0">Private real estate advisory · Amman, Jordan</p>
+    </div>
+    <nav class="foot-nav" aria-label="Footer">
+      <a href="index.html">Home</a><a href="listings.html">Properties</a>
+      <a href="services.html">Services</a><a href="lumina-studio.html">Studio</a><a href="invest.html">Invest</a><a href="room.html">The room</a>
+      <a href="property-management.html">Management</a><a href="property-evaluation.html">Evaluation</a>
+      <a href="team.html">Team</a><a href="index.html#contact">Contact</a>
+    </nav>
+    <p class="fine">
+      <span>© <span id="yr">2026</span> Lumina Real Estate Advisory</span>
+      <span>Investment · Management · Evaluation</span>
+      <span>Fees quoted per instruction</span>
+    </p>
+  </div>
+</footer>
+
+<script src="js/lumina.js?v=2026-08-07d" defer></script>
+<script src="js/nav-menu.js?v=2026-08-07b" defer></script>
+<script src="js/services.js?v=2026-08-07b" defer></script>
+</body>
+</html>

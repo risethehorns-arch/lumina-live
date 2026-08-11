@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Property evaluation — Lumina, Amman</title>
+<meta name="description" content="A written opinion of value for residential property in West Amman: inspected in person, drawn from comparable evidence in our own book, and issued as a document with the reasoning attached. Fees quoted per instruction.">
+<meta name="theme-color" content="#05070B">
+
+<meta property="og:title" content="Property evaluation — Lumina">
+<meta property="og:description" content="What it is worth, in writing, with the evidence it was worked out from.">
+<meta property="og:type" content="website">
+
+<link rel="icon" type="image/png" href="assets/lumina-logo.png" />
+<link rel="preload" as="font" type="font/woff2" href="assets/fonts/InstrumentSerif.woff2" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="assets/fonts/InstrumentSans.woff2" crossorigin>
+
+<link rel="stylesheet" href="css/elevated.css?v=2026-08-07b">
+
+<style>
+/* ═══════════════════════════════════════════════════════════
+   LUMINA — Property evaluation
+   Shared shell in css/elevated.css. This block is the hero, the
+   balance diagram, and the method rail.
+
+   WHAT IS REAL ON THIS PAGE
+   The method, the districts, the WhatsApp number, and that fees and
+   turnaround are quoted per instruction. There is no rate, no
+   turnaround in days, and no JOD/m² figure anywhere — the
+   neighbourhood per-metre numbers elsewhere on this site are flagged
+   as placeholder in CLAUDE.md and must not be repeated here as if
+   they were evidence. Do not invent any of it.
+   ═══════════════════════════════════════════════════════════ */
+
+.hero{
+  position:relative; z-index:2; overflow-x:clip;
+  padding:clamp(120px,17vh,190px) var(--gutter) clamp(50px,8vh,90px);
+  max-width:var(--max); margin-inline:auto;
+}
+.hero-in{position:relative; z-index:1; max-width:820px}
+.hero h1{margin:20px 0 22px}
+.hero .lede{max-width:52ch}
+.hero-cta{display:flex; flex-wrap:wrap; gap:14px 18px; margin-top:clamp(28px,4vw,40px)}
+
+/* the drafting field behind the hero. .bp-grid itself is in
+   css/elevated.css; only invest.html was instantiating it, so the
+   other service pages had no line-work at all and the .mono
+   annotations on them read as grey captions rather than as marks on a
+   sheet. Quieter and slower here than on invest, because this hero is
+   type-led and at invest's weight the grid competes with the headline.
+
+   The parallax has to live on a wrapper: .bp-grid's own transform is
+   already spent on bpDrift, and a second transform on one element
+   silently wins. .depth is the site's existing wrapper for exactly
+   that, and it is already pinned to none under reduced motion. */
+.bp-plane{position:absolute; inset:0; z-index:0; pointer-events:none}
+.hero .bp-grid{opacity:.3; animation-duration:120s}
+
+/* ── the balance ──────────────────────────────────────────────
+   Asking price on one pan, achieved price on the other, and the beam
+   tipped so that asking rides high. It is the whole argument of the
+   page in one object: a valuation drawn from what things were listed
+   at is not evidence, because the two pans are not level.
+
+   The frame is inline SVG on a fixed viewBox. The first version was
+   built from absolutely-positioned divs and the geometry never held —
+   the beam rotated one way while the pans were placed the other, and
+   the hangers did not reach it. In a viewBox every end point is a
+   coordinate and the drawing cannot disagree with itself. The labels
+   stay HTML so they are real type and real text. */
+.bal{--bal-w:min(380px,84vw); position:relative; width:var(--bal-w); margin-inline:auto}
+.bal svg{width:100%; height:auto; overflow:visible}
+.bal-lbl{position:absolute; width:36%; text-align:center}
+.bal-lbl b{
+  display:block; font-family:var(--display); font-weight:400; line-height:1.06;
+  font-size:clamp(1rem,1.35vw,1.2rem); color:var(--cream);
+}
+.bal-lbl span{display:block; margin-top:6px; font-size:.72rem; color:var(--c-52); line-height:1.4}
+/* the pans sit at x=17% and x=83% of the viewBox, and the right one
+   hangs 30 units lower — these two rules are those numbers */
+.bal-ask{left:-1%; top:51%}
+.bal-got{right:-1%; top:61%}
+.bal-got b{color:var(--gold-lt); text-shadow:0 0 18px rgba(255,178,90,.35)}
+.bal-note{
+  margin:clamp(52px,7vw,74px) auto 0; width:min(320px,92%);
+  text-align:center; font-size:.76rem; color:var(--c-38); line-height:1.5;
+}
+/* The tip is the argument, so it has to happen rather than already
+   have happened. The beam and both pans are drawn LEVEL and the arm
+   is rotated into the tip; 8.3deg is the angle that puts the level
+   beam's ends back on the pan heights the labels were placed against
+   (sin θ = 17/118). The pans counter-rotate about their own hang
+   points so the hangers stay plumb through the swing.
+
+   The resting state below is the FINISHED one, and the level start is
+   scoped to no-preference — so reduced motion, and a reveal observer
+   that never fires, both land on the tipped diagram rather than on a
+   balance frozen level, which would say the opposite thing. */
+.bal-arm{transform:rotate(8.3deg); transform-box:view-box; transform-origin:180px 58px}
+.bal-pan{transform:rotate(-8.3deg); transform-box:view-box; transform-origin:var(--o,180px) 58px}
+@media (prefers-reduced-motion:no-preference){
+  .bal-arm,.bal-pan,.bal-lbl{transition:transform 1.15s var(--ease) .25s}
+  .rv:not(.in) .bal-arm,.rv:not(.in) .bal-pan{transform:rotate(0)}
+  /* the labels ride the pans they belong to: 17 viewBox units out of
+     360 across is .0472 of the drawing's own width, whatever it is */
+  .rv:not(.in) .bal-ask{transform:translateY(calc(var(--bal-w) * .0472))}
+  .rv:not(.in) .bal-got{transform:translateY(calc(var(--bal-w) * -.0472))}
+}
+
+.split{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,400px);
+  gap:clamp(30px,5vw,72px); align-items:center}
+@media (max-width:980px){.split{grid-template-columns:1fr}}
+
+/* ── the method rail ──────────────────────────────────────────
+   Five steps down a vertical line. Deliberately vertical rather
+   than the horizontal rail on the invest page — this is a
+   procedure, and a procedure reads down.
+
+   The section's own argument is that the order matters, so the rail
+   draws and the steps light in order as it reaches them: the same
+   mechanism as .prog on invest.html, turned on its side. Driven from
+   js/service-form.js, which writes --ml on #methFill and data-on on
+   each step.
+
+   Note which way round the states are declared. The LIT dot is the
+   resting rule and [data-on="0"] is the exception, so with the script
+   blocked the rail is exactly what it was before this was added — the
+   sequence is the enhancement, not the baseline. */
+.meth{position:relative; padding-left:40px}
+.meth::before{
+  content:""; position:absolute; left:11px; top:8px; bottom:8px; width:1px;
+  background:linear-gradient(180deg,rgba(255,178,90,.4),rgba(160,196,214,.16));
+}
+/* a real element, because a pseudo-element cannot be driven from JS */
+.meth-fill{
+  display:block; position:absolute; left:11px; top:8px; bottom:8px; width:1px;
+  transform-origin:top center; transform:scaleY(var(--ml,0));
+  background:linear-gradient(180deg,var(--gold-lt),var(--plinth));
+  box-shadow:0 0 12px rgba(255,215,163,.55);
+  transition:transform .25s linear;
+}
+.meth-step{position:relative; padding:0 0 clamp(26px,3.4vw,40px);
+  transition:transform .6s var(--ease)}
+.meth-step:last-child{padding-bottom:0}
+.meth-step[data-on="1"]{transform:translateX(4px)}
+.meth-step::before{
+  content:""; position:absolute; left:-34px; top:6px; width:9px; height:9px; border-radius:50%;
+  background:var(--gold-lt); box-shadow:0 0 0 4px rgba(255,215,163,.12),0 0 14px 2px rgba(255,215,163,.5);
+  transition:background-color .5s var(--ease),box-shadow .5s var(--ease),transform .5s var(--ease);
+}
+.meth-step[data-on="0"]::before{
+  background:rgba(244,239,230,.2); transform:scale(.82); box-shadow:none;
+}
+.meth-step .mono{display:block; margin-bottom:9px}
+.meth-step h4{margin:0 0 8px; font-family:var(--display); font-weight:400;
+  font-size:clamp(1.16rem,1.5vw,1.4rem); line-height:1.12; color:var(--cream);
+  transition:color .5s var(--ease)}
+.meth-step[data-on="0"] h4{color:var(--c-70)}
+.meth-step p{margin:0; font-size:.92rem; color:var(--c-52); max-width:56ch}
+
+/* ── what the report contains ─────────────────────────────── */
+.rep{display:grid; grid-template-columns:repeat(auto-fit,minmax(238px,1fr));
+  gap:clamp(16px,1.8vw,26px)}
+.rep h3{margin:0 0 12px; font-family:var(--display); font-weight:400;
+  font-size:clamp(1.16rem,1.5vw,1.4rem); line-height:1.1; color:var(--cream)}
+.rep p{margin:0; font-size:.92rem; color:var(--c-52)}
+/* No .n rule here on purpose. These cards used a 1.5rem gold numeral,
+   which made "01" louder than the heading it labels — and 01–04 is
+   pure ordering, the least informative thing in the card. They now
+   carry the same .mono annotation as the cards on the other two
+   service pages, so a reader who has scanned one already knows what
+   the small line at the top of a card is. */
+</style>
+
+<link rel="stylesheet" href="css/mobile.css?v=2026-08-07d">
+</head>
+<!-- data-subject is what js/service-form.js puts in the WhatsApp
+     greeting, so the message says what it is about. -->
+<body data-subject="a property evaluation">
+
+<div class="boot" id="boot" aria-hidden="true">
+  <img src="assets/lumina-logo.png" alt="" width="669" height="181">
+</div>
+
+<div class="grain" aria-hidden="true"></div>
+<div class="glow" id="glow" aria-hidden="true"></div>
+
+<header class="bar" id="bar">
+  <a href="index.html" class="mark-img" aria-label="Lumina — home">
+    <img src="assets/lumina-logo.png" alt="Lumina" width="669" height="181">
+  </a>
+  <nav class="nav" aria-label="Primary">
+    <a href="index.html">Home</a>
+    <a href="listings.html">Properties</a>
+    <a href="services.html">Services</a>
+    <a href="areas.html">Areas</a>
+    <a href="team.html">Team</a>
+    <a href="index.html#contact">Contact</a>
+    <a href="https://wa.me/962771505250" class="chip" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
+        <path d="M21 11.5a8.4 8.4 0 0 1-12.3 7.4L3.5 20.5l1.7-5A8.4 8.4 0 1 1 21 11.5Z"/>
+        <path d="M8.6 9.2c.3 2.5 2.6 4.8 5.1 5.2.7.1 1.5-.4 1.6-1.1l.1-.6-2-.9-.9.9c-1-.4-1.9-1.3-2.3-2.3l.9-.9-.9-2-.6.1c-.7.1-1.1.9-1 1.6Z"/>
+      </svg>
+      WhatsApp
+    </a>
+  </nav>
+</header>
+
+<nav class="spine" id="spine" aria-label="Section navigation">
+  <span class="rail" aria-hidden="true"></span>
+  <span class="fill" id="fill" aria-hidden="true"></span>
+  <button type="button" data-to="top"><span class="tip">Evaluation</span></button>
+  <button type="button" data-to="why"><span class="tip">Why it matters</span></button>
+  <button type="button" data-to="method"><span class="tip">How it works</span></button>
+  <button type="button" data-to="report"><span class="tip">What you get</span></button>
+  <button type="button" data-to="terms"><span class="tip">Fees and terms</span></button>
+  <button type="button" data-to="start"><span class="tip">Get started</span></button>
+  <button type="button" data-to="more"><span class="tip">Also from Lumina</span></button>
+</nav>
+
+<main>
+
+<!-- ═══ HERO ════════════════════════════════════════════ -->
+<section class="hero" id="top">
+  <div class="depth bp-plane" style="--d:8px" aria-hidden="true"><div class="bp-grid"></div></div>
+  <div class="hero-in">
+    <p class="kicker rv">Services · Property evaluation</p>
+    <h1 class="display rv" style="--rvd:60ms">What your property is worth, in writing, with the evidence attached.</h1>
+    <p class="lede rv" style="--rvd:140ms">A number is easy — anybody will give you one. A number you can defend is the work: inspected in person, priced against what comparable properties actually sold for, and issued as a document. So when someone disagrees, you have something to disagree with them using.</p>
+
+    <!-- Same component and same position as the other service pages —
+         see .whofor in css/elevated.css. -->
+    <div class="whofor rv" style="--rvd:200ms">
+      <p class="mono">Right for you if</p>
+      <ul>
+        <li>You are about to list and want to know where to price it</li>
+        <li>You are about to offer and want to know if the asking price is real</li>
+        <li>A bank, a partner or a court has asked you for a figure</li>
+      </ul>
+      <p class="out">Not selling, just holding? <a href="property-management.html">Property management</a>. Buying new rather than resale? <a href="invest.html">New buildings</a>.</p>
+    </div>
+
+    <div class="hero-cta rv" style="--rvd:280ms">
+      <a class="btn" href="#start">
+        Ask for an evaluation
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:15px;height:15px"><path d="M4.8 11.2 11.2 4.8M6.1 4.8h5.1v5.1"/></svg>
+      </a>
+      <a class="btn-line" href="services.html">
+        All services
+        <i aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4.8 11.2 11.2 4.8M6.1 4.8h5.1v5.1"/></svg></i>
+      </a>
+    </div>
+  </div>
+</section>
+
+<div class="rule"></div>
+
+<!-- ═══ ASKING VS ACHIEVED ══════════════════════════════ -->
+<section class="sec" id="why">
+  <div class="split">
+    <div>
+      <div class="sec-head rv" style="margin-bottom:0">
+        <p class="kicker">Why it matters</p>
+        <h2 class="display">Every portal shows you what people asked for.</h2>
+        <p class="lede">An asking price is an opinion with a phone number attached. It is not evidence, and a valuation built out of a page of them inherits every bit of optimism in it. What a property actually sold for is a different number, and it is the one that matters.</p>
+      </div>
+      <ul class="ticks rv" style="--rvd:120ms">
+        <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8.4l3.2 3.2L13 4.8"/></svg><span>We price from transactions we were part of or can verify, not from listings.</span></li>
+        <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8.4l3.2 3.2L13 4.8"/></svg><span>Every comparable used is named in the report, with why it was chosen.</span></li>
+        <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8.4l3.2 3.2L13 4.8"/></svg><span>If the evidence is thin for your property type, the report says so rather than guessing confidently.</span></li>
+      </ul>
+    </div>
+
+    <div class="float rv" style="--rvd:180ms">
+      <div class="depth" style="--d:20px">
+        <div class="lev" style="--dur:13.8s;--amp:8px;--rot:.18deg;--delay:-4.2s">
+          <div class="bal">
+            <!-- viewBox 0 0 360 300. Pivot (180,58). The beam is drawn
+                 LEVEL and .bal-arm rotates it into the tip, so the
+                 hangers can hang from the same two points at either
+                 angle — see .bal-arm in the style block above for why
+                 the geometry is built this way round. -->
+            <svg viewBox="0 0 360 300" fill="none" role="img"
+                 aria-label="A tipped balance. The pan marked Asking rides high; the pan marked Achieved hangs low.">
+              <!-- column and base -->
+              <path d="M180 58V246" stroke="rgba(180,214,232,.4)" stroke-width="1.5"/>
+              <path d="M124 246h112" stroke="rgba(180,214,232,.5)" stroke-width="2" stroke-linecap="round"/>
+              <g stroke="rgba(160,196,214,.28)" stroke-width="1">
+                <path d="M126 246l-8 10M142 246l-8 10M158 246l-8 10M174 246l-8 10M190 246l-8 10M206 246l-8 10M222 246l-8 10M238 246l-8 10"/>
+              </g>
+              <!-- the beam and everything hanging off it, as one arm -->
+              <g class="bal-arm">
+                <path d="M62 58L298 58" stroke="url(#beam)" stroke-width="2" stroke-linecap="round"/>
+                <circle cx="180" cy="58" r="5" fill="#FFE0B0"/>
+                <circle cx="180" cy="58" r="10" fill="rgba(255,178,90,.16)"/>
+                <!-- --o is each pan's hang point, and the axis it turns
+                     back about so its hanger stays vertical -->
+                <g class="bal-pan" style="--o:62px">
+                  <path d="M62 58v78" stroke="rgba(180,214,232,.3)" stroke-width="1"/>
+                  <path d="M26 136h72" stroke="rgba(180,214,232,.45)" stroke-width="1.5" stroke-linecap="round"/>
+                  <path d="M26 136q36 30 72 0" stroke="rgba(180,214,232,.35)" stroke-width="1.5" fill="none"/>
+                </g>
+                <g class="bal-pan" style="--o:298px">
+                  <path d="M298 58v78" stroke="rgba(180,214,232,.3)" stroke-width="1"/>
+                  <path d="M262 136h72" stroke="rgba(180,214,232,.45)" stroke-width="1.5" stroke-linecap="round"/>
+                  <path d="M262 136q36 30 72 0" stroke="rgba(255,215,163,.6)" stroke-width="1.5" fill="none"/>
+                </g>
+              </g>
+              <defs>
+                <linearGradient id="beam" x1="62" y1="58" x2="298" y2="58" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#FFE0B0" stop-opacity=".85"/>
+                  <stop offset="1" stop-color="#B4D6E8" stop-opacity=".7"/>
+                </linearGradient>
+              </defs>
+            </svg>
+            <span class="bal-lbl bal-ask" aria-hidden="true">
+              <b>Asking</b>
+              <span>What a page said someone wanted</span>
+            </span>
+            <span class="bal-lbl bal-got" aria-hidden="true">
+              <b>Achieved</b>
+              <span>What actually changed hands</span>
+            </span>
+            <p class="bal-note">The gap between the two is not a rounding error, and it is not the same gap in every district.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="rule"></div>
+
+<!-- ═══ METHOD ══════════════════════════════════════════ -->
+<section class="sec" id="method">
+  <div class="sec-head rv">
+    <p class="kicker">How it works</p>
+    <h2 class="display">Five steps, and none of them happen at a desk.</h2>
+    <p class="lede">The order matters as much as the steps. Inspecting a property after you have decided what it is worth is not inspection, it is confirmation.</p>
+  </div>
+
+  <div class="meth rv">
+    <i class="meth-fill" id="methFill" aria-hidden="true"></i>
+    <div class="meth-step">
+      <span class="mono">Step 01</span>
+      <h4>The brief</h4>
+      <p>What the evaluation is for changes what it has to withstand. Selling, buying, a bank, a partnership, a division of assets and an insurance figure are five different documents, and we would rather ask than assume.</p>
+    </div>
+    <div class="meth-step">
+      <span class="mono">Step 02</span>
+      <h4>The inspection</h4>
+      <p>In person, room by room, with photographs. Aspect, floor, view, natural light, the state of the finishes, what the building's common parts look like, and whether the parking is real parking. None of this is visible from a portal listing and all of it moves the number.</p>
+    </div>
+    <div class="meth-step">
+      <span class="mono">Step 03</span>
+      <h4>The comparables</h4>
+      <p>Transactions in the same district, as close as possible in size, age and specification. We say how many we found and how good a match each one is — three close comparables are worth more than fifteen loose ones, and a report that does not tell you which it had is hiding something.</p>
+    </div>
+    <div class="meth-step">
+      <span class="mono">Step 04</span>
+      <h4>The adjustments</h4>
+      <p>No two properties are the same, so each comparable is adjusted for the ways it differs — floor, size, condition, finish, outdoor space, service charge. Every adjustment is written down. This is the part that makes the number arguable in the useful sense.</p>
+    </div>
+    <div class="meth-step">
+      <span class="mono">Step 05</span>
+      <h4>The opinion</h4>
+      <p>A figure, a realistic range around it, and what would have to be true to reach the top of that range. If we think it should be marketed at a different number from what it is worth, we say both and explain why.</p>
+    </div>
+  </div>
+</section>
+
+<div class="rule"></div>
+
+<!-- ═══ THE REPORT ══════════════════════════════════════ -->
+<section class="sec" id="report">
+  <div class="sec-head rv">
+    <p class="kicker">What you get</p>
+    <h2 class="display">Four things arrive, and you own all of them.</h2>
+    <p class="lede">One document, delivered as a document — not a link to a portal you lose access to.</p>
+  </div>
+
+  <div class="rep">
+    <div class="float rv">
+      <div class="depth" style="--d:16px">
+        <div class="lev" style="--dur:12.9s;--amp:7px;--rot:.2deg;--delay:-1.8s">
+          <article class="card-g tilt">
+            <span class="spec" aria-hidden="true"></span>
+            <span class="mono">01 — Value</span>
+            <h3>The figure, and the range</h3>
+            <p>One number, and the band we would expect it to transact within. A single figure with no range is a guess dressed up, and a range so wide it cannot be wrong is useless.</p>
+          </article>
+        </div>
+      </div>
+    </div>
+    <div class="float rv" style="--rvd:110ms">
+      <div class="depth" style="--d:24px">
+        <div class="lev" style="--dur:10.6s;--amp:9px;--rot:.26deg;--delay:-5.7s">
+          <article class="card-g tilt">
+            <span class="spec" aria-hidden="true"></span>
+            <span class="mono">02 — Comparables</span>
+            <h3>The evidence</h3>
+            <p>Each comparable listed with its district, size, date and how it was adjusted. You can check our reasoning, and so can anyone you show it to.</p>
+          </article>
+        </div>
+      </div>
+    </div>
+    <div class="float rv" style="--rvd:220ms">
+      <div class="depth" style="--d:20px">
+        <div class="lev" style="--dur:14.4s;--amp:6px;--rot:.18deg;--delay:-8.6s">
+          <article class="card-g tilt">
+            <span class="spec" aria-hidden="true"></span>
+            <span class="mono">03 — Condition</span>
+            <h3>The condition note</h3>
+            <p>What we saw, with photographs, and what it is costing you. Often the most useful page in the document, because it is the one that lists things you can actually change.</p>
+          </article>
+        </div>
+      </div>
+    </div>
+    <div class="float rv" style="--rvd:330ms">
+      <div class="depth" style="--d:26px">
+        <div class="lev" style="--dur:11.4s;--amp:8px;--rot:.24deg;--delay:-3.3s">
+          <article class="card-g tilt">
+            <span class="spec" aria-hidden="true"></span>
+            <span class="mono">04 — Recommendations</span>
+            <h3>What would move it</h3>
+            <p>The work that would pay for itself before sale and the work that would not. Most owners are about to spend money on the second kind.</p>
+          </article>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="rule"></div>
+
+<!-- ═══ TERMS ═══════════════════════════════════════════ -->
+<section class="sec" id="terms">
+  <div class="sec-head rv">
+    <p class="kicker">Fees and terms</p>
+    <h2 class="display">What it costs, and what you would be signing.</h2>
+    <p class="lede">The fee and the turnaround depend on the property and on what the document has to stand up to. Both are quoted once, in writing, before we visit.</p>
+  </div>
+
+  <dl class="terms rv" style="--tc:3">
+    <div><dt>What we evaluate</dt><dd>Residential<small>Apartments, whole floors, villas and small residential buildings. Land and commercial are outside what we do well and we will say so rather than take it on.</small></dd></div>
+    <div><dt>Where</dt><dd>West Amman<small>The districts we transact in. Our comparable evidence is only worth something where we actually have some.</small></dd></div>
+    <div><dt>Fee</dt><dd>Quoted per instruction<small>Set against the property and the purpose, agreed in writing before we visit. No rate card, because a flat fits differently from a building.</small></dd></div>
+    <div><dt>Turnaround</dt><dd>Agreed up front<small>Quoted with the fee once we know the property and the purpose. We would rather commit to a date we can hold than a number of days we cannot.</small></dd></div>
+    <div><dt>Independence</dt><dd>Stated on the document<small>If we are also instructed to sell the property, the report says so on its face. A valuation from someone with an interest in the outcome is worth knowing about.</small></dd></div>
+    <div><dt>What it is not</dt><dd>Not a survey<small>This is an opinion of value, not a structural or building survey. Where something needs a surveyor or an engineer, the report says that instead of pricing around it.</small></dd></div>
+  </dl>
+
+  <p class="note rv" style="--rvd:120ms">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><circle cx="8" cy="8" r="6.4"/><path d="M8 7.2v4M8 4.9v.9"/></svg>
+    <span>There is no JOD per square metre figure anywhere on this page, and there will not be one. A per-metre rate quoted without the property attached to it is exactly the kind of number this service exists to replace.</span>
+  </p>
+</section>
+
+<div class="rule"></div>
+
+<!-- ═══ START ═══════════════════════════════════════════ -->
+<section class="sec" id="start">
+  <div class="sec-head rv">
+    <p class="kicker">Get started</p>
+    <h2 class="display">Tell us what it is, and what the number is for.</h2>
+    <p class="lede">The second half of that sentence changes the document more than the first does, so it is the one field worth thinking about.</p>
+  </div>
+
+  <div class="reg">
+    <div class="reg-side rv">
+      <p>If someone has already given you a figure, tell us what it was — not so that we can match it, but because knowing what you have been told is part of understanding what you are actually asking us.</p>
+      <ul class="ticks">
+        <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8.4l3.2 3.2L13 4.8"/></svg><span>Fee and turnaround quoted in writing before we visit.</span></li>
+        <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8.4l3.2 3.2L13 4.8"/></svg><span>The report is yours — show it to whoever you like.</span></li>
+        <li><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8.4l3.2 3.2L13 4.8"/></svg><span>No obligation to then market the property with us, and no discount for doing so.</span></li>
+      </ul>
+    </div>
+
+    <form class="reg-form rv" style="--rvd:130ms" id="regForm">
+      <label class="field">
+        <span>Your name</span>
+        <input type="text" id="r-name" name="name" autocomplete="name" placeholder="Name">
+      </label>
+      <label class="field">
+        <span>The property</span>
+        <select id="r-what" name="what">
+          <option>An apartment</option>
+          <option>A whole floor</option>
+          <option>A villa</option>
+          <option>A residential building</option>
+        </select>
+      </label>
+      <label class="field">
+        <span>What the number is for</span>
+        <select id="r-why" name="why">
+          <option>Deciding whether to sell</option>
+          <option>Deciding what to offer</option>
+          <option>A bank or a lender</option>
+          <option>A partnership or a division of assets</option>
+          <option>Insurance</option>
+          <option>Something else</option>
+        </select>
+      </label>
+      <label class="field">
+        <span>Anything else</span>
+        <textarea id="r-note" name="note" placeholder="District, size, floor, and any figure you have already been given."></textarea>
+      </label>
+      <a class="btn" id="regSend" href="https://wa.me/962771505250" target="_blank" rel="noopener">
+        Send on WhatsApp
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true" style="width:16px;height:16px">
+          <path d="M21 11.5a8.4 8.4 0 0 1-12.3 7.4L3.5 20.5l1.7-5A8.4 8.4 0 1 1 21 11.5Z"/>
+        </svg>
+      </a>
+      <p class="fine">Goes to +962 77 150 5250. Nothing is stored on this site.</p>
+    </form>
+  </div>
+</section>
+
+<div class="rule"></div>
+
+<!-- ═══ THE OTHER TWO ═══════════════════════════════════
+     Every service page ends with the other two, so the three read
+     as a set rather than three dead ends. -->
+<section class="sec" id="more">
+  <div class="sec-head rv" style="margin-bottom:clamp(28px,3.4vw,44px)">
+    <p class="kicker">Also from Lumina</p>
+    <h2 class="display">The other two services.</h2>
+  </div>
+  <div class="more-grid rv" style="--rvd:90ms">
+    <a class="more-card" href="invest.html">
+      <span class="mono">For buyers</span>
+      <h3>Investment</h3>
+      <p>New buildings from one contractor, offered to our register before they are listed. If the evaluation is telling you to buy rather than sell, start here.</p>
+      <span class="more-go">Open
+        <i aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4.8 11.2 11.2 4.8M6.1 4.8h5.1v5.1"/></svg></i>
+      </span>
+    </a>
+    <a class="more-card" href="property-management.html">
+      <span class="mono">For owners</span>
+      <h3>Property management</h3>
+      <p>If the answer turns out to be hold rather than sell, this is who runs it while you do — tenants, rent, repairs and a report every month.</p>
+      <span class="more-go">Open
+        <i aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4.8 11.2 11.2 4.8M6.1 4.8h5.1v5.1"/></svg></i>
+      </span>
+    </a>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="foot-in">
+    <div>
+      <a href="index.html" class="mark-img" aria-label="Lumina — home">
+        <img src="assets/lumina-logo.png" alt="Lumina" width="669" height="181">
+      </a>
+      <p class="fine" style="margin:12px 0 0">Private real estate advisory · Amman, Jordan</p>
+    </div>
+    <nav class="foot-nav" aria-label="Footer">
+      <a href="index.html">Home</a><a href="listings.html">Properties</a>
+      <a href="services.html">Services</a><a href="lumina-studio.html">Studio</a><a href="invest.html">Invest</a><a href="room.html">The room</a>
+      <a href="property-management.html">Management</a>
+      <a href="team.html">Team</a><a href="index.html#contact">Contact</a>
+    </nav>
+    <p class="fine">
+      <span>© <span id="yr">2026</span> Lumina Real Estate Advisory</span>
+      <span>Opinions of value · West Amman</span>
+      <span>Fees quoted per instruction</span>
+    </p>
+  </div>
+</footer>
+
+<script src="js/lumina.js?v=2026-08-07d" defer></script>
+<script src="js/nav-menu.js?v=2026-08-07b" defer></script>
+<script src="js/service-form.js?v=2026-08-07b" defer></script>
+</body>
+</html>

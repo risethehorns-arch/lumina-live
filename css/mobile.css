@@ -1,0 +1,347 @@
+/* ==========================================================================
+   LUMINA — mobile.css
+   Loaded last on every page. Nothing here affects the desktop layout;
+   everything is inside a max-width query.
+
+   Measured at 390px before writing any of it:
+     - every page showed exactly two reachable nav links, Properties and
+       WhatsApp. Areas, Insights, Team and Sell With Us existed in the
+       markup and were display:none. Five of seven destinations were
+       unreachable on a phone.
+     - 224 card action links at 40px tall, 112 view buttons at 39px,
+       footer links at 17px. The usual floor for a finger is 44.
+     - 592 elements under 11.5px on the listings page alone, the
+       smallest at 9.6px.
+
+   Desktop is untouched: those sizes are correct for a cursor.
+   ========================================================================== */
+
+/* js/nav-menu.js injects the button and the sheet on every viewport —
+   it has no width test, and adding one would leave a rotated phone
+   without a menu. Everything that styles them lives in the query below,
+   so above 860px the toggle rendered as a bare <button> with three empty
+   spans: a dozen pixels of UA padding sitting in .nav's gap, which read
+   as an unbalanced right-hand gutter, and a real tab stop that opened an
+   unstyled sheet. Both are hidden by default and the query re-enables
+   them; the display values inside win on source order. */
+.nav-toggle,
+.nav-sheet { display: none; }
+
+@media (max-width: 860px) {
+
+  /* ---- THE BAR ----
+     The text links move into the sheet, so the bar keeps only the
+     wordmark, the WhatsApp chip and the menu button. */
+  .bar .nav a:not(.chip) { display: none; }
+
+  /* max() against the safe area rather than a flat gutter. In portrait
+     a notch sits above the viewport and env() is 0, so the clamp wins
+     and nothing changes; turn the phone sideways and the wordmark stops
+     disappearing under the camera housing. Every page now carries
+     viewport-fit=cover, which is what makes env() resolve at all. */
+  .bar {
+    gap: 12px;
+    padding-left: max(clamp(16px, 4vw, 26px), env(safe-area-inset-left));
+    padding-right: max(clamp(16px, 4vw, 26px), env(safe-area-inset-right));
+  }
+
+  .bar .mark-img { padding: 8px 0; }
+
+  .bar .nav {
+    gap: 10px;
+    margin-left: auto;
+  }
+
+  .bar .nav a.chip {
+    min-height: 44px;
+    padding: 0 15px;
+  }
+
+  /* ---- MENU BUTTON ----
+     Injected by js/nav-menu.js so the markup stays in one place rather
+     than being pasted into twelve files. */
+  .nav-toggle {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    width: 44px;
+    height: 44px;
+    flex: none;
+    padding: 0;
+    border: 1px solid rgba(255, 178, 90, .30);
+    border-radius: 12px;
+    background: rgba(255, 178, 90, .05);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: border-color .3s ease, background-color .3s ease;
+  }
+
+  .nav-toggle span {
+    display: block;
+    width: 17px;
+    height: 1.5px;
+    border-radius: 2px;
+    background: #F4EFE6;
+    transition: transform .38s cubic-bezier(.22, .68, .16, 1),
+                opacity .28s ease;
+  }
+
+  .nav-toggle[aria-expanded="true"] { border-color: rgba(255, 178, 90, .6); }
+  /* 3.25px is half the 5px gap plus half the 1.5px bar — the two outer
+     lines have to land on the middle one exactly or the X is lopsided */
+  .nav-toggle[aria-expanded="true"] span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+  .nav-toggle[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+  .nav-toggle[aria-expanded="true"] span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+  .nav-toggle:focus-visible { outline: 2px solid #FFB25A; outline-offset: 3px; }
+
+  /* ---- THE SHEET ---- */
+  .nav-sheet {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding:
+      max(96px, calc(env(safe-area-inset-top) + 84px))
+      max(clamp(22px, 7vw, 40px), env(safe-area-inset-right))
+      max(40px, calc(env(safe-area-inset-bottom) + 24px))
+      max(clamp(22px, 7vw, 40px), env(safe-area-inset-left));
+    background: linear-gradient(180deg, rgba(5, 7, 11, .97), rgba(8, 11, 17, .99));
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .34s cubic-bezier(.22, .68, .16, 1);
+  }
+
+  .nav-sheet[hidden] { display: none; }
+  .nav-sheet.open { opacity: 1; pointer-events: auto; }
+
+  .nav-sheet a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 56px;
+    padding: 8px 2px;
+    border-bottom: 1px solid rgba(247, 242, 233, .09);
+    font-family: "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 1.12rem;
+    font-weight: 400;
+    letter-spacing: -.01em;
+    color: rgba(244, 239, 230, .78);
+    text-decoration: none;
+    /* each row arrives just after the one above */
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity .4s cubic-bezier(.22, .68, .16, 1),
+                transform .44s cubic-bezier(.22, .68, .16, 1),
+                color .25s ease;
+  }
+
+  .nav-sheet.open a {
+    opacity: 1;
+    transform: none;
+    transition-delay: calc(var(--i, 0) * 45ms);
+  }
+
+  .nav-sheet a:last-of-type { border-bottom: 0; }
+  .nav-sheet a[aria-current="page"] { color: #FFB25A; }
+  .nav-sheet a:active { color: #F4EFE6; }
+
+  /* The index numeral is decoration; the label is the link text. */
+  .nav-sheet a i {
+    font-style: normal;
+    font-size: .62rem;
+    letter-spacing: .2em;
+    color: rgba(255, 178, 90, .55);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .nav-sheet-foot {
+    margin-top: 30px;
+    font-family: "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: .72rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: rgba(244, 239, 230, .38);
+  }
+
+  html.nav-locked, html.nav-locked body { overflow: hidden; }
+
+  /* ---- TAP TARGETS ----
+     44px is the floor. These are the elements measured below it. */
+  /* 46, not 44: several of these landed on 43.6 and rounded to 44,
+     which is under the floor by the only measure that matters. */
+  .prop-float .card-act,
+  .prop-float .view-btn,
+  .tm-link,
+  .filter-bar .type-pill,
+  .filter-bar .fx-pill,
+  .filter-bar .fx-trigger,
+  .filter-bar .filter-select,
+  .fx-foot button {
+    min-height: 46px;
+  }
+
+  .bar .mark-img { min-height: 44px; display: flex; align-items: center; }
+
+  .filter-bar .type-pill,
+  .filter-bar .fx-pill {
+    padding-top: 0;
+    padding-bottom: 0;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .fx-opt { min-height: 46px; }
+
+  /* Footer links were 17px tall — the smallest targets on the site. */
+  .footer-col ul li { margin-bottom: 4px; }
+  .footer-col ul li a,
+  .footer-col ul li span {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+  }
+
+  /* ...and the OTHER footer. The rule above covers the old cluster's
+     .footer-col; the elevated pages use .foot-nav, which was never in
+     it — measured at 23px on all six of them. Same floor, and the row
+     gap comes down because the links now carry their own height. */
+  .foot-nav { gap: 2px clamp(18px, 5vw, 26px); }
+  .foot-nav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+  .foot .fine a { display: inline-flex; align-items: center; min-height: 44px; }
+
+  /* ---- TRACKED UPPERCASE ----
+     .mono is .62rem — 9.9px — set in uppercase with .22em of tracking.
+     That is a precise drafting annotation on a 27-inch display and a
+     smear on a phone held at arm's length, and the elevated pages use
+     it for every label they have: the room's reading panel, the areas
+     districts, the quiz, the invest stages. Measured on six pages.
+
+     The tracking comes down as the size goes up — .22em was chosen to
+     hold a 9.9px line together, and at 11.8px it just pushes the words
+     apart. No !important anywhere: this sheet loads last, so plain
+     selectors already win on source order. */
+  .mono { font-size: .74rem; letter-spacing: .16em; }
+  .kicker { font-size: .76rem; letter-spacing: .19em; }
+  .cmx-kick, .qz-step { font-size: .68rem; letter-spacing: .2em; }
+  /* more specific rules that would otherwise outrank the two above */
+  .prog-sub-step .mono { font-size: .68rem; }
+  .ar-item .mono, .meth-step .mono, .svc-card .mono { font-size: .74rem; }
+  .nav-sheet-foot { font-size: .78rem; }
+  .terms dt, .title-block dt { font-size: .68rem; letter-spacing: .16em; }
+
+  /* ---- TYPE ----
+     Nothing below 11px. Uppercase tracked labels are the worst
+     offenders: at 9.6px with .2em of letter-spacing they are decoration
+     rather than text. */
+  .prop-float .card-tag,
+  .prop-float .card-badge,
+  .prop-float .no-photo-note,
+  .prop-float .card-shots,
+  .fx-badge,
+  .filter-label,
+  .fx-group-label {
+    font-size: .72rem;
+  }
+
+  .prop-float .kicker,
+  .prop-float .card-act,
+  .prop-float .view-btn,
+  .tm-link,
+  .filter-bar .type-pill,
+  .filter-bar .fx-pill,
+  .whatsapp-float.advisor-float {
+    font-size: .74rem;
+  }
+
+  .prop-float .specs li,
+  .fx-opt-n,
+  .fx-opt,
+  .footer-col h4,
+  .filter-count {
+    font-size: .8rem;
+  }
+
+  .prop-float .card-body h3 { font-size: 1.12rem; }
+}
+
+/* Below 400px the two-up action row in a property card starts to
+   truncate its labels; stack it instead. */
+@media (max-width: 400px) {
+  .prop-float .card-cta { flex-direction: column; align-items: stretch; }
+  .prop-float .card-act { justify-content: center; }
+}
+
+/* The price row is flex-wrap, so whether "View property" sits beside the
+   figure or under it depended on how many characters the figure happened
+   to have — a column of cards broke the line in different places. Below
+   520px it always breaks. */
+@media (max-width: 520px) {
+  .prop-float .price { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .prop-float .price .view-btn { align-self: stretch; justify-content: space-between; }
+}
+
+/* ---- 320px ----
+   The narrowest phone still in circulation. Two things overflowed. */
+@media (max-width: 480px) {
+  /* The levitation rotates as well as lifting. At 320px the card is
+     nearly the full width of the column, and rotating a rectangle grows
+     its bounding box — enough to push the page 2px sideways on the
+     listings grid and 5px on the area pages. Verified by reverting this
+     rule and watching both come back.
+
+     --dur, --amp and --delay still differ per card, so the grid does not
+     fall into the synchronised pulsing CLAUDE.md warns about; only the
+     tilt goes, and only on phones.
+
+     !important because js/property-card.js writes --rot as an inline
+     style from its FLOAT table, and inline beats a stylesheet rule. */
+  .prop-float .lev { --rot: 0deg !important; }
+
+  /* repeat(auto-fit, minmax(300px, 1fr)) does not shrink below 300px.
+     At 320px with 24px of container padding the column is 272px, so the
+     cards sat 4px past the edge and the page scrolled sideways.
+     listings.html happened to override this in its own <style>; the area
+     pages did not, so the same grid behaved differently on two pages.
+     One column, declared once, for every grid that uses the shared card. */
+  .grid-props,
+  .preview-grid,
+  .listings-grid,
+  .tm-grid { grid-template-columns: 1fr; }
+
+  /* The wizard's button row would not shrink below its min-content of
+     288px, forcing the card to 354px inside a 257px column. */
+  .wizard-card,
+  .info-card { padding: 24px 18px; }
+
+  .wizard-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .wizard-actions > * {
+    width: 100%;
+    min-width: 0;
+    justify-content: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-sheet,
+  .nav-sheet a,
+  .nav-toggle span {
+    transition-duration: .01ms !important;
+    transition-delay: 0ms !important;
+  }
+  .nav-sheet a { opacity: 1; transform: none; }
+}

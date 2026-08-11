@@ -1,0 +1,237 @@
+/* ==========================================================================
+   LUMINA — quiz.css
+   The district quiz, everywhere it appears outside index.html.
+
+   WHY THIS FILE EXISTS
+   index.html carries the whole of the elevated shell inline, including
+   the .cmx sheet the quiz borrows, so on that page the quiz needs no
+   stylesheet at all. Every OTHER page that wants the quiz loads
+   css/elevated.css, which has no sheet in it — so the shell lives here
+   too. That is two copies of the .cmx block, index.html's and this one,
+   and it is the same trade CLAUDE.md already records for the tokens:
+   two places beats rewriting index.html's inline stylesheet.
+
+   Change the sheet's look and change it in BOTH. The quiz's CONTENT —
+   the questions, the options, the scoring, the wording — is not here at
+   all: it is in js/quiz.js, in one place, for every page.
+
+   Load order: css/elevated.css, then this, then the page's own <style>.
+   ========================================================================== */
+
+/* ── the entry card ───────────────────────────────────────────────────────
+   A standalone glass panel that opens the quiz. index.html uses its own
+   .stat-card--act for this because it has three siblings to match; every
+   other page uses this. Same material, same affordance: the disc rotates
+   rather than slides, because this one unfolds in place instead of going
+   somewhere. */
+.qz-cta{
+  position:relative; display:block; width:100%; max-width:520px;
+  padding:22px 62px 22px 24px; border-radius:18px;
+  font:inherit; text-align:left; color:var(--cream); cursor:pointer;
+  border:1px solid rgba(255,178,90,.34);
+  background:
+    radial-gradient(120% 130% at 20% 12%,rgba(255,255,255,.09),transparent 54%),
+    linear-gradient(150deg,rgba(35,46,60,.6),rgba(12,18,26,.66));
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.18),
+    0 24px 52px -26px rgba(0,0,0,.9),
+    0 0 40px -16px rgba(255,178,90,.45);
+  transition:transform .5s var(--ease),border-color .5s var(--ease),
+             box-shadow .5s var(--ease),background-color .5s var(--ease);
+}
+@media (min-width:1024px){
+  .qz-cta{-webkit-backdrop-filter:blur(16px) saturate(140%); backdrop-filter:blur(16px) saturate(140%)}
+}
+.qz-cta b{
+  display:block; font-family:var(--display); font-weight:400; letter-spacing:-.015em;
+  font-size:clamp(1.24rem,1.9vw,1.6rem); line-height:1.08; color:var(--cream); margin-bottom:7px;
+}
+.qz-cta>span{display:block; font-size:.86rem; color:var(--c-52)}
+.qz-cta .cm-go{
+  position:absolute; top:50%; right:22px; margin-top:-15px;
+  width:30px; height:30px; border-radius:50%; display:grid; place-items:center;
+  border:1px solid rgba(255,224,176,.34); color:var(--gold-lt);
+  transition:transform .45s var(--ease),border-color .45s var(--ease),
+             background-color .45s var(--ease);
+}
+.qz-cta .cm-go svg{width:13px; height:13px}
+@media (hover:hover) and (pointer:fine){
+  .qz-cta:hover{
+    transform:translateY(-3px); border-color:rgba(255,200,130,.6);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.24),
+      0 30px 60px -26px rgba(0,0,0,.92),
+      0 0 56px -12px rgba(255,178,90,.6);
+  }
+  .qz-cta:hover .cm-go{transform:rotate(90deg); border-color:var(--gold); background:rgba(255,178,90,.16)}
+}
+.qz-cta:active{transform:scale(.99)}
+.qz-cta:focus-visible{outline:2px solid var(--gold-lt); outline-offset:3px}
+
+/* ── the sheet shell ─────────────────────────────────────────────────────
+   A copy of index.html's .cmx block. hero-panels.js drives it by class
+   and id, so the names have to match exactly. */
+.cmx{position:fixed; inset:0; z-index:120; display:grid; place-items:center;
+  padding:clamp(12px,3.5vw,44px)}
+.cmx[hidden]{display:none}          /* display:grid outranks the UA rule */
+.cmx-veil{position:absolute; inset:0; background:rgba(3,5,9,.72); opacity:0;
+  transition:opacity .5s var(--ease)}
+.cmx.open .cmx-veil{opacity:1}
+.cmx-panel{
+  position:relative; width:min(760px,100%); max-height:88vh; overflow-y:auto;
+  padding:clamp(26px,3.4vw,44px); border-radius:22px;
+  background:
+    linear-gradient(148deg,rgba(255,255,255,.14) 0%,rgba(255,255,255,.045) 34%,rgba(12,16,24,.72) 100%);
+  border:1px solid rgba(255,255,255,.17);
+  box-shadow:
+    0 40px 90px rgba(0,0,0,.62),
+    0 0 70px -18px rgba(255,178,90,.26),
+    inset 0 1px 0 rgba(255,255,255,.3);
+  opacity:0; transform:translateY(26px) scale(.94);
+  transition:opacity .5s var(--ease),transform .62s var(--ease);
+}
+.cmx.open .cmx-panel{opacity:1; transform:none}
+@media (min-width:1024px){
+  .cmx-panel{-webkit-backdrop-filter:blur(22px) saturate(150%);
+    backdrop-filter:blur(22px) saturate(150%)}
+}
+/* Below 1024 the backdrop-filter is gated off for performance, so the
+   glass has nothing to blur and the page reads straight through the
+   panel. Give it a real background there — the top highlight, the border
+   and the sheen are what make it read as glass; the blur was only ever
+   making it legible. */
+@media (max-width:1023px){
+  .cmx-panel{
+    background:linear-gradient(148deg,
+      rgba(48,60,77,.97) 0%,rgba(23,31,42,.985) 34%,rgba(10,14,21,.99) 100%);
+  }
+  .cmx-veil{background:rgba(3,5,9,.86)}
+}
+.cmx-panel::before{
+  content:""; position:absolute; inset:0; pointer-events:none; border-radius:inherit;
+  background:radial-gradient(110% 70% at 14% 0%,rgba(255,230,190,.14),transparent 50%);
+}
+.cmx-x{position:absolute; top:16px; right:16px; z-index:2;
+  width:38px; height:38px; display:grid; place-items:center;
+  border-radius:50%; border:1px solid rgba(255,255,255,.16);
+  background:rgba(10,14,20,.4); color:var(--cream); cursor:pointer;
+  transition:border-color .35s var(--ease),background .35s var(--ease),transform .35s var(--ease)}
+.cmx-x svg{width:17px; height:17px}
+.cmx-x:focus-visible{outline:2px solid var(--gold); outline-offset:3px}
+@media (hover:hover) and (pointer:fine){
+  .cmx-x:hover{border-color:var(--gold); background:rgba(255,178,90,.14); transform:rotate(90deg)}
+}
+.cmx-kick{position:relative; margin:0 0 10px; font-size:.62rem; letter-spacing:.3em;
+  text-transform:uppercase; color:var(--gold)}
+.cmx-panel h2{position:relative; margin:0 0 12px;
+  font-size:clamp(1.7rem,3.4vw,2.5rem); line-height:1.1}
+.cmx-lede{position:relative; margin:0; color:var(--c-70); font-size:.98rem; line-height:1.8;
+  max-width:60ch}
+.cmx-locked{overflow:hidden}
+
+/* ── the quiz interior ───────────────────────────────────────────────── */
+.qz-head{position:relative; margin-bottom:clamp(20px,2.6vw,30px)}
+.qz-bar{
+  position:relative; height:2px; border-radius:2px; margin-top:14px;
+  background:rgba(247,242,233,.12); overflow:hidden;
+}
+.qz-bar i{
+  display:block; height:100%; transform-origin:left; transform:scaleX(var(--qp,0));
+  background:linear-gradient(90deg,var(--gold-dp),var(--gold-lt),var(--plinth));
+  box-shadow:0 0 10px rgba(255,215,163,.6);
+  transition:transform .5s var(--ease);
+}
+.qz-step{
+  position:absolute; top:0; right:0; margin:0;
+  font-size:.62rem; letter-spacing:.22em; text-transform:uppercase;
+  color:var(--c-38); font-variant-numeric:tabular-nums;
+}
+.qz-card{animation:qzIn .42s var(--ease) both}
+@keyframes qzIn{from{opacity:0; transform:translateY(10px)}to{opacity:1; transform:none}}
+.qz-q{
+  position:relative; margin:0 0 8px; font-family:var(--display); font-weight:400;
+  font-size:clamp(1.4rem,2.7vw,2rem); line-height:1.14; color:var(--cream);
+}
+.qz-hint{margin:0 0 clamp(18px,2.4vw,26px); font-size:.86rem; color:var(--c-52); max-width:52ch}
+.qz-opts{display:grid; gap:10px}
+.qz-opt{
+  position:relative; display:flex; align-items:center; justify-content:space-between; gap:16px;
+  width:100%; padding:16px 18px; border-radius:14px; cursor:pointer;
+  font:inherit; text-align:left; color:var(--cream);
+  border:1px solid rgba(255,255,255,.14);
+  background:linear-gradient(150deg,rgba(255,255,255,.07),rgba(12,16,24,.34));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.14);
+  transition:transform .4s var(--ease),border-color .4s var(--ease),
+             box-shadow .4s var(--ease),background-color .4s var(--ease);
+}
+.qz-opt-t{font-size:1.02rem; font-weight:500; letter-spacing:-.005em}
+.qz-tick{
+  width:24px; height:24px; flex:none; border-radius:50%; display:grid; place-items:center;
+  border:1px solid rgba(255,255,255,.18); color:var(--ink); background:transparent;
+  transition:background-color .35s var(--ease),border-color .35s var(--ease),
+             transform .35s var(--ease),color .35s var(--ease);
+}
+.qz-tick svg{width:12px; height:12px; opacity:0; transition:opacity .3s var(--ease)}
+@media (hover:hover) and (pointer:fine){
+  .qz-opt:hover{
+    transform:translateX(4px); border-color:rgba(255,178,90,.5);
+    background:linear-gradient(150deg,rgba(255,200,130,.14),rgba(12,16,24,.34));
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 16px 34px -22px rgba(255,178,90,.7);
+  }
+  .qz-opt:hover .qz-tick{border-color:var(--gold)}
+}
+.qz-opt:focus-visible{outline:2px solid var(--gold-lt); outline-offset:3px}
+.qz-opt:active{transform:scale(.99)}
+.qz-opt[data-on="1"]{
+  border-color:var(--gold);
+  background:linear-gradient(150deg,rgba(255,200,130,.2),rgba(12,16,24,.34));
+}
+.qz-opt[data-on="1"] .qz-tick{
+  background:var(--gold-lt); border-color:var(--gold-lt); transform:scale(1.08);
+}
+.qz-opt[data-on="1"] .qz-tick svg{opacity:1}
+.qz-back{
+  display:inline-flex; align-items:center; gap:8px; margin-top:18px; padding:8px 2px;
+  font:inherit; font-size:.78rem; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--c-52); cursor:pointer; transition:color .35s var(--ease);
+}
+.qz-back svg{width:13px; height:13px}
+.qz-back:hover{color:var(--cream)}
+.qz-back:focus-visible{outline:2px solid var(--gold-lt); outline-offset:3px}
+.qz-res-kick{display:block; margin-bottom:8px; color:var(--gold)}
+.qz-res-name{
+  margin:0 0 6px; font-family:var(--display); font-weight:400;
+  font-size:clamp(2rem,4.4vw,3.1rem); line-height:1; letter-spacing:-.02em; color:var(--cream);
+}
+.qz-res-n{margin:0 0 16px; font-size:.82rem; color:var(--c-52)}
+.qz-res-n b{color:var(--gold-lt); font-variant-numeric:tabular-nums}
+.qz-res-line{margin:0 0 18px; color:var(--c-70); font-size:.96rem; line-height:1.7; max-width:56ch}
+.qz-why{
+  margin:0 0 18px; padding:16px 18px; list-style:none; display:grid; gap:9px;
+  border-radius:14px; border:1px solid rgba(255,178,90,.2);
+  background:linear-gradient(150deg,rgba(255,178,90,.07),rgba(12,16,24,.3));
+}
+.qz-why li{position:relative; padding-left:19px; font-size:.88rem; color:var(--c-70)}
+.qz-why li::before{
+  content:""; position:absolute; left:0; top:.62em; width:9px; height:1px;
+  background:var(--gold); box-shadow:0 0 8px rgba(255,178,90,.6);
+}
+.qz-alt{margin:0 0 22px; font-size:.9rem; color:var(--c-52)}
+.qz-alt a{color:var(--gold-lt); border-bottom:1px solid rgba(255,224,176,.3)}
+.qz-alt a:hover{border-bottom-color:var(--gold-lt)}
+.qz-acts{display:flex; flex-wrap:wrap; gap:12px 14px; align-items:center}
+.qz-acts .qz-back{margin-top:0}
+.qz-fine{margin:20px 0 0; padding-top:18px; border-top:1px solid var(--hair);
+  font-size:.8rem; color:var(--c-38); max-width:58ch}
+
+@media (max-width:560px){
+  .qz-acts{gap:10px}
+  .qz-acts .btn,.qz-acts .btn-line{width:100%; justify-content:center}
+}
+@media (prefers-reduced-motion:reduce){
+  .qz-card{animation:none}
+  .qz-opt:hover,.qz-cta:hover{transform:none}
+  .cmx-veil,.cmx-panel{transition-duration:.01ms !important}
+  .cmx-panel{transform:none}
+  .cmx-x:hover{transform:none}
+}

@@ -7,8 +7,8 @@
   <meta name="description" content="Private property details — Lumina portfolio, Amman." />
   <meta name="robots" content="noindex, follow" />
   <meta name="theme-color" content="#0A0A0B" />
-  <link rel="icon" type="image/png" href="/assets/lumina-logo.png" />
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" type="image/png" href="assets/lumina-logo.png" />
+  <link rel="stylesheet" href="css/style.css?v=2026-08-07b" />
   <style>
     :root {
       --pd-void: #0A0A0B;
@@ -30,6 +30,9 @@
     /* ── shell ── */
     .pd {
       min-height: 100vh;
+  /* svh, so the page does not resize under the reader every time the
+     address bar collapses on a phone */
+  min-height: 100svh;
       padding-top: 80px;
       padding-bottom: 100px;
       background: var(--pd-void);
@@ -328,21 +331,94 @@
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
     }
-    .pd-cta a {
+    .pd-cta a,
+    .pd-cta button {
       flex: 1;
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      gap: 8px;
       min-height: 48px;
       border-radius: 999px;
+      font-family: inherit;
       font-size: 0.78rem;
       font-weight: 600;
       letter-spacing: 0.06em;
       text-transform: uppercase;
       text-decoration: none;
-      transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+      cursor: pointer;
+      transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease,
+                  color 0.2s ease;
     }
-    .pd-cta a:active { transform: scale(0.98); }
+    .pd-cta a:active,
+    .pd-cta button:active { transform: scale(0.98); }
+    /* Share is the mark and nothing else — a circle between two pills,
+       so it reads as a distinct kind of action rather than a third
+       equal choice on a bar whose job is the enquiry.
+
+       `.pd-cta button` above is 0-1-1 and a bare `.pd-share` is 0-1-0,
+       so it would lose and the button took an equal third — 482px at
+       1440, measured. Matching the element keeps the two at the same
+       weight and source order decides. */
+    .pd-cta button.pd-share {
+      flex: 0 0 auto;
+      width: 48px;
+      padding: 0;
+      border-radius: 50%;
+      color: var(--pd-cream);
+    }
+    .pd-share svg {
+      width: 19px; height: 19px; flex: none;
+      /* the plane leans into its own direction of travel, and lifts a
+         little on the way out */
+      transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .pd-share:hover { border-color: var(--pd-champagne); color: var(--pd-champagne); }
+    .pd-share:hover svg { transform: translate(2px, -2px); }
+    .pd-share:focus-visible {
+      outline: 2px solid var(--pd-champagne);
+      outline-offset: 3px;
+    }
+    /* sent: the plane flies out of the circle and the gold stays for
+       the two seconds the toast is up */
+    .pd-share[data-done] {
+      border-color: var(--pd-champagne);
+      color: var(--pd-champagne);
+    }
+    .pd-share[data-done] svg { transform: translate(4px, -4px) scale(0.92); }
+
+    /* the confirmation, above the bar so it clears it on a phone */
+    .pd-toast {
+      position: fixed;
+      left: 50%;
+      bottom: calc(84px + env(safe-area-inset-bottom));
+      z-index: 60;
+      padding: 10px 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(201,168,124,0.5);
+      background: rgba(16,16,19,0.94);
+      color: var(--pd-champagne);
+      font-size: 0.74rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      pointer-events: none;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      opacity: 0;
+      transform: translate(-50%, 10px);
+      transition: opacity 0.3s ease, transform 0.36s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .pd-toast[data-on] { opacity: 1; transform: translate(-50%, 0); }
+
+    @media (prefers-reduced-motion: reduce) {
+      .pd-share svg,
+      .pd-toast { transition-duration: 0.01ms; }
+      .pd-share:hover svg,
+      .pd-share[data-done] svg { transform: none; }
+      .pd-toast[data-on] { transform: translate(-50%, 0); }
+    }
     .pd-cta-primary {
       background: linear-gradient(100deg, #E8A54B, #C9A87C);
       color: #14100A;
@@ -392,20 +468,33 @@
     /* hide bulky site footer CTA overlap */
     .footer { margin-bottom: 0; padding-bottom: 24px; }
   </style>
+  <!-- the landing page's brand bar, shared -->
+
+  <link rel="stylesheet" href="css/nav.css?v=2026-08-07b" />
+
+  <!-- last: phone-only overrides -->
+  <link rel="stylesheet" href="css/mobile.css?v=2026-08-07d" />
 </head>
 <body>
 
-<nav class="nav scrolled" id="nav">
-  <a href="/index.html" class="nav-logo" aria-label="Lumina — home">
-    <img src="/assets/lumina-logo.png" alt="Lumina" width="669" height="181">
+<header class="bar stuck" id="bar">
+  <a href="index.html" class="mark-img" aria-label="Lumina — home">
+    <img src="assets/lumina-logo.png" alt="Lumina" width="669" height="181">
   </a>
-  <div class="nav-links">
-    <a href="/listings.html" class="active-link">Properties</a>
-    <a href="/index.html#hoods">Locations</a>
-    <a href="/index.html#advisory">About</a>
-    <a href="/index.html#contact" class="nav-cta btn">Inquire Now</a>
-  </div>
-</nav>
+  <nav class="nav" aria-label="Primary">
+    <a href="index.html">Home</a>
+    <a href="listings.html" class="keep active-link" aria-current="page">Properties</a>
+    <a href="services.html">Services</a>
+    <a href="areas.html">Areas</a>
+    <a href="insights/best-areas-in-amman.html">Insights</a>
+    <a href="team.html">Team</a>
+    <a href="pages/list-property.html">Sell With Us</a>
+    <a href="https://wa.me/962771505250" class="chip keep" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-12.3 7.4L3.5 20.5l1.7-5A8.4 8.4 0 1 1 21 11.5Z"/><path d="M8.6 9.2c.3 2.5 2.6 4.8 5.1 5.2.7.1 1.5-.4 1.6-1.1l.1-.6-2-.9-.9.9c-1-.4-1.9-1.3-2.3-2.3l.9-.9-.9-2-.6.1c-.7.1-1.1.9-1 1.6Z"/></svg>
+      WhatsApp
+    </a>
+  </nav>
+</header>
 
 <main id="property-root" class="pd" aria-live="polite"></main>
 
@@ -413,32 +502,47 @@
   <div class="container">
     <div class="footer-grid">
       <div>
-        <div class="footer-logo">
-          <img src="/assets/lumina-logo.png" alt="Lumina" width="669" height="181">
-        </div>
-        <p class="footer-desc">Private real estate advisory in Amman. Exceptional properties, presented with discretion.</p>
+        <div class="footer-logo"><img src="assets/lumina-logo.png" alt="Lumina" width="669" height="181"></div>
+        <p class="footer-desc">A private property advisory in Amman. We represent a small number of residences at a time and introduce them quietly.</p>
       </div>
       <div class="footer-col">
-        <h4>Properties</h4>
+        <h4>Browse</h4>
         <ul>
-          <li><a href="/listings.html">All Listings</a></li>
+          <li><a href="listings.html">All properties</a></li>
+          <li><a href="listings.html?type=apartment">Apartments</a></li>
+          <li><a href="listings.html?type=villa">Villas</a></li>
+          <li><a href="listings.html?budget=for-sale">For sale</a></li>
         </ul>
       </div>
       <div class="footer-col">
-        <h4>Contact</h4>
+        <h4>Areas</h4>
         <ul>
+          <li><a href="areas-abdoun.html">Abdoun</a></li>
+          <li><a href="areas-swefieh.html">Swefieh</a></li>
+          <li><a href="areas-circles.html">The Circles</a></li>
+          <li><a href="insights/best-areas-in-amman.html">Choosing an area</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Lumina</h4>
+        <ul>
+          <li><a href="team.html">The team</a></li>
+        <li><a href="pages/list-property.html">Sell with us</a></li>
+          <li><a href="pages/valuation.html">Request a valuation</a></li>
           <li><a href="https://wa.me/962771505250" target="_blank" rel="noopener noreferrer">WhatsApp</a></li>
-          <li><a href="mailto:lumina@qutaifan.com">Email</a></li>
+        <li><a href="mailto:Lumina@lumina-jo.com">Lumina@lumina-jo.com</a></li>
+          <li><span>+962 77 150 5250</span></li>
         </ul>
       </div>
     </div>
     <div class="footer-bottom">
-      <span>© 2026 Lumina. All rights reserved.</span>
-      <span>Amman, Jordan</span>
+      <span>© 2026 Lumina Real Estate Advisory · Amman</span>
+      <span>Particulars confirmed with the owner before viewing</span>
     </div>
   </div>
 </footer>
 
-<script src="js/property-details.js"></script>
+<script src="js/property-details.js?v=2026-08-07g"></script>
+<script src="js/nav-menu.js?v=2026-08-07b" defer></script>
 </body>
 </html>

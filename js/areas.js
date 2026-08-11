@@ -1,26 +1,43 @@
 // LUMINA — areas.js
-// Loads listing previews for area-specific pages.
+// Loads the three-listing preview on area-specific pages.
+//
+// The card comes from js/property-card.js, the same builder the landing
+// page and the full portfolio use, so a preview here opens the same
+// gallery it would anywhere else.
 
-(function(){
-  var areaEl = document.querySelector('[data-area]');
+(function () {
+  'use strict';
+
+  const areaEl = document.querySelector('[data-area]');
   if (!areaEl) return;
-  var area = areaEl.dataset.area;
-  var grid = document.getElementById('listing-preview');
-  var formatPrice = function(value) { return Number(value).toLocaleString('en-US') + ' JOD'; };
-  var card = function(item) {
-    var a = document.createElement('a');
-    a.href = 'property-details.html?id=' + encodeURIComponent(item.id);
-    a.className = 'preview-card';
-    var img = document.createElement('img'); img.src = item.image_url || '/assets/images/hero-luxury-villa.jpg'; img.alt = item.title + ' — demo preview'; img.loading='lazy';
-    var body = document.createElement('div'); body.className = 'preview-body';
-    var h = document.createElement('h3'); h.textContent = item.title;
-    var loc = document.createElement('p'); loc.textContent = item.location_area;
-    var price = document.createElement('p'); price.className='preview-price'; price.textContent = formatPrice(item.price_jod_test_margin);
-    var status = document.createElement('p'); status.textContent = 'Demo Listing — Verification Required';
-    body.append(h, loc, price, status); a.append(img, body); return a;
-  };
-  fetch('/data/lumina-demo-leads.json').then(function(r){ return r.json(); }).then(function(items){
-    var filtered = items.filter(function(item){ return item.location_area && item.location_area.toLowerCase().includes(area); }).slice(0,3);
-    grid.replaceChildren.apply(grid, (filtered.length ? filtered : items.slice(0,3)).map(card));
-  }).catch(function(){ if(grid) grid.textContent='Listing previews are temporarily unavailable.'; });
+
+  const area = String(areaEl.dataset.area || '').toLowerCase();
+  const grid = document.getElementById('listing-preview');
+  if (!grid) return;
+
+  const PREVIEW = 3;
+
+  /* Relative, not root-absolute: a GitHub Pages project deploy serves
+     this from /lumina/, where a leading slash 404s. */
+  fetch('data/lumina-demo-leads.json?v=2026-08-06')
+    .then(r => {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    })
+    .then(items => {
+      if (!Array.isArray(items) || !items.length) throw new Error('empty');
+      const build = window.Lumina && window.Lumina.buildPropertyCard;
+      if (typeof build !== 'function') throw new Error('property-card.js did not load');
+
+      const inArea = items.filter(item =>
+        String(item.location_area || '').toLowerCase().includes(area));
+      const shown = (inArea.length ? inArea : items).slice(0, PREVIEW);
+
+      grid.replaceChildren(...shown.map((l, i) => build(l, i, { wide: false })));
+      window.Lumina.activateCards(grid);
+    })
+    .catch(err => {
+      console.error('Lumina area preview failed:', err);
+      grid.textContent = 'Listing previews are temporarily unavailable.';
+    });
 })();

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Private Valuation Mandate — Lumina Real Estate</title>
   <meta name="description" content="Request a discrete, manual valuation for your luxury property in Amman. Lumina presents select residences to qualified buyers across Jordan and the Gulf." />
   <meta name="robots" content="index, follow" />
@@ -18,9 +18,9 @@
   <meta property="og:locale" content="en_JO" />
 
   <!-- Favicon -->
-  <link rel="icon" type="image/png" href="/assets/lumina-logo.png" />
+  <link rel="icon" type="image/png" href="../assets/lumina-logo.png" />
 
-  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/style.css?v=2026-08-07b" />
   <style>
     /* ---- HERO ---- */
     .page-hero {
@@ -284,20 +284,33 @@
       .page-hero h1 { font-size: 2rem; }
     }
   </style>
+  <!-- the landing page's brand bar, shared -->
+
+  <link rel="stylesheet" href="../css/nav.css?v=2026-08-07b" />
+
+  <!-- last: phone-only overrides -->
+  <link rel="stylesheet" href="../css/mobile.css?v=2026-08-07d" />
 </head>
 <body>
 
 <!-- NAV -->
-<nav class="nav" id="nav">
-  <a href="/index.html" class="nav-logo" aria-label="Lumina — home"><img src="/assets/lumina-logo.png" alt="Lumina" width="669" height="181"></a>
-  <div class="nav-links">
-    <a href="/listings.html">Properties</a>
-    <a href="/index.html#locations">Locations</a>
-    <a href="/pages/list-property.html">List Property</a>
-    <a href="/index.html#team">Advisors</a>
-    <a href="/index.html#contact" class="nav-cta btn">Inquire Now</a>
-  </div>
-</nav>
+<header class="bar stuck" id="bar">
+  <a href="../index.html" class="mark-img" aria-label="Lumina — home">
+    <img src="../assets/lumina-logo.png" alt="Lumina" width="669" height="181">
+  </a>
+  <nav class="nav" aria-label="Primary">
+    <a href="../index.html">Home</a>
+    <a href="../listings.html" class="keep">Properties</a>
+    <a href="../areas-abdoun.html">Areas</a>
+    <a href="../insights/best-areas-in-amman.html">Insights</a>
+    <a href="../team.html">Team</a>
+    <a href="../pages/list-property.html" class="active-link" aria-current="page">Sell With Us</a>
+    <a href="https://wa.me/962771505250" class="chip keep" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-12.3 7.4L3.5 20.5l1.7-5A8.4 8.4 0 1 1 21 11.5Z"/><path d="M8.6 9.2c.3 2.5 2.6 4.8 5.1 5.2.7.1 1.5-.4 1.6-1.1l.1-.6-2-.9-.9.9c-1-.4-1.9-1.3-2.3-2.3l.9-.9-.9-2-.6.1c-.7.1-1.1.9-1 1.6Z"/></svg>
+      WhatsApp
+    </a>
+  </nav>
+</header>
 
 <!-- HERO -->
 <section class="page-hero">
@@ -346,14 +359,22 @@
             <div class="form-group">
               <label class="form-label" for="prop-area">Neighborhood Address</label>
               <select class="form-input" id="prop-area" name="prop_area" required>
-                <option value="" disabled selected>Select location...</option>
-                <option value="Dabouq">Dabouq</option>
+                <!-- The districts we actually work in, ordered by how much
+                     we hold in each. The previous list led with Dabouq,
+                     Abdali and Al Kursi — three areas with no inventory —
+                     and omitted Swefieh, Shmesani and the Circles. -->
+                <option value="" disabled selected>Select area...</option>
                 <option value="Abdoun">Abdoun</option>
-                <option value="Dair Ghbar">Dair Ghbar</option>
+                <option value="4th Circle">4th Circle</option>
+                <option value="Swefieh">Swefieh</option>
+                <option value="Shmesani">Shmesani</option>
+                <option value="Jabal Al Weibdeh">Jabal Al Weibdeh</option>
                 <option value="Um Uthaina">Um Uthaina</option>
-                <option value="Abdali">Abdali</option>
-                <option value="Al Kursi">Al Kursi</option>
-                <option value="Other">Other Amman Area</option>
+                <option value="Dair Ghbar">Dair Ghbar</option>
+                <option value="2nd Circle">2nd Circle</option>
+                <option value="3rd Circle">3rd Circle</option>
+                <option value="Jabal Amman">Jabal Amman</option>
+                <option value="Other">Elsewhere in Amman</option>
               </select>
             </div>
 
@@ -484,47 +505,54 @@
   <div class="container">
     <div class="footer-grid">
       <div>
-        <div class="footer-logo"><img src="/assets/lumina-logo.png" alt="Lumina" width="669" height="181"></div>
-        <p class="footer-desc">Luxury real estate in Amman's most prestigious addresses. Exceptional properties, presented with discretion.</p>
+        <div class="footer-logo"><img src="../assets/lumina-logo.png" alt="Lumina" width="669" height="181"></div>
+        <p class="footer-desc">A private property advisory in Amman. We represent a small number of residences at a time and introduce them quietly.</p>
       </div>
       <div class="footer-col">
-        <h4>Properties</h4>
+        <h4>Browse</h4>
         <ul>
-          <li><a href="/listings.html">All Listings</a></li>
-          <li><a href="/listings.html?type=villa">Villas</a></li>
-          <li><a href="/listings.html?type=penthouse">Penthouses</a></li>
+          <li><a href="../listings.html">All properties</a></li>
+          <li><a href="../listings.html?type=apartment">Apartments</a></li>
+          <li><a href="../listings.html?type=villa">Villas</a></li>
+          <li><a href="../listings.html?budget=for-sale">For sale</a></li>
         </ul>
       </div>
       <div class="footer-col">
-        <h4>Locations</h4>
+        <h4>Areas</h4>
         <ul>
-          <li><a href="/listings.html?location=abdoun">Abdoun</a></li>
-          <li><a href="/listings.html?location=dabouq">Dabouq</a></li>
-          <li><a href="/listings.html?location=abdali">Abdali</a></li>
+          <li><a href="../areas-abdoun.html">Abdoun</a></li>
+          <li><a href="../areas-swefieh.html">Swefieh</a></li>
+          <li><a href="../areas-circles.html">The Circles</a></li>
+          <li><a href="../insights/best-areas-in-amman.html">Choosing an area</a></li>
         </ul>
       </div>
       <div class="footer-col">
-        <h4>Contact</h4>
+        <h4>Lumina</h4>
         <ul>
-          <li><a href="https://wa.me/9627XXXXXXXX" target="_blank" rel="noopener noreferrer">WhatsApp</a></li>
-          <li><a href="mailto:lumina@qutaifan.com">lumina@qutaifan.com</a></li>
+          <li><a href="../team.html">The team</a></li>
+        <li><a href="../pages/list-property.html">Sell with us</a></li>
+          <li><a href="../pages/valuation.html">Request a valuation</a></li>
+          <li><a href="https://wa.me/962771505250" target="_blank" rel="noopener noreferrer">WhatsApp</a></li>
+        <li><a href="mailto:Lumina@lumina-jo.com">Lumina@lumina-jo.com</a></li>
+          <li><span>+962 77 150 5250</span></li>
         </ul>
       </div>
     </div>
     <div class="footer-bottom">
-      <span>© 2026 Lumina Luxury Real Estate.</span>
-      <span>Private real estate advisory · Amman, Jordan</span>
+      <span>© 2026 Lumina Real Estate Advisory · Amman</span>
+      <span>Particulars confirmed with the owner before viewing</span>
     </div>
   </div>
 </footer>
 
 <!-- WHATSAPP FLOAT -->
-<a href="https://wa.me/9627XXXXXXXX?text=Hello%2C%20I%27d%20like%20to%20discuss%20a%20property%20valuation%20with%20Lumina." class="whatsapp-float" target="_blank" rel="noopener noreferrer" aria-label="Contact Advisor on WhatsApp">
+<a href="https://wa.me/962771505250?text=Hello%2C%20I%27d%20like%20to%20discuss%20a%20property%20valuation%20with%20Lumina." class="whatsapp-float" target="_blank" rel="noopener noreferrer" aria-label="Contact Advisor on WhatsApp">
   <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
 </a>
 
 <!-- SCRIPTS -->
-<script src="../js/site.js"></script>
-<script src="../js/valuation.js"></script>
+<script src="../js/site.js?v=2026-08-07b"></script>
+<script src="../js/valuation.js?v=2026-07-28b"></script>
+<script src="../js/nav-menu.js?v=2026-08-07b" defer></script>
 </body>
 </html>

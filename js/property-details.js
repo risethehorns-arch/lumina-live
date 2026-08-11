@@ -7,7 +7,7 @@
   const root = document.getElementById('property-root');
   if (!root) return;
 
-  const PLACEHOLDER = '/assets/images/hero-luxury-villa.jpg';
+  const PLACEHOLDER = 'assets/images/hero-luxury-villa.jpg';
   const WHATSAPP = (window.LuminaConfig && window.LuminaConfig.whatsapp) || '962771505250';
 
   const t = v => (v == null ? '' : String(v));
@@ -15,9 +15,13 @@
     const n = Number(v);
     return Number.isFinite(n) ? `${n.toLocaleString('en-US')} JOD` : 'Price on request';
   };
+  /* Paths in the JSON are root-absolute, which 404s the moment the site
+     is served from anything but a domain root — which is exactly what a
+     GitHub Pages project deploy is. */
   const img = v => {
     const s = t(v).trim();
-    return s || PLACEHOLDER;
+    if (!s) return PLACEHOLDER;
+    return s.startsWith('/') ? s.slice(1) : s;
   };
 
   const waLink = listing => {
@@ -269,7 +273,14 @@
     const priceVal = listing.price_jod_test_margin != null
       ? listing.price_jod_test_margin
       : listing.price_jod_raw;
-    const priceLabel = money(priceVal);
+    /* Some 4th Circle records quote a rate per square metre rather than
+       a total; `price_unit` marks them so the figure is not read as an
+       asking price. */
+    const priceLabel = listing.needs_price_review
+      ? 'Price on request'
+      : listing.price_unit === 'per_sqm'
+        ? money(priceVal).replace(/ JOD$/, ' JOD/m²')
+        : money(priceVal);
     const tx = t(listing.transaction);
     const priceLine = tx ? `${priceLabel} · ${tx}` : priceLabel;
 
@@ -321,9 +332,108 @@
     cta.className = 'pd-cta';
     cta.innerHTML = `
       <a class="pd-cta-ghost" href="listings.html">Back</a>
+      <button class="pd-cta-ghost pd-share" type="button" id="pdShare"
+              aria-label="Share this property" title="Share this property">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21.5 2.5 10.8 13.2"/>
+          <path d="M21.5 2.5 14.8 21.5 10.8 13.2 2.5 9.2Z"/>
+        </svg>
+      </button>
       <a class="pd-cta-primary" href="${waLink(listing)}" target="_blank" rel="noopener noreferrer">WhatsApp</a>
     `;
     root.appendChild(cta);
+    bindShare(listing);
+  };
+
+  /* ── sharing one property ──────────────────────────────────
+     The link has always worked — property-details.html?id=… is how the
+     collection cards navigate here, so every property has had its own
+     address the whole time. What was missing was a way to GET it
+     without going to the URL bar, which is not something a client on a
+     phone is going to do.
+
+     Two paths, and the split is by capability rather than by width:
+       - navigator.share  → the OS sheet. On a phone that is WhatsApp,
+         Messages and AirDrop in one tap, which is exactly how these
+         get passed around.
+       - clipboard        → desktop. Copies and says so.
+     Neither available (older Safari, an insecure origin): fall back to
+     selecting the URL in a temporary input so ⌘C still works.
+
+     No await/async: this file is plain ES5-flavoured and the rest of
+     the codebase does not use it either. */
+  const bindShare = listing => {
+    const btn = document.getElementById('pdShare');
+    if (!btn) return;
+
+    const url = location.origin + location.pathname +
+      '?id=' + encodeURIComponent(t(listing.id));
+    const title = t(listing.title);
+    const where = t(listing.location_area || listing.location);
+
+    /* The button is the mark and nothing else, so the confirmation
+       cannot live inside it any more — it rises above the bar instead
+       and takes itself away. A copy that reports nothing reads as a
+       copy that failed, and on a page whose whole job is passing a
+       property to somebody that is the one thing this must not do. */
+    let resetTimer = null;
+    let toast = null;
+    const say = word => {
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.className = 'pd-toast';
+        toast.setAttribute('role', 'status');
+        document.body.appendChild(toast);
+      }
+      toast.textContent = word;
+      /* force a reflow so the transition has a real start value when
+         the toast is being re-shown rather than created */
+      void toast.offsetWidth;
+      toast.dataset.on = '1';
+      btn.dataset.done = '1';
+      clearTimeout(resetTimer);
+      resetTimer = setTimeout(() => {
+        toast.removeAttribute('data-on');
+        btn.removeAttribute('data-done');
+      }, 2000);
+    };
+
+    const copy = () => {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(() => say('Link copied'), selectFallback);
+      } else {
+        selectFallback();
+      }
+    };
+
+    /* Last resort: put the URL somewhere selectable and select it, so
+       the reader can copy it by hand rather than being told nothing
+       happened. */
+    const selectFallback = () => {
+      const box = document.createElement('input');
+      box.value = url;
+      box.setAttribute('readonly', '');
+      box.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);' +
+        'z-index:200;width:min(420px,86vw);padding:12px;font:inherit;';
+      document.body.appendChild(box);
+      box.select();
+      try { document.execCommand('copy'); say('Link copied'); }
+      catch (e) { say('Copy the link'); }
+      setTimeout(() => box.remove(), 2400);
+    };
+
+    btn.addEventListener('click', () => {
+      if (navigator.share) {
+        navigator.share({
+          title: title + ' — Lumina',
+          text: [title, where].filter(Boolean).join(' · '),
+          url: url,
+        }).catch(() => {});   /* the reader cancelling is not an error */
+        return;
+      }
+      copy();
+    });
   };
 
   const id = new URLSearchParams(window.location.search).get('id');
@@ -332,7 +442,7 @@
     return;
   }
 
-  fetch('/data/lumina-demo-leads.json')
+  fetch('data/lumina-demo-leads.json?v=2026-08-06')
     .then(r => (r.ok ? r.json() : Promise.reject()))
     .then(data => {
       const listing = Array.isArray(data) ? data.find(item => item.id === id) : null;

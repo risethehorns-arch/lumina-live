@@ -1,1045 +1,135 @@
 {
-  "generated": "2026-07-28T00:36:57.668939+00:00",
-  "source_excel": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Grok Updated new.xlsx",
-  "excel_rows": 125,
-  "unique_listings": 124,
-  "duplicate_rows": [
-    {
-      "ref": "130",
-      "kept": {
-        "title": "Jabal AL Lweibdeh Apartment",
-        "price": 6000,
-        "location": "Jabal AL Lweibdeh"
-      },
-      "dropped_price": 6000
-    }
-  ],
-  "listings_with_photos": 109,
-  "listings_missing_photos": [
-    "017",
-    "018",
-    "019",
-    "020",
-    "021",
-    "031",
-    "038",
-    "080",
-    "117",
-    "118",
-    "135",
-    "136",
-    "137",
-    "138",
-    "139"
-  ],
-  "total_images_imported": 1257,
-  "photo_report": [
-    {
-      "ref": "015",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\015",
-      "source_images": 11,
-      "imported": 11,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "016",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\016",
-      "source_images": 20,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "022",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\022",
-      "source_images": 23,
-      "imported": 10,
-      "duplicates_skipped": 0,
-      "failed": 13
-    },
-    {
-      "ref": "023",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\023",
-      "source_images": 26,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "024",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\024",
-      "source_images": 11,
-      "imported": 11,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "025",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\025-026-027",
-      "source_images": 39,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "026",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\025-026-027",
-      "source_images": 39,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "027",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\025-026-027",
-      "source_images": 39,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "028",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\028",
-      "source_images": 42,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "029",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\029",
-      "source_images": 40,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "030",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\030",
-      "source_images": 41,
-      "imported": 12,
-      "duplicates_skipped": 6,
-      "failed": 0
-    },
-    {
-      "ref": "032",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\032",
-      "source_images": 37,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "033",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\033",
-      "source_images": 28,
-      "imported": 12,
-      "duplicates_skipped": 3,
-      "failed": 0
-    },
-    {
-      "ref": "034",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\034",
-      "source_images": 18,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "035",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\035",
-      "source_images": 18,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "036",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\036",
-      "source_images": 29,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "037",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\037",
-      "source_images": 19,
-      "imported": 12,
-      "duplicates_skipped": 5,
-      "failed": 0
-    },
-    {
-      "ref": "039",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\039",
-      "source_images": 19,
-      "imported": 12,
-      "duplicates_skipped": 5,
-      "failed": 0
-    },
-    {
-      "ref": "040",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\040",
-      "source_images": 15,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "041",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\041",
-      "source_images": 26,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "042",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\042",
-      "source_images": 36,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "043",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\043",
-      "source_images": 17,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "044",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\044",
-      "source_images": 12,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "045",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\045",
-      "source_images": 31,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "046",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\046",
-      "source_images": 26,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "047",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\047",
-      "source_images": 44,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "048",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\048",
-      "source_images": 44,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "049",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\049-050",
-      "source_images": 27,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "050",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\049-050",
-      "source_images": 27,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "051",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\051",
-      "source_images": 79,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "052",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\052",
-      "source_images": 44,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "053",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\053",
-      "source_images": 30,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "054",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\054",
-      "source_images": 11,
-      "imported": 11,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "055",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\055",
-      "source_images": 41,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "056",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\056",
-      "source_images": 19,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "057",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\057",
-      "source_images": 27,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "058",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\058",
-      "source_images": 23,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "059",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\059",
-      "source_images": 8,
-      "imported": 8,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "060",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\060",
-      "source_images": 24,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "061",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\061",
-      "source_images": 29,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "062",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\062",
-      "source_images": 14,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "063",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\063",
-      "source_images": 11,
-      "imported": 11,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "064",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\064",
-      "source_images": 11,
-      "imported": 11,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "065",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\065",
-      "source_images": 21,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "066",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\066",
-      "source_images": 35,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "067",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\067-068",
-      "source_images": 51,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "068",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\067-068",
-      "source_images": 51,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "069",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\069",
-      "source_images": 45,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "070",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\070",
-      "source_images": 15,
-      "imported": 12,
-      "duplicates_skipped": 1,
-      "failed": 0
-    },
-    {
-      "ref": "071",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\071",
-      "source_images": 10,
-      "imported": 10,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "072",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\072",
-      "source_images": 5,
-      "imported": 5,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "073",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\073",
-      "source_images": 8,
-      "imported": 8,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "074",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\074",
-      "source_images": 7,
-      "imported": 7,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "075",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\075",
-      "source_images": 15,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "076",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\076",
-      "source_images": 7,
-      "imported": 7,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "077",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\077",
-      "source_images": 13,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "078",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\078",
-      "source_images": 12,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "079",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\079",
-      "source_images": 13,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "081",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\081",
-      "source_images": 20,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "082",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\082",
-      "source_images": 12,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "083",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\083",
-      "source_images": 23,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "084",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\084",
-      "source_images": 13,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "085",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\085",
-      "source_images": 7,
-      "imported": 7,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "086",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\086",
-      "source_images": 8,
-      "imported": 7,
-      "duplicates_skipped": 1,
-      "failed": 0
-    },
-    {
-      "ref": "087",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\087",
-      "source_images": 15,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "088",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\088",
-      "source_images": 15,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "089",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\089",
-      "source_images": 14,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "090",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\090-91-92-93-94-95-96",
-      "source_images": 32,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "091",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\090-91-92-93-94-95-96",
-      "source_images": 32,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "092",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\090-91-92-93-94-95-96",
-      "source_images": 32,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "093",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\090-91-92-93-94-95-96",
-      "source_images": 32,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "094",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\090-91-92-93-94-95-96",
-      "source_images": 32,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "095",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\090-91-92-93-94-95-96",
-      "source_images": 32,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "096",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\090-91-92-93-94-95-96",
-      "source_images": 32,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "097",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\097",
-      "source_images": 23,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "098",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\098",
-      "source_images": 28,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "099",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\099",
-      "source_images": 20,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "100",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\100",
-      "source_images": 29,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "101",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\101",
-      "source_images": 29,
-      "imported": 12,
-      "duplicates_skipped": 2,
-      "failed": 12
-    },
-    {
-      "ref": "102",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\102",
-      "source_images": 43,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "103",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\103",
-      "source_images": 20,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "104",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\104",
-      "source_images": 23,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "105",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\105",
-      "source_images": 14,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "106",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\106",
-      "source_images": 7,
-      "imported": 7,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "107",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\107",
-      "source_images": 43,
-      "imported": 12,
-      "duplicates_skipped": 1,
-      "failed": 0
-    },
-    {
-      "ref": "108",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\108",
-      "source_images": 14,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "109",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\109",
-      "source_images": 16,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "110",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\110",
-      "source_images": 20,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "111",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\111",
-      "source_images": 13,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "112",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\112",
-      "source_images": 15,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "113",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\113",
-      "source_images": 16,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "114",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\114",
-      "source_images": 10,
-      "imported": 10,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "115",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\115",
-      "source_images": 38,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "116",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\116",
-      "source_images": 54,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "119",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\119",
-      "source_images": 33,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "120",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\120",
-      "source_images": 19,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "121",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\121",
-      "source_images": 15,
-      "imported": 12,
-      "duplicates_skipped": 2,
-      "failed": 0
-    },
-    {
-      "ref": "122",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\122",
-      "source_images": 22,
-      "imported": 12,
-      "duplicates_skipped": 1,
-      "failed": 0
-    },
-    {
-      "ref": "123",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\123",
-      "source_images": 21,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "124",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\124",
-      "source_images": 24,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "125",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\125",
-      "source_images": 14,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "126",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\126",
-      "source_images": 34,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "127",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\127",
-      "source_images": 36,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "128",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\128",
-      "source_images": 30,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "129",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\129",
-      "source_images": 46,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "130",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\130-131",
-      "source_images": 29,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "132",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\132",
-      "source_images": 52,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "133",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\133",
-      "source_images": 13,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "134",
-      "folder": "C:\\Users\\Yazan\\Desktop\\Last updated Project X\\Up to date listings\\134",
-      "source_images": 27,
-      "imported": 12,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "017",
-      "folder": null,
-      "source_images": 0,
-      "imported": 0,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "018",
-      "folder": null,
-      "source_images": 0,
-      "imported": 0,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "019",
-      "folder": null,
-      "source_images": 0,
-      "imported": 0,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "020",
-      "folder": null,
-      "source_images": 0,
-      "imported": 0,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "021",
-      "folder": null,
-      "source_images": 0,
-      "imported": 0,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "031",
-      "folder": null,
-      "source_images": 0,
-      "imported": 0,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "038",
-      "folder": null,
-      "source_images": 0,
-      "imported": 0,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "080",
-      "folder": null,
-      "source_images": 0,
-      "imported": 0,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "117",
-      "folder": null,
-      "source_images": 0,
-      "imported": 0,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "118",
-      "folder": null,
-      "source_images": 0,
-      "imported": 0,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "135",
-      "folder": null,
-      "source_images": 0,
-      "imported": 0,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "136",
-      "folder": null,
-      "source_images": 0,
-      "imported": 0,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "137",
-      "folder": null,
-      "source_images": 0,
-      "imported": 0,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "138",
-      "folder": null,
-      "source_images": 0,
-      "imported": 0,
-      "duplicates_skipped": 0,
-      "failed": 0
-    },
-    {
-      "ref": "139",
-      "folder": null,
-      "source_images": 0,
-      "imported": 0,
-      "duplicates_skipped": 0,
-      "failed": 0
-    }
-  ],
-  "type_counts": {
-    "Apartment": 105,
-    "Villa": 8,
-    "Rooftop": 2,
-    "Residential": 9
+ "generated": "2026-08-04T15:40:25.300881+00:00",
+ "source_zip": "C:\\Users\\Yazan\\Desktop\\website final from saif\\OneDrive_1_8-4-2026.zip",
+ "source_zip_note": "Download was truncated - the archive had no end-of-central-directory record and only 64 of its index entries survived. All file data was present, so the index was rebuilt by scanning local file headers. 0 of 2426 entries failed to decode.",
+ "source_excel": "Lumina 2026.xlsx (sheet \"Listings Log 26\")",
+ "excel_rows": 147,
+ "listings_kept": 141,
+ "duplicate_rows": [
+  {
+   "ref": "068",
+   "duplicate_of": "067",
+   "location": "Abdoun",
+   "price": 850000.0
   },
-  "transaction_counts": {
-    "Rent": 110,
-    "Sale": 10,
-    "Sale | Rent": 1,
-    "Rent-Sale": 1,
-    "": 2
+  {
+   "ref": "095",
+   "duplicate_of": "094",
+   "location": "4th Circle",
+   "price": 225.0
   },
-  "output_json": "C:\\Users\\Yazan\\Desktop\\lumina\\website\\data\\lumina-demo-leads.json",
-  "output_assets": "C:\\Users\\Yazan\\Desktop\\lumina\\website\\assets\\listings"
+  {
+   "ref": "135",
+   "duplicate_of": "136",
+   "location": "Swefieh",
+   "price": 17000.0
+  },
+  {
+   "ref": "157",
+   "duplicate_of": "155",
+   "location": "Abdoun",
+   "price": 26000.0
+  }
+ ],
+ "empty_shells_dropped": [
+  "088",
+  "149"
+ ],
+ "listings_with_photos": 122,
+ "listings_missing_photos": [
+  "017",
+  "018",
+  "019",
+  "020",
+  "021",
+  "031",
+  "038",
+  "080",
+  "117",
+  "118",
+  "151",
+  "153",
+  "154",
+  "155",
+  "156",
+  "158",
+  "159",
+  "160",
+  "161"
+ ],
+ "total_images_imported": 1227,
+ "photo_rules": {
+  "cover": "source photo named \"1\" (or \"01\") becomes 01.jpg, the card cover",
+  "scope": "root level of each property folder only; the \"New folder\" subdirectories are the raw unsorted dump and in several cases hold another property's files",
+  "cap": 12,
+  "max_side_px": 1920,
+  "jpeg_quality": 82
+ },
+ "refs_without_a_numbered_photo_1": [
+  "055",
+  "061",
+  "070",
+  "072",
+  "073",
+  "084",
+  "090",
+  "091",
+  "092",
+  "130",
+  "131"
+ ],
+ "refs_sharing_a_photo_folder": {
+  "130": "Rent/2026-130-131",
+  "131": "Rent/2026-130-131"
+ },
+ "photos_dropped_over_cap": 137,
+ "data_quality_notes": [
+  "ref 029: Floor held 'Villa' (not a floor) - cleared",
+  "ref 056: price 'Rent 12000 | Sale 150000' - rent figure used, listing marked Sale or Rent",
+  "ref 059: price '14000 Year | 1600 Month' - annual figure used",
+  "ref 061: Floor held 'Villa' (not a floor) - cleared",
+  "ref 063: Baths '1\\5' not a number - cleared",
+  "ref 067: Floor held 'Villa' (not a floor) - cleared",
+  "ref 068: Floor held 'Villa' (not a floor) - cleared",
+  "ref 069: Floor held 'Villa' (not a floor) - cleared",
+  "ref 070: Floor held 'Villa' (not a floor) - cleared",
+  "ref 090: 885 JOD on a sale is a per-m2 rate",
+  "ref 091: 848 JOD on a sale is a per-m2 rate",
+  "ref 092: 885 JOD on a sale is a per-m2 rate",
+  "ref 093: 885 JOD on a sale is a per-m2 rate",
+  "ref 094: 225 JOD on a sale is a per-m2 rate",
+  "ref 095: 225 JOD on a sale is a per-m2 rate",
+  "ref 096: 235 JOD on a sale is a per-m2 rate",
+  "ref 097: size '215,70sqn' read as 215.70 m2",
+  "ref 101: Floor held '4 Floors' (not a floor) - cleared",
+  "ref 101: Kitchen held '3.0' - cleared",
+  "ref 102: Floor held '2 Floors' (not a floor) - cleared",
+  "ref 102: Kitchen held '1.0' - cleared",
+  "ref 108: Beds 'Studio | 1 Bed | 2 Bed' not a number - cleared",
+  "ref 108: rent of 900 JOD may be monthly - price withheld",
+  "ref 114: rent of 700 JOD may be monthly - price withheld",
+  "ref 116: Beds '1 | 2' not a number - cleared",
+  "ref 116: rent of 500 JOD may be monthly - price withheld",
+  "ref 127: Floor held 'Building' (not a floor) - cleared",
+  "ref 127: Beds value 46024 out of range - cleared (Excel date serial?)",
+  "ref 127: rent of 500 JOD may be monthly - price withheld",
+  "ref 132: Beds value 46024 out of range - cleared (Excel date serial?)",
+  "ref 132: rent of 1200 JOD may be monthly - price withheld",
+  "ref 150: Floor held '2 Floors Villa' (not a floor) - cleared",
+  "ref 130 appeared twice; second row assigned ref 131 (photo folder Rent/2026-130-131 covers both)"
+ ],
+ "excluded_from_output": "Owner No. and Guard No. columns - personal phone numbers, and this JSON is served publicly",
+ "output_json": "data/lumina-demo-leads.json",
+ "output_assets": "assets/listings/<ref>/NN.jpg",
+ "photos_carried_over_from_previous_import": {
+  "refs": [
+   "027",
+   "041",
+   "093",
+   "094",
+   "096",
+   "101"
+  ],
+  "why": "the 2026-08-04 drop has no folder for these six; ref numbering is identical across both sources (0 address mismatches, 101/101 sizes, 100/100 bedroom counts) so the existing photography still applies"
+ }
 }

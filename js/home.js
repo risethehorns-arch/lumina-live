@@ -1,4 +1,24 @@
 // LUMINA — home.js
+//
+// DEAD FILE. NOTHING LOADS THIS, AND NOTHING SHOULD. Kept only until it
+// can be moved out of the deployable folder — it is not part of the site.
+//
+// It belongs to the OLD css/style.css cluster, not the elevated one.
+// Every selector below targets markup index.html does not have:
+// .hero-content h1, .fx-cursor/.fx-cursor-dot, .stats-bar/.stat-number,
+// .card-img img, .why-image img, .location-card-bg, .property-card,
+// .location-card, .type-pill. Wiring it into index.html would:
+//   - throw at the `dot.style` line, because .fx-cursor-dot is null;
+//   - install a second custom cursor competing with .glow;
+//   - add a second unthrottled scroll listener, against note 4 in
+//     CLAUDE.md — and its .hero-bg parallax writes backgroundPosition,
+//     which is a no-op on index.html's <img class="hero-bg">.
+//
+// The one thing here worth keeping is countUp() below. index.html has
+// six .num elements that never count, and .num sets tabular-nums, which
+// only earns its keep if the digits move. Port it into js/lumina.js
+// driven by the existing reveal observer — do not load this file to get it.
+//
 // Homepage animations: hero word-mask, custom cursor, parallax, count-up, image reveals.
 
 (function(){

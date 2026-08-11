@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Luxury Properties in Amman — Lumina Real Estate</title>
-  <meta name="description" content="Browse curated luxury apartments, villas, and penthouses in Amman's most prestigious neighbourhoods — Abdoun, Dabouq, Dair Ghbar, Um Uthaina, and Abdali. Private viewings by appointment." />
+  <meta name="description" content="Every residence Lumina currently holds in Amman — Abdoun, Swefieh, the Circles, Shmesani, Jabal Al Weibdeh, Um Uthaina and Dair Ghbar. Filter by area, type and budget." />
   <meta name="robots" content="index, follow" />
   <meta name="author" content="Lumina Real Estate" />
   <meta name="theme-color" content="#0D1B2A" />
@@ -15,7 +15,7 @@
   <meta property="og:url" content="https://lumina.qutaifan.com/listings.html" />
   <meta property="og:site_name" content="Lumina Real Estate" />
   <meta property="og:title" content="Luxury Properties in Amman — Lumina Real Estate" />
-  <meta property="og:description" content="Curated luxury apartments, villas, and penthouses in Abdoun, Dabouq, Dair Ghbar, Um Uthaina, and Abdali. Private viewings by appointment." />
+  <meta property="og:description" content="Every residence Lumina currently holds in Amman — Abdoun, Swefieh, the Circles, Shmesani, Jabal Al Weibdeh, Um Uthaina and Dair Ghbar. Filter by area, type and budget." />
   <meta property="og:image" content="https://lumina.qutaifan.com/assets/images/hero-luxury-villa.jpg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -24,32 +24,63 @@
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Luxury Properties in Amman — Lumina Real Estate" />
-  <meta name="twitter:description" content="Curated luxury apartments, villas, and penthouses in Abdoun, Dabouq, Dair Ghbar, Um Uthaina, and Abdali." />
+  <meta name="twitter:description" content="Every residence Lumina currently holds in Amman — Abdoun, Swefieh, the Circles, Shmesani, Jabal Al Weibdeh, Um Uthaina and Dair Ghbar. Filter by area, type and budget." />
   <meta name="twitter:image" content="https://lumina.qutaifan.com/assets/images/hero-luxury-villa.jpg" />
 
   <!-- Favicon -->
-  <link rel="icon" type="image/png" href="/assets/lumina-logo.png" />
+  <link rel="icon" type="image/png" href="assets/lumina-logo.png" />
 
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/style.css?v=2026-08-07b" />
+  <link rel="preload" as="font" type="font/woff2" href="assets/fonts/InstrumentSerif.woff2" crossorigin>
+  <link rel="preload" as="font" type="font/woff2" href="assets/fonts/InstrumentSans.woff2" crossorigin>
   <style>
-    /* ---- PAGE HEADER ---- */
+    /* ---- PAGE HEADER ----
+       The photograph is the room, not a texture: it sits at a workable
+       opacity behind a two-stop scrim rather than being washed out, and it
+       drifts slowly so the frame is never quite still. Everything that
+       moves here is transform or opacity only. */
     .page-header {
       background: var(--navy-deep);
-      padding: 200px 0 90px;
+      padding: clamp(150px, 21vh, 226px) 0 clamp(78px, 10vh, 104px);
       position: relative;
       overflow: hidden;
     }
     .page-header-bg {
       position: absolute;
-      inset: 0;
-      background: url('assets/images/demo-villa-terrace-01.jpg') center 40%/cover no-repeat;
-      opacity: 0.22;
+      inset: -6%;
+      background: url('assets/images/demo-villa-terrace-01.jpg') center 42%/cover no-repeat;
+      opacity: 0.34;
+      filter: saturate(1.06) contrast(1.05) brightness(0.86);
+      transform: scale(1.04);
+      animation: ph-drift 52s ease-in-out infinite alternate;
+      will-change: transform;
     }
+    @keyframes ph-drift {
+      from { transform: scale(1.04) translate3d(0, 0, 0); }
+      to   { transform: scale(1.12) translate3d(-1.6%, -1.2%, 0); }
+    }
+    /* warm light gathering behind the headline, the same amber the cards
+       and the pills use — opacity-animated, so it costs nothing */
+    .ph-glow {
+      position: absolute;
+      left: -12%; top: 8%;
+      width: 78%; height: 92%;
+      z-index: 1;
+      pointer-events: none;
+      mix-blend-mode: screen;
+      background:
+        radial-gradient(46% 54% at 26% 46%, rgba(255,178,90,.16), transparent 68%),
+        radial-gradient(34% 40% at 8% 78%, rgba(127,217,232,.07), transparent 70%);
+      animation: ph-breathe 11s ease-in-out infinite;
+    }
+    @keyframes ph-breathe { 0%,100% { opacity: .62 } 50% { opacity: 1 } }
     .page-header::before {
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(180deg, rgba(9,21,34,0.7) 0%, rgba(9,21,34,0.9) 100%);
+      background:
+        linear-gradient(180deg, rgba(6,9,14,.86) 0%, rgba(8,12,18,.5) 34%, rgba(8,11,16,.82) 100%),
+        radial-gradient(72% 60% at 78% 40%, transparent 30%, rgba(6,9,14,.6) 100%);
       z-index: 0;
     }
     .page-header::after {
@@ -61,102 +92,99 @@
       z-index: 1;
     }
     .page-header-inner { position: relative; z-index: 2; }
-    .page-header h1 { color: var(--white); font-size: clamp(2.4rem, 5vw, 4rem); font-weight: 400; }
-    .page-header p { color: rgba(255,255,255,0.6); margin-top: 16px; font-size: 1.02rem; font-weight: 300; max-width: 540px; }
+    .page-header h1 {
+      color: var(--white); font-size: clamp(2.4rem, 5vw, 4.15rem);
+      font-weight: 400; line-height: 1.04; letter-spacing: -0.015em;
+    }
+    .page-header p { color: rgba(255,255,255,0.66); margin-top: 18px; font-size: 1.02rem; font-weight: 300; max-width: 560px; line-height: 1.72; }
     .page-header .gold-line { margin: 16px 0; }
     .nav-links .active-link { color: var(--gold); }
 
-    /* ---- FILTER BAR ---- */
-    .filter-bar {
-      background: #0B0B0B;
-      border-bottom: 1px solid rgba(198,167,110,0.18);
-      padding: 22px 0;
-      position: sticky;
-      top: 0;
-      z-index: 50;
+    /* Portfolio at a glance. Counted from the JSON by js/listings.js. */
+    .ph-stats {
+      display: flex; flex-wrap: wrap; gap: 0;
+      margin: 34px 0 0; padding: 0; list-style: none;
     }
-    .filter-inner {
-      display: flex;
-      gap: 14px;
-      align-items: center;
-      flex-wrap: wrap;
+    .ph-stats li {
+      padding: 0 26px; position: relative;
+      display: flex; flex-direction: column; gap: 5px;
     }
-    .filter-label {
-      font-size: 0.62rem;
-      font-weight: 500;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: #A0A0A0;
-      margin-right: 8px;
-      flex-shrink: 0;
+    .ph-stats li:first-child { padding-left: 0; }
+    .ph-stats li + li::before {
+      content: ''; position: absolute; left: 0; top: 6px; bottom: 6px;
+      width: 1px; background: linear-gradient(180deg, transparent, rgba(198,167,110,.42), transparent);
     }
-    .filter-select {
-      padding: 11px 38px 11px 16px;
-      border: 1px solid rgba(198,167,110,0.22);
-      background: #111111;
-      font-family: var(--font-sans);
-      font-size: 0.78rem;
-      letter-spacing: 0.04em;
-      color: #FFFFFF;
-      outline: none;
-      appearance: none;
-      cursor: pointer;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23C2A35A' stroke-width='1.2' fill='none'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 14px center;
-      transition: border-color 0.3s ease, color 0.3s ease;
-      min-width: 168px;
+    .ph-stats b {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-size: clamp(1.5rem, 2.4vw, 2.05rem); font-weight: 400; line-height: 1;
+      color: var(--gold-light, #FFE0B0);
     }
-    .filter-select:focus { border-color: #C6A76E; }
-    .filter-select.active { border-color: #C6A76E; color: #FFFFFF; }
-    .filter-count {
-      margin-left: auto;
-      font-size: 0.72rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: #A0A0A0;
-      flex-shrink: 0;
+    .ph-stats span {
+      font-size: .6rem; letter-spacing: .22em; text-transform: uppercase;
+      color: rgba(255,255,255,.44);
     }
-    .filter-count span { font-weight: 600; color: #C6A76E; }
 
-    /* ---- TYPE PILLS ---- */
-    .type-pills {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
+    /* One load sequence for the header, so it assembles rather than
+       appearing all at once. Nothing here waits on the data. */
+    .rise { animation: rise-in .95s cubic-bezier(.22,.68,.16,1) both; animation-delay: var(--d, 0ms); }
+    @keyframes rise-in {
+      from { opacity: 0; transform: translate3d(0, 20px, 0); }
+      to   { opacity: 1; transform: none; }
     }
-    .type-pill {
-      padding: 10px 22px;
-      border: 1px solid rgba(198,167,110,0.22);
-      font-size: 0.68rem;
-      font-weight: 400;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: #A0A0A0;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      background: transparent;
+
+    /* Three figures do not wrap gracefully — the third dropped to its own
+       line and took a divider with it. A three-column grid keeps them on
+       one row down to 320px. */
+    @media (max-width: 620px) {
+      .ph-stats { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 28px; }
+      .ph-stats li { padding: 0 13px; }
+      .ph-stats li:first-child { padding-left: 0; }
+      .ph-stats b { font-size: 1.34rem; }
+      .ph-stats span { font-size: .53rem; letter-spacing: .15em; }
     }
-    .type-pill:hover {
-      border-color: #C6A76E;
-      color: #FFFFFF;
+
+    @media (prefers-reduced-motion: reduce) {
+      .page-header-bg, .ph-glow, .rise { animation: none; }
+      .page-header-bg { transform: scale(1.04); }
+      .rise { opacity: 1; transform: none; }
     }
-    .type-pill.active { background: #C6A76E; color: #0B0B0B; border-color: #C6A76E; }
+
+    /* The filter bar used to be styled here. It now lives entirely in
+       css/filter-ui.css — the rules were left in place at first and the
+       old .type-pill.active { background: #C6A76E } showed through the
+       new gold sweep for the length of the animation. Two stylesheets
+       describing one control is how that happens; there is now one. */
 
     /* ---- LISTINGS SECTION ---- */
     .listings-section {
       background: #0B0B0B;
-      padding: 72px 0 110px;
+      padding: 64px 0 110px;
+      position: relative;
     }
+    /* the grid emerges out of the filter bar rather than starting on a flat
+       black edge — one gradient, no extra element in the flow */
+    .listings-section::before {
+      content: '';
+      position: absolute;
+      left: 0; right: 0; top: 0; height: 220px;
+      background: linear-gradient(180deg, rgba(18,26,36,.85), rgba(11,11,11,0));
+      pointer-events: none;
+    }
+    .listings-section .container { position: relative; z-index: 1; }
     .listings-section .demo-disclaimer-wide {
-      background: #111111;
-      border-color: rgba(198,167,110,0.24);
-      color: #A0A0A0;
+      background: linear-gradient(180deg, rgba(20,27,37,.72), rgba(13,18,25,.55));
+      border: 1px solid rgba(198,167,110,0.2);
+      border-radius: 14px;
+      color: rgba(247,242,233,.56);
+      font-size: .78rem;
+      line-height: 1.7;
+      padding: 16px 22px;
+      margin-bottom: 34px;
     }
     .listings-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 32px;
+      grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+      gap: clamp(22px, 2.3vw, 34px);
     }
 
     /* ---- PROPERTY CARD (extended for listings page) ---- */
@@ -201,161 +229,50 @@
     }
     .card-link:hover .card-link-arrow { width: 36px; }
 
-    .listing-card {
-      background: #111111;
-      border: 1px solid rgba(198,167,110,0.14);
-      border-radius: 14px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-      display: flex;
-      flex-direction: column;
-      min-height: 100%;
-      overflow: hidden;
-      opacity: 0;
-      transform: translateY(22px);
-      transition: all 0.3s ease;
-      animation: listingFadeUp 0.65s ease forwards;
-    }
-    .listing-card:hover {
-      transform: translateY(-6px) !important;
-      border-color: rgba(198,167,110,0.34);
-      box-shadow: 0 16px 52px rgba(0,0,0,0.62);
-    }
-    .listing-card:hover .card-img img { transform: scale(1.05); }
-    .listing-image { background: #181818; }
-    .listing-content {
-      padding: 26px 26px 24px;
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-    }
-    .listing-content h3 {
-      font-family: var(--font-sans);
-      font-size: clamp(18px, 1.4vw, 22px);
-      font-weight: 600;
-      line-height: 1.35;
-      margin-bottom: 10px;
-      color: #FFFFFF;
-    }
-    .listing-content .location {
-      font-size: 0.7rem;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: #A0A0A0;
-      margin-bottom: 18px;
-    }
-    .listing-content .price {
-      font-family: var(--font-sans);
-      font-size: clamp(1.45rem, 2vw, 1.9rem);
-      font-weight: 600;
-      color: #C6A76E;
-      margin-bottom: 18px;
-      line-height: 1.25;
-    }
-    .listing-content .details {
-      font-size: 0.84rem;
-      letter-spacing: 0.05em;
-      color: #A0A0A0;
-      margin: 0 0 24px;
-      padding-top: 18px;
-      border-top: 1px solid rgba(255,255,255,0.08);
-    }
-    .listing-content .card-link {
-      width: fit-content;
-      margin-top: auto;
-      padding: 12px 18px;
-      border: 1px solid #C6A76E;
-      border-radius: 999px;
-      background: transparent;
-      color: #C6A76E;
-      font-size: 0.66rem;
-      font-weight: 600;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      transition: all 0.3s ease;
-    }
-    .listing-content .card-link:hover {
-      background: #C6A76E;
-      color: #0B0B0B;
-    }
-    .listing-actions {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-      margin-top: auto;
-    }
-    .listing-whatsapp {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 44px;
-      padding: 12px 18px;
-      border: 1px solid #C6A76E;
-      border-radius: 999px;
-      font-size: 0.66rem;
-      font-weight: 600;
-      letter-spacing: 0.16em;
-      line-height: 1;
-      text-align: center;
-      text-transform: uppercase;
-      transition: all 0.2s ease;
-    }
-    .listing-whatsapp-primary {
-      background: #C6A76E;
-      color: #0B0B0B;
-    }
-    .listing-whatsapp-primary:hover {
-      background: #FFFFFF;
-      border-color: #FFFFFF;
-      color: #0B0B0B;
-    }
-    .listing-whatsapp-secondary {
-      background: transparent;
-      color: #C6A76E;
-    }
-    .listing-whatsapp-secondary:hover {
-      background: #C6A76E;
-      color: #0B0B0B;
-    }
-    .listing-content .status {
-      margin-top: 22px;
-      color: #A0A0A0;
-      font-size: 0.64rem;
-      font-weight: 500;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      line-height: 1.6;
-    }
+    /* The flat .listing-card and its whole sub-tree were replaced by the
+       shared floating card in css/property-ui.css — see js/listings.js.
+       Only .listing-error survives, since the empty and failure states
+       still render it. */
+    /* An empty grid is the one moment the page has nothing to show, so it
+       has to carry itself — and offer the way back out rather than leaving
+       the reader to work out which pill did it. */
     .listing-error {
       grid-column: 1 / -1;
-      padding: 44px;
-      border: 1px solid rgba(198,167,110,0.28);
-      background: #111111;
+      padding: clamp(44px, 7vw, 76px) 32px;
+      border: 1px solid rgba(198,167,110,0.22);
+      border-radius: 18px;
+      background:
+        radial-gradient(60% 80% at 50% 0%, rgba(255,178,90,.07), transparent 70%),
+        linear-gradient(180deg, rgba(20,27,37,.8), rgba(13,18,25,.6));
       text-align: center;
-      color: #A0A0A0;
+      color: rgba(247,242,233,.62);
     }
-
-    @keyframes listingFadeUp {
-      to { opacity: 1; transform: translateY(0); }
+    .listing-error b {
+      display: block;
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-weight: 400;
+      font-size: clamp(1.3rem, 2.4vw, 1.7rem);
+      color: #F7F2E9;
+      margin-bottom: 10px;
     }
-    .delay-0 { animation-delay: 0s; }
-    .delay-1 { animation-delay: 0.05s; }
-    .delay-2 { animation-delay: 0.1s; }
-    .delay-3 { animation-delay: 0.15s; }
-    .delay-4 { animation-delay: 0.2s; }
-    .delay-5 { animation-delay: 0.25s; }
-    .delay-6 { animation-delay: 0.3s; }
-    .delay-7 { animation-delay: 0.35s; }
-    .delay-8 { animation-delay: 0.4s; }
-    .delay-9 { animation-delay: 0.45s; }
-    @media (prefers-reduced-motion: reduce) {
-      .listing-card {
-        opacity: 1;
-        transform: none;
-        animation: none;
-      }
-      .listing-card:hover { transform: none !important; }
-      .listing-card:hover .card-img img { transform: none; }
+    .listing-error span { display: block; max-width: 420px; margin: 0 auto; font-size: .9rem; line-height: 1.7; }
+    .listing-error button {
+      margin-top: 24px;
+      padding: 11px 26px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,178,90,.45);
+      background: transparent;
+      color: #FFB25A;
+      font-family: inherit;
+      font-size: .64rem;
+      font-weight: 500;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background-color .3s ease, color .3s ease, border-color .3s ease;
     }
+    .listing-error button:hover { background: #FFB25A; color: #0B0B0B; border-color: #FFB25A; }
+    .listing-error button:focus-visible { outline: 2px solid #FFB25A; outline-offset: 3px; }
 
     /* ---- FEATURED LARGE CARD ---- */
     .card-featured {
@@ -417,8 +334,15 @@
     }
     @media (max-width: 680px) {
       .listings-grid { grid-template-columns: 1fr; }
-      .filter-inner { flex-direction: column; align-items: stretch; }
-      .type-pills { order: -1; }
+      /* The label does not fit on one line on a phone and .btn sets
+         white-space: nowrap, so the whole page scrolled sideways by
+         about 40px. Predates the filter work; fixed here because a
+         sticky filter bar that slides off-screen is unusable. */
+      .listings-section .btn-outline-gold {
+        white-space: normal;
+        max-width: 100%;
+        line-height: 1.55;
+      }
       .whatsapp-float.advisor-float {
         right: 18px;
         bottom: 18px;
@@ -428,28 +352,57 @@
       }
     }
   </style>
+
+  <!-- After the inline block on purpose: .grid-props and .listings-grid
+       are the same specificity, so source order decides, and the shared
+       component has to win. Same file index.html loads. -->
+  <link rel="stylesheet" href="css/property-ui.css?v=2026-08-07i" />
+
+  <!-- Last on purpose: several rules here restate ones from the inline
+       block above at equal specificity, so source order decides. -->
+  <link rel="stylesheet" href="css/filter-ui.css?v=2026-08-07b" />
+  <!-- the landing page's brand bar, shared -->
+
+  <link rel="stylesheet" href="css/nav.css?v=2026-08-07b" />
+
+  <!-- last: phone-only overrides -->
+  <link rel="stylesheet" href="css/mobile.css?v=2026-08-07d" />
 </head>
 <body>
 
 <!-- NAV -->
-<nav class="nav scrolled" id="nav">
-  <a href="/index.html" class="nav-logo" aria-label="Lumina — home"><img src="/assets/lumina-logo.png" alt="Lumina" width="669" height="181"></a>
-  <div class="nav-links">
-    <a href="/listings.html" class="active-link">Properties</a>
-    <a href="/index.html#locations">Locations</a>
-    <a href="/index.html#why">About</a>
-    <a href="/index.html#contact" class="nav-cta btn">Inquire Now</a>
-  </div>
-</nav>
+<header class="bar stuck" id="bar">
+  <a href="index.html" class="mark-img" aria-label="Lumina — home">
+    <img src="assets/lumina-logo.png" alt="Lumina" width="669" height="181">
+  </a>
+  <nav class="nav" aria-label="Primary">
+    <a href="index.html">Home</a>
+    <a href="listings.html" class="keep active-link" aria-current="page">Properties</a>
+    <a href="services.html">Services</a>
+    <a href="areas.html">Areas</a>
+    <a href="insights/best-areas-in-amman.html">Insights</a>
+    <a href="team.html">Team</a>
+    <a href="pages/list-property.html">Sell With Us</a>
+    <a href="https://wa.me/962771505250" class="chip keep" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-12.3 7.4L3.5 20.5l1.7-5A8.4 8.4 0 1 1 21 11.5Z"/><path d="M8.6 9.2c.3 2.5 2.6 4.8 5.1 5.2.7.1 1.5-.4 1.6-1.1l.1-.6-2-.9-.9.9c-1-.4-1.9-1.3-2.3-2.3l.9-.9-.9-2-.6.1c-.7.1-1.1.9-1 1.6Z"/></svg>
+      WhatsApp
+    </a>
+  </nav>
+</header>
 
 <!-- PAGE HEADER -->
 <div class="page-header">
   <div class="page-header-bg"></div>
+  <span class="ph-glow" aria-hidden="true"></span>
   <div class="container page-header-inner">
-    <p class="label">Private Portfolio</p>
-    <span class="gold-line"></span>
-    <h1>The Collection</h1>
-    <p>Real inventory from the Lumina portfolio — each listing matched to its reference photos. Particulars shared privately, by appointment.</p>
+    <p class="label rise">Available now</p>
+    <span class="gold-line rise" style="--d:70ms"></span>
+    <h1 class="rise" style="--d:120ms">Every residence we hold.</h1>
+    <p class="rise" style="--d:200ms">Filter by area, type or budget. Open any property to page through its photographs — most have a dozen. Availability and the final figure are confirmed with the owner before a viewing is arranged.</p>
+    <!-- Counted from the data at runtime by js/listings.js, never typed in:
+         a hand-written figure here is a figure that goes stale the next
+         time the portfolio changes. -->
+    <ul class="ph-stats rise" id="ph-stats" style="--d:290ms" aria-live="polite"></ul>
   </div>
 </div>
 
@@ -457,39 +410,76 @@
 <div class="filter-bar">
   <div class="container">
     <div class="filter-inner">
-      <span class="filter-label">Filter:</span>
 
-      <!-- Type pills -->
-      <div class="type-pills">
-        <button class="type-pill active" data-type="all">All</button>
-        <button class="type-pill" data-type="apartment">Apartment</button>
-        <button class="type-pill" data-type="villa">Villa</button>
-        <button class="type-pill" data-type="rooftop">Rooftop</button>
-        <button class="type-pill" data-type="residential">Residential</button>
+      <div class="fx-row">
+        <span class="filter-label">Filter:</span>
+
+        <!-- Type pills. Single choice — the other four filters narrow
+             within a type, this one picks the type. -->
+        <div class="type-pills">
+          <button class="type-pill active" data-type="all"><span>All</span></button>
+          <button class="type-pill" data-type="apartment"><span>Apartment</span></button>
+          <button class="type-pill" data-type="villa"><span>Villa</span></button>
+          <button class="type-pill" data-type="rooftop"><span>Rooftop</span></button>
+          <button class="type-pill" data-type="residential"><span>Residential</span></button>
+        </div>
+
+        <div class="filter-count">Showing <span id="listing-count">0</span> properties</div>
       </div>
 
-      <!-- Location select -->
-      <select class="filter-select" id="filter-location">
-        <option value="">All Locations</option>
-        <option>Abdoun</option>
-        <option>Dabouq</option>
-        <option>Dair Ghbar</option>
-        <option>Um Uthaina</option>
-        <option>Abdali</option>
-      </select>
+      <div class="fx-row">
+        <!-- Areas and floors are built by js/listings.js through
+             Lumina.multiSelect, because both need counts taken from the
+             data. The hard-coded area list that used to sit here was
+             Abdoun / Dabouq / Dair Ghbar / Um Uthaina / Abdali, and
+             three of those five have never had a single listing. -->
+        <!-- Transaction. Single choice, because these are three views of
+             the book rather than three things to combine. A "Sale or Rent"
+             listing genuinely answers both questions, so it shows under
+             Rent and under Sale; "Rent & Sale" isolates just those. -->
+        <div class="fx-group">
+          <span class="fx-group-label">For</span>
+          <div class="fx-pills" id="fx-deal">
+            <button class="fx-pill" data-deal="rent"><span>Rent</span></button>
+            <button class="fx-pill" data-deal="sale"><span>Sale</span></button>
+            <button class="fx-pill" data-deal="both"><span>Rent &amp; Sale</span></button>
+          </div>
+        </div>
 
-      <!-- Budget select -->
-      <select class="filter-select" id="filter-budget">
-        <option value="">Any Budget</option>
-        <option value="rent-under-15k">Rent under 15k JOD</option>
-        <option value="rent-15-30k">Rent 15k – 30k JOD</option>
-        <option value="rent-30k-plus">Rent 30k+ JOD</option>
-        <option value="sale-under-400k">Sale under 400k JOD</option>
-        <option value="sale-400-800k">Sale 400k – 800k JOD</option>
-        <option value="sale-800k-plus">Sale 800k+ JOD</option>
-      </select>
+        <div id="fx-location"></div>
+        <div id="fx-floor"></div>
 
-      <div class="filter-count">Showing <span id="listing-count">0</span> properties</div>
+        <!-- Bedrooms toggle independently: "two or three" is a real
+             search and a single-choice control cannot express it. 4+ is
+             one option because 4 and 8 are the only values above three,
+             six listings between them. -->
+        <div class="fx-group">
+          <span class="fx-group-label">Beds</span>
+          <div class="fx-pills" id="fx-beds">
+            <button class="fx-pill" data-bed="1"><span>1</span></button>
+            <button class="fx-pill" data-bed="2"><span>2</span></button>
+            <button class="fx-pill" data-bed="3"><span>3</span></button>
+            <button class="fx-pill" data-bed="4"><span>4+</span></button>
+          </div>
+        </div>
+
+        <!-- Budget bands sized to the actual spread: rents run 6,000 to
+             120,000 JOD a year and cluster at 10–20k. The previous sale
+             bands (under 400k / 400–800k / 800k+) matched two listings
+             between them, so sales are now one option rather than three. -->
+        <select class="filter-select" id="filter-budget" aria-label="Filter by budget">
+          <option value="">Any budget</option>
+          <option value="rent-under-10k">Rent · under 10,000 JOD</option>
+          <option value="rent-10-15k">Rent · 10,000 – 15,000 JOD</option>
+          <option value="rent-15-20k">Rent · 15,000 – 20,000 JOD</option>
+          <option value="rent-20-30k">Rent · 20,000 – 30,000 JOD</option>
+          <option value="rent-30k-plus">Rent · 30,000 JOD and above</option>
+          <option value="for-sale">For sale</option>
+        </select>
+
+        <button class="fx-clear" id="fx-clear" type="button" hidden>Clear all</button>
+      </div>
+
     </div>
   </div>
 </div>
@@ -497,11 +487,11 @@
 <!-- LISTINGS GRID -->
 <section class="listings-section">
   <div class="container">
-    <p class="demo-disclaimer demo-disclaimer-wide">Lumina portfolio listings. Availability, final pricing, and access require verification before viewing. Photos are matched by reference number from the source files.</p>
-    <div class="listings-grid" id="listings-grid" aria-live="polite"></div>
+    <p class="demo-disclaimer demo-disclaimer-wide">Photographs are the owner's and are shown with permission. Availability and the final figure are confirmed before a viewing is arranged — a few of these will already be gone.</p>
+    <div class="listings-grid grid-props" id="listings-grid" aria-live="polite"></div>
 
     <div class="load-more-wrap">
-      <a href="/index.html#contact" class="btn btn-outline-gold">Request Off-Market Listings</a>
+      <a href="index.html#contact" class="btn btn-outline-gold">Ask about something not listed here</a>
     </div>
   </div>
 </section>
@@ -511,52 +501,65 @@
   <div class="container">
     <div class="footer-grid">
       <div>
-        <div class="footer-logo"><img src="/assets/lumina-logo.png" alt="Lumina" width="669" height="181"></div>
-        <p class="footer-desc">Luxury real estate in Amman's most prestigious addresses. Exceptional properties, presented with discretion.</p>
+        <div class="footer-logo"><img src="assets/lumina-logo.png" alt="Lumina" width="669" height="181"></div>
+        <p class="footer-desc">A private property advisory in Amman. We represent a small number of residences at a time and introduce them quietly.</p>
       </div>
       <div class="footer-col">
-        <h4>Properties</h4>
+        <h4>Browse</h4>
         <ul>
-          <li><a href="/listings.html?type=apartment">Apartments</a></li>
-          <li><a href="/listings.html?type=villa">Villas</a></li>
-          <li><a href="/listings.html?type=penthouse">Penthouses</a></li>
-          <li><a href="/listings.html?type=investment">Investment</a></li>
+          <!-- These carry real filters now; nothing read the query string
+               before, so every one of them landed on the unfiltered page.
+               "Penthouses" and "Investment" are gone — no listing has ever
+               matched either. -->
+          <li><a href="listings.html?type=apartment">Apartments</a></li>
+          <li><a href="listings.html?type=villa">Villas</a></li>
+          <li><a href="listings.html?type=rooftop">Rooftops</a></li>
+          <li><a href="listings.html?budget=for-sale">For sale</a></li>
         </ul>
       </div>
       <div class="footer-col">
-        <h4>Locations</h4>
+        <h4>Areas</h4>
         <ul>
-          <li><a href="/listings.html?location=abdoun">Abdoun</a></li>
-          <li><a href="/listings.html?location=dabouq">Dabouq</a></li>
-          <li><a href="/listings.html?location=dair-ghbar">Dair Ghbar</a></li>
-          <li><a href="/listings.html?location=um-uthaina">Um Uthaina</a></li>
-          <li><a href="/listings.html?location=abdali">Abdali</a></li>
+          <li><a href="listings.html?location=Abdoun">Abdoun</a></li>
+          <li><a href="listings.html?location=Swefieh">Swefieh</a></li>
+          <li><a href="listings.html?location=Shmesani">Shmesani</a></li>
+          <li><a href="listings.html?location=Um%20Uthaina">Um Uthaina</a></li>
+          <li><a href="areas-abdoun.html">All area guides</a></li>
         </ul>
       </div>
       <div class="footer-col">
-        <h4>Contact</h4>
+        <h4>Lumina</h4>
         <ul>
-          <li><a href="https://wa.me/9627XXXXXXXX" target="_blank" rel="noopener noreferrer">WhatsApp</a></li>
-          <li><a href="mailto:lumina@qutaifan.com">Email</a></li>
-          <li><span>+962 7X XXX XXXX</span></li>
+          <li><a href="team.html">The team</a></li>
+        <li><a href="pages/list-property.html">Sell with us</a></li>
+          <li><a href="pages/valuation.html">Request a valuation</a></li>
+          <li><a href="https://wa.me/962771505250" target="_blank" rel="noopener noreferrer">WhatsApp</a></li>
+        <li><a href="mailto:Lumina@lumina-jo.com">Lumina@lumina-jo.com</a></li>
+          <li><span>+962 77 150 5250</span></li>
         </ul>
       </div>
     </div>
     <div class="footer-bottom">
-      <span>© 2026 Lumina Luxury Real Estate. All rights reserved.</span>
-      <span>Amman, Jordan</span>
+      <span>© 2026 Lumina Real Estate Advisory · Amman</span>
+      <span>Particulars confirmed with the owner before viewing</span>
     </div>
   </div>
 </footer>
 
 <!-- WHATSAPP FLOAT -->
-<a href="https://wa.me/962000000000?text=Hello%2C%20I%20am%20interested%20in%20luxury%20properties%20in%20Amman." class="whatsapp-float advisor-float" target="_blank" rel="noopener noreferrer" aria-label="Contact Advisor on WhatsApp">
+<a href="https://wa.me/962771505250?text=Hello%20Lumina%20%E2%80%94%20I%20am%20looking%20at%20your%20available%20properties%20in%20Amman." class="whatsapp-float advisor-float" target="_blank" rel="noopener noreferrer" aria-label="Contact Lumina on WhatsApp">
   <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
   <span>Contact Advisor</span>
 </a>
 
-<script src="js/site.js"></script>
-<script src="js/listings.js"></script>
+<script src="js/site.js?v=2026-08-07b"></script>
+<!-- order matters: the card builder asks the viewer to open, and
+     listings.js asks the builder to build -->
+<script src="js/property-viewer.js?v=2026-08-07h"></script>
+<script src="js/property-card.js?v=2026-08-07b"></script>
+<!-- filter-ui defines Lumina.multiSelect, which listings.js calls on load -->
+<script src="js/filter-ui.js?v=2026-07-29a"></script>
+<script src="js/listings.js?v=2026-08-07h"></script>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -566,7 +569,7 @@
       "@id": "https://lumina.qutaifan.com/listings.html#webpage",
       "url": "https://lumina.qutaifan.com/listings.html",
       "name": "Luxury Properties in Amman — Lumina Real Estate",
-      "description": "Curated luxury apartments, villas, and penthouses in Abdoun, Dabouq, Dair Ghbar, Um Uthaina, and Abdali. Private viewings by appointment.",
+      "description": "Every residence Lumina currently holds in Amman — Abdoun, Swefieh, the Circles, Shmesani, Jabal Al Weibdeh, Um Uthaina and Dair Ghbar. Filter by area, type and budget.",
       "isPartOf": { "@id": "https://lumina.qutaifan.com/#website" },
       "inLanguage": "en",
       "breadcrumb": {
@@ -580,13 +583,14 @@
     {
       "@type": "ItemList",
       "name": "Luxury Properties in Amman",
-      "description": "Curated luxury residences presented by Lumina Real Estate in Amman, Jordan.",
+      "description": "Residences currently available through Lumina in Amman, Jordan.",
       "url": "https://lumina.qutaifan.com/listings.html",
-      "numberOfItems": 7,
+      "numberOfItems": 118,
       "itemListOrder": "https://schema.org/ItemListOrderDescending"
     }
   ]
 }
 </script>
+<script src="js/nav-menu.js?v=2026-08-07b" defer></script>
 </body>
 </html>
