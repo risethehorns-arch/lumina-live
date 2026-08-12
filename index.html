@@ -1258,22 +1258,94 @@ h3.display{font-size:clamp(1.32rem,1.7vw,1.72rem); line-height:1.1}
 .cf-hand{margin:16px 0 0; font-size:.74rem; line-height:1.65; color:var(--c-52);
   opacity:0; animation:cf-line .5s var(--ease) both; animation-delay:900ms}
 
-/* confirmation */
-.cf-done{position:relative; text-align:center; padding:8px 0 4px}
-.cf-seal{width:62px; height:62px; margin:0 auto 18px; border-radius:50%;
-  display:grid; place-items:center; color:var(--gold);
-  border:1px solid rgba(255,178,90,.4); background:rgba(255,178,90,.1);
-  animation:cf-pop .5s var(--ease) both}
-.cf-seal svg{width:26px; height:26px}
-.cf-done h3{font-family:var(--display); font-weight:400; font-size:1.5rem;
-  color:var(--cream); margin:0 0 10px}
-.cf-done p{color:var(--c-70); font-size:.9rem; line-height:1.8; margin:0 auto 22px; max-width:42ch}
+/* The confirmation used to be a third stage inside this panel (.cf-done,
+   .cf-seal). It moved out to #cfSeal / .cf-seal-box below on 2026-08-12,
+   because the panel closes the moment the request leaves and a confirmation
+   nested in it left with it. .cf-again survives — the seal's button reuses it. */
 .cf-again{min-height:46px; padding:0 22px; border-radius:999px; cursor:pointer;
   font-family:var(--sans); font-size:.78rem; letter-spacing:.06em; color:var(--cream);
   background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.18);
   transition:border-color .3s var(--ease),background .3s var(--ease)}
 .cf-again:hover{border-color:var(--gold); background:rgba(255,178,90,.12)}
 .cf-again:focus-visible{outline:2px solid var(--gold); outline-offset:3px}
+
+/* ═══ the sent seal ════════════════════════════════════════
+   A floating glass box over the whole page, not a third stage inside the
+   panel — the panel closes on send, so the confirmation has to outlive it,
+   and a reply that appears where the form just was reads as the form
+   answering rather than as the request leaving.
+
+   z-index 140 clears both sheets (120/130). The scrim is a sibling
+   ::before rather than a background on .cf-seal-box, so the box can carry
+   its own transform without dragging the scrim's opacity through it.
+
+   The ring and tick are drawn with stroke-dashoffset, which is the one
+   place on this page that animates something other than transform and
+   opacity. It is deliberate and it is cheap: a 72px SVG with two paths,
+   no layout, no filter, and the alternative — revealing a static tick
+   behind a moving mask — costs a compositor layer to say less. */
+.cf-seal-box{position:fixed; inset:0; z-index:140; display:grid; place-items:center;
+  padding:24px; pointer-events:none}
+.cf-seal-box[hidden]{display:none}
+.cf-seal-box::before{content:""; position:absolute; inset:0;
+  background:radial-gradient(58% 48% at 50% 46%, rgba(6,8,12,.66), rgba(6,8,12,.92));
+  opacity:0; transition:opacity .5s var(--ease)}
+.cf-seal-box.in::before{opacity:1}
+
+.cf-note{position:relative; width:min(392px,100%); padding:38px 32px 30px;
+  text-align:center; border-radius:26px; pointer-events:auto;
+  border:1px solid rgba(255,178,90,.24);
+  background:linear-gradient(165deg,rgba(29,38,50,.82),rgba(11,16,24,.9));
+  box-shadow:0 40px 90px -30px rgba(0,0,0,.9), 0 0 60px -20px rgba(255,178,90,.35),
+             inset 0 1px 0 rgba(255,255,255,.09);
+  opacity:0; transform:translate3d(0,18px,0) scale(.94);
+  transition:opacity .5s var(--ease), transform .62s var(--ease)}
+.cf-seal-box.in .cf-note{opacity:1; transform:none}
+/* backdrop-filter is the site's stated performance ceiling and stays gated. */
+@media (min-width:1024px){
+  .cf-note{backdrop-filter:blur(22px) saturate(120%);
+    -webkit-backdrop-filter:blur(22px) saturate(120%)}
+}
+
+.cf-mark{position:relative; width:78px; height:78px; margin:0 auto 20px;
+  display:grid; place-items:center}
+.cf-mark svg{width:78px; height:78px; overflow:visible}
+.cf-ring{fill:none; stroke:var(--gold); stroke-width:1.5; opacity:.9;
+  stroke-dasharray:195; stroke-dashoffset:195; transform-origin:50% 50%;
+  transform:rotate(-90deg)}
+.cf-tick{fill:none; stroke:var(--gold-lt); stroke-width:3.2;
+  stroke-linecap:round; stroke-linejoin:round;
+  stroke-dasharray:42; stroke-dashoffset:42}
+/* The halo is a separate element so it can scale without touching the SVG,
+   which would re-rasterise the stroked paths every frame. */
+.cf-halo{position:absolute; inset:-14px; border-radius:50%; z-index:-1;
+  background:radial-gradient(circle,rgba(255,178,90,.55),transparent 68%);
+  opacity:0; transform:scale(.6)}
+.cf-seal-box.in .cf-ring{animation:cf-draw .78s var(--ease) .1s forwards}
+.cf-seal-box.in .cf-tick{animation:cf-draw .44s var(--ease) .62s forwards}
+.cf-seal-box.in .cf-halo{animation:cf-halo 1.5s var(--ease) .5s}
+@keyframes cf-draw{to{stroke-dashoffset:0}}
+@keyframes cf-halo{
+  0%{opacity:0; transform:scale(.6)}
+  38%{opacity:1; transform:scale(1.06)}
+  100%{opacity:.34; transform:scale(1)}
+}
+
+.cf-note h3{font-family:var(--display); font-weight:400; font-size:1.62rem;
+  color:var(--cream); margin:0 0 10px; letter-spacing:.01em}
+.cf-note p{color:var(--c-70); font-size:.88rem; line-height:1.75; margin:0 auto 22px;
+  max-width:34ch}
+.cf-note .cf-again{pointer-events:auto}
+
+/* Under reduced motion nothing draws, nothing scales, nothing pulses — the
+   box and a finished tick are simply there. */
+@media (prefers-reduced-motion:reduce){
+  .cf-note{transition:none; opacity:1; transform:none}
+  .cf-seal-box::before{transition:none}
+  .cf-ring,.cf-tick{stroke-dashoffset:0}
+  .cf-seal-box.in .cf-ring,.cf-seal-box.in .cf-tick,.cf-seal-box.in .cf-halo{animation:none}
+  .cf-halo{opacity:.34; transform:scale(1)}
+}
 
 @media (max-width:860px){
   /* .62rem is 9.9px — fine on a desktop as a tracked-out label, under the
@@ -1304,7 +1376,7 @@ h3.display{font-size:clamp(1.32rem,1.7vw,1.72rem); line-height:1.1}
     transition-delay:0ms !important}
   .cf-panel{transform:none}
   .cf-field,.cf-actions{opacity:1; transform:none}
-  .cf-chip,.cf-seal{animation:none}
+  .cf-chip{animation:none}
   .cf-nudge{animation:none}
   .cf-x:hover,.cf-chip-x:hover,.cf-send:hover:not(:disabled){transform:none}
 }
@@ -2446,7 +2518,7 @@ footer.foot{position:relative; z-index:2; padding:clamp(46px,6vh,74px) var(--gut
       </div>
       <dl class="lines rv" style="--rvd:120ms">
         <div><dt>WhatsApp</dt><dd><a href="https://wa.me/962771505250" target="_blank" rel="noopener">+962 77 150 5250</a></dd></div>
-        <div><dt>Email</dt><dd><a href="mailto:advisory@lumina-amman.com">advisory@lumina-amman.com</a></dd></div>
+        <div><dt>Email</dt><dd><a href="mailto:info@lumina-jo.com">info@lumina-jo.com</a></dd></div>
         <div><dt>Office</dt><dd>Abdoun, Amman, Jordan</dd></div>
         <div><dt>Hours</dt><dd>Sun–Thu, 09:00–18:00 <span class="fine">(GMT+3)</span></dd></div>
       </dl>
@@ -2691,16 +2763,28 @@ footer.foot{position:relative; z-index:2; padding:clamp(46px,6vh,74px) var(--gut
       <p class="cf-hand" id="cf-hand"></p>
     </div>
 
-    <div class="cf-done" hidden>
-      <span class="cf-seal" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M4 12.5l5 5L20 6.5"/>
-        </svg>
-      </span>
-      <h3>On its way</h3>
-      <p id="cf-done-msg"></p>
-      <button class="cf-again" type="button">Send another</button>
-    </div>
+
+  </div>
+</div>
+
+<!-- The sent seal. A sibling of #cf, not a child: the panel closes the moment
+     the request goes, and a confirmation nested inside it would go with it.
+     role="status" + aria-live so the text is announced without stealing focus
+     the instant it lands; the button is focused separately once it settles. -->
+<div class="cf-seal-box" id="cfSeal" hidden role="status" aria-live="polite">
+  <div class="cf-note">
+    <span class="cf-mark" aria-hidden="true">
+      <i class="cf-halo"></i>
+      <svg viewBox="0 0 72 72">
+        <circle class="cf-ring" cx="36" cy="36" r="31"/>
+        <!-- length ~40.7, dasharray rounded up to 42 so the stroke is fully
+             hidden before it draws -->
+        <path class="cf-tick" d="M22 37.5 L32 47 L50 27"/>
+      </svg>
+    </span>
+    <h3 id="cfSealTitle">On its way</h3>
+    <p id="cfSealMsg"></p>
+    <button class="cf-again" type="button" id="cfSealDone">Done</button>
   </div>
 </div>
 
@@ -2715,7 +2799,7 @@ footer.foot{position:relative; z-index:2; padding:clamp(46px,6vh,74px) var(--gut
      quiz reuses, and defer preserves document order -->
 <script src="js/quiz.js?v=2026-08-07c" defer></script>
 <script src="js/nav-menu.js?v=2026-08-07b" defer></script>
-<script src="js/consult-form.js?v=2026-08-07b" defer></script>
+<script src="js/consult-form.js?v=2026-08-12a" defer></script>
 
 <!-- Organisation identity, 2026-08-12. Two different Google surfaces, two different
      sources, and it is worth knowing which is which:

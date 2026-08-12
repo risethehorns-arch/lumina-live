@@ -2,26 +2,57 @@
    straight into WhatsApp with an empty chat.
 
    WHY THE HANDOFF LOOKS THE WAY IT DOES
-   wa.me cannot carry an attachment. WhatsApp's click-to-chat API prefills
-   text and nothing else, and `script-src 'self'` plus `connect-src 'self'`
-   rule out both a CDN PDF library and an upload endpoint. So the PDF is
-   built here, in the page, and handed over one of two ways:
+   There is no server. The PDF is written here, in the page, by hand — see
+   buildPdf — because `script-src 'self'` rules out a CDN PDF library. Getting
+   it off the device then has exactly three routes, tried in this order:
 
+     email    fetch POST to Web3Forms, which relays the PDF to MAIL_TO as a
+              real attachment. Needs MAIL_KEY set and api.web3forms.com in
+              connect-src. This is the route the Send button promises.
      phones   navigator.share({files}) opens the system share sheet with the
               PDF attached; the client picks WhatsApp and it goes as a file.
+              wa.me itself cannot carry an attachment — its click-to-chat API
+              prefills text and nothing else, and no amount of URL work
+              changes that.
      desktop  most desktop browsers refuse file shares, so the PDF downloads
-              and wa.me opens with the same details as text. The panel says
-              so rather than pretending the file went on its own.
+              and wa.me opens with the same details as text.
 
-   Either way the full details also travel as message text, which matters
-   because the PDF is written with the standard PDF fonts (Latin-1) and an
-   Arabic name would not survive the encoding. The text is Unicode. */
+   Every route also sends the full details as text, which matters because the
+   PDF uses the standard PDF fonts (Latin-1) and an Arabic name would not
+   survive that encoding. The text is Unicode.
+
+   The confirmation is #cfSeal in index.html, NOT a stage in this panel: the
+   panel closes as the request leaves, so a confirmation inside it left too.
+   Its wording is chosen per route and must keep matching what actually
+   happened — "On its way" is only ever said for a send that really left. */
 (() => {
   'use strict';
 
   const WHATSAPP = '962771505250';
   const DATA_URL = 'data/lumina-demo-leads.json?v=2026-08-06';
   const MAX_REFS = 3;
+
+  /* ── where the request actually goes ──────────────────────────
+     A static site cannot send email. There is no server here and there is
+     not going to be one, so the PDF is relayed by Web3Forms: the browser
+     POSTs it, they forward it to MAIL_TO as a real attachment.
+
+     PASTE THE ACCESS KEY BELOW. Get it free at https://web3forms.com —
+     enter info@lumina-jo.com, they email a key, it goes here. It is a
+     PUBLIC key by design (it only says "deliver to the address this key
+     was issued for"), so it is safe in client-side source; it is not a
+     secret and must not be treated as one.
+
+     Left empty, nothing breaks: deliver() falls straight through to the
+     WhatsApp route this form has always used, and the confirmation says
+     what actually happened rather than claiming a send that did not occur.
+
+     Free tier carries ONE attachment up to 5MB. These PDFs are a few KB.
+     `https://api.web3forms.com` must stay in connect-src in _headers, or
+     the site's own CSP blocks the POST. */
+  const MAIL_ENDPOINT = 'https://api.web3forms.com/submit';
+  const MAIL_KEY = '';
+  const MAIL_TO = 'info@lumina-jo.com';
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   const form = document.getElementById('cf');
@@ -38,8 +69,11 @@
   const submit = document.getElementById('cf-send');
   const stage = form.querySelector('.cf-stage');
   const review = form.querySelector('.cf-review');
-  const done = form.querySelector('.cf-done');
-  const doneMsg = document.getElementById('cf-done-msg');
+
+  const seal = document.getElementById('cfSeal');
+  const sealTitle = document.getElementById('cfSealTitle');
+  const sealMsg = document.getElementById('cfSealMsg');
+  const sealDone = document.getElementById('cfSealDone');
 
   const rvName = document.getElementById('rv-name');
   const rvRefs = document.getElementById('rv-refs');
@@ -396,13 +430,15 @@
     setTimeout(finish, reduce ? 30 : 700);
   };
 
-  /* Three stages in one panel: fill it in, read it back, confirmation. */
+  /* TWO stages in one panel now: fill it in, then read it back. The third
+     used to be the confirmation, and it moved out to #cfSeal on 2026-08-12 —
+     the panel closes when the request leaves, so a confirmation living inside
+     it left with it. There is no 'done' state here any more; asking for one
+     just hides both stages. */
   const show = which => {
     stage.hidden = which !== 'form';
     review.hidden = which !== 'review';
-    done.hidden = which !== 'done';
     form.classList.toggle('cf-reviewing', which === 'review');
-    form.classList.toggle('cf-sent', which === 'done');
   };
 
   const reset = () => {
@@ -495,7 +531,48 @@
     if (go) go.focus({ preventScroll: true });
   };
 
-  /* ---- STEP TWO: hand it to WhatsApp ---- */
+  /* ---- the sent seal ----
+     Floating glass over the whole page, deliberately not a stage inside the
+     panel: the panel closes when the request leaves, and a confirmation that
+     lives inside it would leave with it. */
+  let sealPrev = null;
+  const openSeal = (title, msg) => {
+    if (!seal) return;
+    sealPrev = document.activeElement;
+    sealTitle.textContent = title;
+    sealMsg.textContent = msg;
+    seal.hidden = false;
+    /* Force a reflow before adding .in, so the transition has a real start
+       value. rAF is throttled to nothing in a backgrounded tab, which is the
+       same reason property-viewer.js reads offsetWidth rather than waiting on
+       a frame pair — a seal that never animates in also never becomes
+       visible, because it starts at opacity 0. */
+    void seal.offsetWidth;
+    seal.classList.add('in');
+    if (sealDone) sealDone.focus({ preventScroll: true });
+  };
+
+  const closeSeal = () => {
+    if (!seal || seal.hidden) return;
+    seal.classList.remove('in');
+    const finish = () => {
+      seal.hidden = true;
+      /* Re-arm the draw animations. They are `forwards` fills, so without
+         removing and re-adding .in the ring and tick would already be at
+         dashoffset 0 the next time the seal opens and would simply appear. */
+      if (sealPrev && document.contains(sealPrev)) {
+        try { sealPrev.focus({ preventScroll: true }); } catch (e) {}
+      }
+      sealPrev = null;
+    };
+    if (reduce) { finish(); return; }
+    setTimeout(finish, 520);
+  };
+
+  /* ---- STEP TWO: send it ----
+     Email first, WhatsApp as the route that has always worked. Whichever
+     runs, the client is told what actually happened — the seal never says
+     "on its way" for a send that has not left the device. */
   const dispatch = () => {
     const data = pending;
     if (!data) return;
@@ -506,14 +583,14 @@
     const file = new File([blob], fileName, { type: 'application/pdf' });
     const chat = `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(messageText(data))}`;
 
-    const showDone = msg => {
-      doneMsg.textContent = msg;
-      show('done');
-      const back = done.querySelector('.cf-again');
-      if (back) back.focus({ preventScroll: true });
+    /* Close the panel and seal it. shut() runs its own exit transition, so
+       the two overlap: the form leaves as the confirmation arrives. */
+    const sealIt = (title, msg) => {
+      shut();
+      setTimeout(() => openSeal(title, msg), reduce ? 0 : 180);
     };
 
-    const fallback = () => {
+    const savePdf = () => {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -522,12 +599,53 @@
       a.click();
       a.remove();
       setTimeout(() => URL.revokeObjectURL(url), 30000);
+    };
+
+    const viaWhatsApp = () => {
+      savePdf();
       /* This route is addressed: wa.me carries the number, so the enquiry
          lands on the Lumina line whatever the client does next. */
       window.open(chat, '_blank', 'noopener');
-      showDone('WhatsApp is open on the Lumina line with your details already written out — ' +
-               'press send there. The PDF has saved to your device if you would like to attach it too.');
+      sealIt('Nearly there',
+             'WhatsApp is open on the Lumina line with your details already written out — ' +
+             'press send there. The PDF has saved to your device to attach.');
     };
+
+    /* Web3Forms relays the PDF to MAIL_TO as a real attachment. FormData and
+       no explicit Content-Type: the browser has to set the multipart boundary
+       itself, and setting the header by hand omits it and the upload fails. */
+    const viaEmail = () => {
+      const fd = new FormData();
+      fd.append('access_key', MAIL_KEY);
+      fd.append('subject', `Consultation request — ${data.name}`);
+      fd.append('from_name', 'Lumina website');
+      fd.append('Name', data.name);
+      fd.append('Properties', data.refs.length
+        ? data.refs.map(r => (r.title ? `${r.ref} — ${r.title}` : r.ref)).join('\n')
+        : 'None given');
+      fd.append('Comments', data.comment || '—');
+      fd.append('Sent', data.stamp);
+      fd.append('attachment', file, fileName);
+
+      return fetch(MAIL_ENDPOINT, { method: 'POST', body: fd })
+        .then(r => {
+          if (!r.ok) throw new Error('HTTP ' + r.status);
+          return r.json();
+        })
+        .then(() => {
+          sealIt('On its way',
+                 `Your request has been sent to ${MAIL_TO} with the PDF attached. ` +
+                 'We answer the same working day.');
+        });
+    };
+
+    if (MAIL_KEY) {
+      /* A blocked POST, a dead network or a rejected key must never strand
+         the client on a spinner — every failure falls through to the route
+         that does not need the internet to agree with us. */
+      viaEmail().catch(() => viaWhatsApp());
+      return;
+    }
 
     /* Web Share is the only route that puts the PDF itself into WhatsApp;
        no API can hand a file to one particular chat, so the client picks
@@ -538,17 +656,18 @@
         title: 'Lumina consultation request',
         text: messageText(data),
       })
-        .then(() => showDone('Sent. If WhatsApp is still asking, choose Lumina — ' +
-                             'the PDF goes across as an attachment.'))
+        .then(() => sealIt('On its way',
+                           'If WhatsApp is still asking, choose Lumina — ' +
+                           'the PDF goes across as an attachment.'))
         .catch(err => {
           /* A cancelled share sheet is not a failure. Go back to the review
              so Send can be pressed again without retyping anything. */
           if (err && err.name === 'AbortError') { show('review'); return; }
-          fallback();
+          viaWhatsApp();
         });
       return;
     }
-    fallback();
+    viaWhatsApp();
   };
 
   /* ==========================================================
@@ -608,8 +727,16 @@
     setTimeout(reset, reduce ? 40 : 720);
   });
 
-  const again = done.querySelector('.cf-again');
-  if (again) again.addEventListener('click', () => { reset(); nameIn.focus(); });
+  /* Seal dismissal. Escape and the backdrop close it as well as the button —
+     it is a confirmation, not a decision, so every exit is the same exit. The
+     form is reset behind it so the next enquiry starts clean. */
+  if (sealDone) sealDone.addEventListener('click', () => { closeSeal(); reset(); });
+  if (seal) seal.addEventListener('click', e => {
+    if (e.target === seal) { closeSeal(); reset(); }
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && seal && !seal.hidden) { closeSeal(); reset(); }
+  });
 
   /* The panel is centred by the grid, so its offset from the button has to
      be recomputed when the viewport changes under an open dialog. */

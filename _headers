@@ -3,7 +3,11 @@
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
-  Content-Security-Policy: default-src 'self'; img-src 'self' data:; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src 'self' https://api.open-meteo.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests
+  # connect-src carries api.web3forms.com so the consultation form can POST the
+  # request PDF to info@lumina-jo.com (js/consult-form.js). Remove that origin and
+  # the send silently falls back to the WhatsApp route. form-action stays 'self':
+  # the POST is a fetch, not a form submission, so it is governed by connect-src.
+  Content-Security-Policy: default-src 'self'; img-src 'self' data:; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src 'self' https://api.open-meteo.com https://api.web3forms.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests
 
 /*.html
   Cache-Control: public, max-age=0, must-revalidate

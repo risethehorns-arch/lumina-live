@@ -12,19 +12,27 @@
   window.LuminaConfig = {
     whatsapp: '962771505250',      // Business WhatsApp number (numbers only, no spaces or '+' symbol)
     phone: '+962 77 150 5250',     // Customer-facing phone display format
-    email: 'Lumina@lumina-jo.com'  // General enquiries. The mailbox must exist at the domain host.
+    email: 'info@lumina-jo.com'  // General enquiries. The mailbox must exist at the domain host.
   };
 
   /* Addresses this file is allowed to overwrite. Everything else in a
      mailto: is left alone — the substitution exists to fill in
      placeholders, and it used to rewrite every mailto on the page to
      config.email regardless. That silently redirected real addresses:
-     the team page shows Saifnawaf@lumina-jo.com and the link went to
+     the team page shows saif-nawaf@lumina-jo.com and the link went to
      info@qutaifan.com, with nothing on screen to say so. */
+  /* Lumina@lumina-jo.com joined this list on 2026-08-12. It was the general
+     address until then and is now retired in favour of info@lumina-jo.com;
+     leaving it here means any page that still carries it repairs itself
+     instead of pointing at a mailbox nobody reads. It is safe to sweep
+     because no individual uses it — Saif and Yazan have their own addresses,
+     which is exactly why this list is an allow-list and not "rewrite every
+     mailto on the page". */
   const PLACEHOLDER_EMAILS = [
     'info@qutaifan.com',
     'lumina@qutaifan.com',
     'advisory@lumina-amman.com',
+    'Lumina@lumina-jo.com',
     'hello@example.com'
   ];
 
@@ -84,6 +92,7 @@
       { pattern: /lumina@qutaifan\.com/g, replacement: config.email },
       { pattern: /info@qutaifan\.com/g, replacement: config.email },
       { pattern: /advisory@lumina-amman\.com/g, replacement: config.email },
+      { pattern: /Lumina@lumina-jo\.com/g, replacement: config.email },
       { pattern: /9627XXXXXXXX/g, replacement: config.whatsapp }
     ];
 
