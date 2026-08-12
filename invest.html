@@ -1148,37 +1148,40 @@ footer.foot{position:relative; z-index:2; padding:clamp(46px,6vh,74px) var(--gut
 }
 @media (max-width:860px){
   .spine{display:none}
-  /* The pin now runs all the way down to phone widths — js/invest.js's
-     pinned() no longer excludes them. Everything structural is already
-     handled by the ≤1180px tier above: the stage stacks over the
-     reading panel with no overlap, built for tablet widths but it
-     holds up fine narrower too. This block is just phone-specific
-     trims on top of that, not a re-flatten.
-
-     .dim (the dimension string) and .bld-cursor (a hover-only pointer
-     readout) stay off — one needs width this page doesn't have left to
-     give it below 860px, the other needs a pointer a touch screen
-     doesn't have. .bld-envelope (the dashed setting-out volume) and
-     .build-cue stay ON, unlike the old fallback — both read fine at
-     this width and dropping them was a leftover from when this tier
-     had no scroll driving it at all. */
-  /* 38px cleared "G"/"L1"-"L5"/"B1" fine but clipped "ROOF" — .lvl-tag
-     is right:calc(100% + 14px), so it grows LEFTWARD by its own text
-     width from the slab's edge, and ROOF is the widest label in the
-     set. Sized off that word specifically, not the average one. */
-  .stack-frame{padding-left:52px}
+  /* Reverted (2026-08-12) from a pinned/scrubbed mobile version back to
+     this flat fallback — it ran laggy on a real phone even though CDP
+     touch-emulation testing during that work showed nothing wrong.
+     The pin is the first thing to go on a phone: a section four
+     viewports tall that holds the viewport is a lot of scrolling to
+     reach anything else, and the layered stage cannot survive the
+     width. It becomes an ordinary revealed diagram with the reading
+     panel beneath it, and invest.js hands every level --p:1 instead
+     of scrubbing. */
+  .build{height:auto}
+  /* position:relative, not static — the blueprint field inside is
+     absolute at inset:-20%, so it needs this element as its
+     containing block and this element's clip. Left to resolve against
+     .build it hung 70px off both edges and scrolled the page. */
+  .build-pin{position:relative; height:auto; padding:clamp(96px,15vh,130px) var(--gutter) clamp(30px,6vh,50px)}
+  .build-pin::after{display:none}
+  .stack-stage{grid-template-rows:none; height:auto; gap:30px}
+  /* order, because the intro is written AFTER the stage in the markup —
+     on the pinned layout it is an overlay and the source order does not
+     matter, but once it goes static the page would open on a wall of
+     diagram with the sentence explaining it underneath. */
+  .build-intro{order:-1; position:static; transform:none; opacity:1; filter:none; width:100%; margin-bottom:34px}
+  .build-cue{display:none}
+  .bld-cam{transform:none}
+  /* The 56px left padding exists on desktop to make room for the
+     dimension string, which is hidden here — and the section has to
+     leave room for the level tags on one side and the ground line's
+     overhang on the other, or the page scrolls sideways at 390px. */
+  .stack-frame{height:auto; padding-left:0; padding-bottom:26px}
+  .bld{margin-inline:auto; width:min(100%,258px)}
+  .bld-ground{margin-inline:-12px}
   .bld-cursor{display:none}
+  .bld-envelope{display:none}
   .dim{display:none}
-  /* .bld's width:min(100%,var(--bld-w)) is correct on desktop, where
-     --bld-w's own 300–640px cap is always well inside the available
-     width. On a phone the container itself is the tight constraint, so
-     .bld already renders right at 100% of it — and #cam's zoom then
-     scales that up to 1.22× at the low end of the scroll (see invest.js:
-     --cam-s = 1.22 - c*0.22), pushing part of the building straight
-     past the screen edge with nothing left to absorb it. 82% ≈ 1/1.22,
-     so the scaled-up render lands back at 100% of #cam's own box
-     instead of overshooting it. */
-  .bld{width:min(82%,var(--bld-w,520px))}
 }
 @media (max-width:620px){
   .prog-steps{grid-template-columns:repeat(2,minmax(0,1fr))}

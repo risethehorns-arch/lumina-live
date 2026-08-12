@@ -409,13 +409,18 @@
      helpfully re-add a resize-measuring pass; there is nothing here for
      it to measure. */
 
-  /* The pin runs at every width now — only reduced motion turns it off.
-     Below 860px css/room.css repositions the chrome (intro, read panel,
-     rail, skip) for a narrow viewport; it does not touch the pin or the
-     drawing, which scales for free (viewBox + non-scaling-stroke). Kept
-     as a function, and re-checked on resize, because reduced-motion can
-     still change mid-session via the OS setting. */
-  const pinned = () => !reduce;
+  /* The pin only exists on a wide viewport with motion allowed. Below
+     861px — invest's breakpoint, not a new one — the stylesheet drops
+     the pin entirely, and a static room must not be driven by a scroll
+     position that no longer means anything. Re-checked on resize
+     because crossing that breakpoint mid-session is a real thing.
+
+     This was pinned/scrubbed on mobile too for a while (2026-08-12) —
+     reverted back to the flat fallback because it ran laggy on a real
+     phone. The lesson stands even though the code doesn't: touch/CDP
+     emulation testing during that work never caught it, only a real
+     device did. */
+  const pinned = () => !reduce && matchMedia('(min-width: 861px)').matches;
 
   const onScrollRoom = () => {
     if (!pinned()) return;
