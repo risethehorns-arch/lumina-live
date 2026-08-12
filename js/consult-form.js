@@ -1,25 +1,33 @@
 /* Private-consultation form — the hero CTA opens this instead of jumping
    straight into WhatsApp with an empty chat.
 
-   WHY THE HANDOFF LOOKS THE WAY IT DOES
-   There is no server. The PDF is written here, in the page, by hand — see
-   buildPdf — because `script-src 'self'` rules out a CDN PDF library. Getting
-   it off the device then has exactly three routes, tried in this order:
+   WHERE THE REQUEST GOES — email, and only email
+   This button was asked (2026-08-12) to deliver to info@lumina-jo.com and to
+   show nothing else. It previously handed off through navigator.share, which
+   put the PDF into WhatsApp properly on a phone but on desktop opened the OS
+   share sheet — the whole Nearby-Share / Discord / Teams list — and let the
+   client send a consultation request anywhere at all. That route is gone from
+   this form. WhatsApp is still one tap away in the header and throughout the
+   page; it is simply not what Send does.
 
-     email    fetch POST to Web3Forms, which relays the PDF to MAIL_TO as a
-              real attachment. Needs MAIL_KEY set and api.web3forms.com in
-              connect-src. This is the route the Send button promises.
-     phones   navigator.share({files}) opens the system share sheet with the
-              PDF attached; the client picks WhatsApp and it goes as a file.
-              wa.me itself cannot carry an attachment — its click-to-chat API
-              prefills text and nothing else, and no amount of URL work
-              changes that.
-     desktop  most desktop browsers refuse file shares, so the PDF downloads
-              and wa.me opens with the same details as text.
+   There is no server, and a browser cannot speak SMTP, so there are two ways
+   out and they are tried in this order:
 
-   Every route also sends the full details as text, which matters because the
-   PDF uses the standard PDF fonts (Latin-1) and an Arabic name would not
-   survive that encoding. The text is Unicode.
+     MAIL_KEY set    fetch POST to Web3Forms, which relays the PDF to MAIL_TO
+                     as a real attachment. Nothing opens, nothing is asked of
+                     the client. This is the route Send promises.
+     no key, or the
+     POST failed     the client's own mail app, already addressed to MAIL_TO
+                     with every detail written out, and the PDF saved beside
+                     it to attach. No mail URL scheme can carry an attachment,
+                     which is why the PDF travels separately.
+
+   Either way the details also go as text, because the PDF is written with the
+   standard PDF fonts (Latin-1) and an Arabic name would not survive that
+   encoding. The text is Unicode.
+
+   The PDF itself is built here, in the page, by hand — see buildPdf — because
+   `script-src 'self'` rules out a CDN PDF library.
 
    The confirmation is #cfSeal in index.html, NOT a stage in this panel: the
    panel closes as the request leaves, so a confirmation inside it left too.
@@ -43,9 +51,14 @@
      was issued for"), so it is safe in client-side source; it is not a
      secret and must not be treated as one.
 
-     Left empty, nothing breaks: deliver() falls straight through to the
-     WhatsApp route this form has always used, and the confirmation says
-     what actually happened rather than claiming a send that did not occur.
+     Left empty, nothing breaks and nothing goes to WhatsApp: Send falls
+     through to viaMailApp(), which opens the client's own mail app already
+     addressed to MAIL_TO. The seal then says the email is OPEN rather than
+     sent — "On its way" is reserved for the POST actually succeeding, so the
+     page never claims a delivery that has not happened.
+
+     Filling this in is the whole difference between "your mail app opens" and
+     "it is already in the inbox".
 
      Free tier carries ONE attachment up to 5MB. These PDFs are a few KB.
      `https://api.web3forms.com` must stay in connect-src in _headers, or
@@ -469,15 +482,6 @@
   /* ---- STEP ONE: read it back ----
      Nothing leaves the page here. The preview is a scaled sheet of paper
      laid out like the PDF itself, so what is on screen is what arrives. */
-  const canShareFile = () => {
-    try {
-      const probe = new File([new Blob(['x'])], 'x.pdf', { type: 'application/pdf' });
-      return !!(navigator.canShare && navigator.canShare({ files: [probe] }) && navigator.share);
-    } catch (e) {
-      return false;
-    }
-  };
-
   const toReview = () => {
     const name = nameIn.value.trim();
     if (!name) { flash(nameIn); nameIn.focus(); return; }
@@ -520,11 +524,12 @@
       rvRefs.appendChild(none);
     }
 
-    /* Say which of the two routes this device will take, before they
-       commit, rather than surprising them with a share sheet. */
-    rvHand.textContent = canShareFile()
-      ? 'Send opens WhatsApp with the PDF attached — choose Lumina in the list to deliver it.'
-      : 'Send opens the Lumina chat with these details, and saves the PDF to your device to attach.';
+    /* Say what Send will do before they commit. This used to describe two
+       WhatsApp routes and could surprise a desktop client with the OS share
+       sheet; there is one destination now and it is named. */
+    rvHand.textContent = MAIL_KEY
+      ? `Send delivers this straight to ${MAIL_TO}. Nothing else opens.`
+      : `Send opens your email app addressed to ${MAIL_TO}, with these details written out and the PDF saved to attach.`;
 
     show('review');
     const go = review.querySelector('.cf-go');
@@ -581,7 +586,6 @@
     const fileName = `Lumina-consultation-${data.name.replace(/[^a-z0-9]+/gi, '-')
       .replace(/^-|-$/g, '').toLowerCase() || 'request'}.pdf`;
     const file = new File([blob], fileName, { type: 'application/pdf' });
-    const chat = `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(messageText(data))}`;
 
     /* Close the panel and seal it. shut() runs its own exit transition, so
        the two overlap: the form leaves as the confirmation arrives. */
@@ -601,14 +605,30 @@
       setTimeout(() => URL.revokeObjectURL(url), 30000);
     };
 
-    const viaWhatsApp = () => {
+    /* The route when there is no MAIL_KEY, and the safety net when the POST
+       fails. It opens the client's own mail app already addressed to MAIL_TO
+       with every detail written out, and saves the PDF beside it to attach.
+
+       Deliberately NOT navigator.share and NOT wa.me. Web Share put the PDF
+       into WhatsApp properly, but it hands the OS share sheet to the client
+       and lets them send it anywhere — on Windows that sheet is the whole
+       Nearby-Share/Discord/Teams list, which is not what a consultation
+       request should offer. This button is email only, by instruction.
+       WhatsApp is still one tap away in the header and all over the page.
+
+       mailto cannot carry an attachment either — no mail URL scheme can — so
+       the PDF downloads and the body carries the same content in Unicode,
+       which the Latin-1 PDF fonts could not hold anyway. */
+    const viaMailApp = () => {
       savePdf();
-      /* This route is addressed: wa.me carries the number, so the enquiry
-         lands on the Lumina line whatever the client does next. */
-      window.open(chat, '_blank', 'noopener');
+      const href = 'mailto:' + MAIL_TO +
+        '?subject=' + encodeURIComponent('Consultation request — ' + data.name) +
+        '&body=' + encodeURIComponent(messageText(data) +
+          '\n\n(The PDF of this request has been saved to my device — attaching it now.)');
+      location.href = href;
       sealIt('Nearly there',
-             'WhatsApp is open on the Lumina line with your details already written out — ' +
-             'press send there. The PDF has saved to your device to attach.');
+             `Your email app is open and addressed to ${MAIL_TO} with these details ` +
+             'written out — press send there. The PDF has saved to your device to attach.');
     };
 
     /* Web3Forms relays the PDF to MAIL_TO as a real attachment. FormData and
@@ -640,34 +660,14 @@
     };
 
     if (MAIL_KEY) {
-      /* A blocked POST, a dead network or a rejected key must never strand
-         the client on a spinner — every failure falls through to the route
-         that does not need the internet to agree with us. */
-      viaEmail().catch(() => viaWhatsApp());
+      /* A blocked POST, a dead network or a rejected key must never strand the
+         client on a spinner, so failure falls through to the mail-app route —
+         which needs nothing to be reachable and is still addressed to the same
+         inbox. It is never WhatsApp: this button was asked to be email only. */
+      viaEmail().catch(() => viaMailApp());
       return;
     }
-
-    /* Web Share is the only route that puts the PDF itself into WhatsApp;
-       no API can hand a file to one particular chat, so the client picks
-       Lumina from the list. Phones support this, most desktops do not. */
-    if (canShareFile()) {
-      navigator.share({
-        files: [file],
-        title: 'Lumina consultation request',
-        text: messageText(data),
-      })
-        .then(() => sealIt('On its way',
-                           'If WhatsApp is still asking, choose Lumina — ' +
-                           'the PDF goes across as an attachment.'))
-        .catch(err => {
-          /* A cancelled share sheet is not a failure. Go back to the review
-             so Send can be pressed again without retyping anything. */
-          if (err && err.name === 'AbortError') { show('review'); return; }
-          viaWhatsApp();
-        });
-      return;
-    }
-    viaWhatsApp();
+    viaMailApp();
   };
 
   /* ==========================================================
