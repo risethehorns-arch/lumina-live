@@ -6,11 +6,22 @@
 <title>Lumina — Private Real Estate Advisory, Amman</title>
 <meta name="description" content="Lumina is a private real estate advisory in Amman. Villas, penthouses and standalone residences in Abdoun, Dabouq, Khalda and Um Uthaina — represented with discretion.">
 <meta name="theme-color" content="#05070B">
+<link rel="canonical" href="https://www.lumina-jo.com/">
 
+<!-- og:image and og:url MUST be absolute. They were relative here, which is why a
+     pasted link showed a title and no picture: WhatsApp, iMessage and Slack resolve
+     these against nothing and simply drop the image. Every other page on the site
+     already had them absolute — index.html was the one that did not. -->
+<meta property="og:site_name" content="Lumina">
 <meta property="og:title" content="Lumina — Private Real Estate Advisory, Amman">
 <meta property="og:description" content="Exclusive villas and residences in Amman's most prestigious neighbourhoods.">
-<meta property="og:image" content="assets/pod-hero.jpg">
+<meta property="og:image" content="https://www.lumina-jo.com/assets/pod-hero.jpg">
+<meta property="og:url" content="https://www.lumina-jo.com/">
 <meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Lumina — Private Real Estate Advisory, Amman">
+<meta name="twitter:description" content="Exclusive villas and residences in Amman's most prestigious neighbourhoods.">
+<meta name="twitter:image" content="https://www.lumina-jo.com/assets/pod-hero.jpg">
 
 <link rel="preload" as="font" type="font/woff2" href="assets/fonts/InstrumentSerif.woff2" crossorigin>
 <link rel="preload" as="font" type="font/woff2" href="assets/fonts/InstrumentSans.woff2" crossorigin>
@@ -1938,7 +1949,20 @@ footer.foot{position:relative; z-index:2; padding:clamp(46px,6vh,74px) var(--gut
 </style>
   <!-- Same icon every other page already declares. Without it the browser
        asks for /favicon.ico on every visit and takes a 404 for it. -->
-  <link rel="icon" type="image/png" href="assets/lumina-logo.png" />
+  <!-- Favicon set, 2026-08-12. Google's search-result icon is read from these, and
+       it will only use a SQUARE source at a multiple of 48px — the old
+       assets/lumina-logo.png is the full wordmark at 669x181, so Google letterboxed
+       it into an unreadable smear. The mark here is the L lifted out of that same
+       render, so it is still the client's own artwork, not a redrawn logo.
+       48/96/192 are the sizes Google, Chrome and Android choose between;
+       favicon.ico stays because browsers and crawlers still probe /favicon.ico
+       directly and take a 404 for it otherwise. -->
+  <link rel="icon" href="favicon.ico" sizes="32x32">
+  <link rel="icon" type="image/png" sizes="48x48" href="assets/icon-48.png?v=20260812">
+  <link rel="icon" type="image/png" sizes="96x96" href="assets/icon-96.png?v=20260812">
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png?v=20260812">
+  <link rel="apple-touch-icon" href="assets/icon-180.png?v=20260812">
+  <link rel="manifest" href="site.webmanifest">
 
   <!-- last: phone-only overrides -->
   <link rel="stylesheet" href="css/mobile.css?v=2026-08-07d" />
@@ -2684,5 +2708,74 @@ footer.foot{position:relative; z-index:2; padding:clamp(46px,6vh,74px) var(--gut
 <script src="js/quiz.js?v=2026-08-07c" defer></script>
 <script src="js/nav-menu.js?v=2026-08-07b" defer></script>
 <script src="js/consult-form.js?v=2026-08-07b" defer></script>
+
+<!-- Organisation identity, 2026-08-12. Two different Google surfaces, two different
+     sources, and it is worth knowing which is which:
+
+       * the small icon beside a search RESULT is the favicon — the <link rel="icon">
+         set in <head>, nothing to do with this block;
+       * the logo in a knowledge panel / brand card comes from "logo" below.
+
+     Both now point at the same square L mark so the brand reads the same either way.
+
+     #organization and #website are the nodes listings.html and team.html already
+     reference through isPartOf and publisher. Until now nothing on the site actually
+     DEFINED them, so those references dangled — this is where they resolve.
+
+     Nothing here is invented. The WhatsApp number is the real one (see CLAUDE.md);
+     there is no street address on file so only the locality is claimed, and sameAs
+     is absent rather than guessed — a wrong social profile is a worse signal than
+     none, because sameAs is what Google uses to decide two names are one entity.
+     Add sameAs the day real profile URLs exist; it is the strongest lever here. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": ["Organization", "RealEstateAgent"],
+      "@id": "https://www.lumina-jo.com/#organization",
+      "name": "Lumina",
+      "alternateName": "Lumina Real Estate Advisory",
+      "description": "A private real estate advisory in Amman, Jordan. Villas, penthouses and standalone residences in Abdoun, Swefieh, the Circles and Um Uthaina.",
+      "url": "https://www.lumina-jo.com/",
+      "logo": {
+        "@type": "ImageObject",
+        "@id": "https://www.lumina-jo.com/#logo",
+        "url": "https://www.lumina-jo.com/assets/icon-512.png",
+        "contentUrl": "https://www.lumina-jo.com/assets/icon-512.png",
+        "width": 512,
+        "height": 512,
+        "caption": "Lumina"
+      },
+      "image": { "@id": "https://www.lumina-jo.com/#logo" },
+      "telephone": "+962771505250",
+      "areaServed": { "@type": "City", "name": "Amman" },
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Amman",
+        "addressCountry": "JO"
+      }
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://www.lumina-jo.com/#website",
+      "url": "https://www.lumina-jo.com/",
+      "name": "Lumina",
+      "publisher": { "@id": "https://www.lumina-jo.com/#organization" },
+      "inLanguage": "en"
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://www.lumina-jo.com/#webpage",
+      "url": "https://www.lumina-jo.com/",
+      "name": "Lumina — Private Real Estate Advisory, Amman",
+      "isPartOf": { "@id": "https://www.lumina-jo.com/#website" },
+      "about": { "@id": "https://www.lumina-jo.com/#organization" },
+      "primaryImageOfPage": { "@id": "https://www.lumina-jo.com/#logo" },
+      "inLanguage": "en"
+    }
+  ]
+}
+</script>
 </body>
 </html>

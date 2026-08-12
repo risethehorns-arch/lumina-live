@@ -7,18 +7,31 @@
   <meta name="description" content="Request a discrete, manual valuation for your luxury property in Amman. Lumina presents select residences to qualified buyers across Jordan and the Gulf." />
   <meta name="robots" content="index, follow" />
   <meta name="theme-color" content="#0D1B2A" />
-  <link rel="canonical" href="https://lumina.qutaifan.com/pages/valuation.html" />
+  <link rel="canonical" href="https://www.lumina-jo.com/pages/valuation.html" />
 
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://lumina.qutaifan.com/pages/valuation.html" />
+  <meta property="og:url" content="https://www.lumina-jo.com/pages/valuation.html" />
   <meta property="og:site_name" content="Lumina Real Estate" />
   <meta property="og:title" content="Private Valuation Mandate — Lumina Real Estate" />
   <meta property="og:description" content="Confidential property valuation and advisory in Amman's elite areas. Private assessment of premium villas, apartments, and penthouses." />
   <meta property="og:locale" content="en_JO" />
 
   <!-- Favicon -->
-  <link rel="icon" type="image/png" href="../assets/lumina-logo.png" />
+  <!-- Favicon set, 2026-08-12. Google's search-result icon is read from these, and
+       it will only use a SQUARE source at a multiple of 48px — the old
+       assets/lumina-logo.png is the full wordmark at 669x181, so Google letterboxed
+       it into an unreadable smear. The mark here is the L lifted out of that same
+       render, so it is still the client's own artwork, not a redrawn logo.
+       48/96/192 are the sizes Google, Chrome and Android choose between;
+       favicon.ico stays because browsers and crawlers still probe /favicon.ico
+       directly and take a 404 for it otherwise. -->
+  <link rel="icon" href="../favicon.ico" sizes="32x32">
+  <link rel="icon" type="image/png" sizes="48x48" href="../assets/icon-48.png?v=20260812">
+  <link rel="icon" type="image/png" sizes="96x96" href="../assets/icon-96.png?v=20260812">
+  <link rel="icon" type="image/png" sizes="192x192" href="../assets/icon-192.png?v=20260812">
+  <link rel="apple-touch-icon" href="../assets/icon-180.png?v=20260812">
+  <link rel="manifest" href="../site.webmanifest">
 
   <link rel="stylesheet" href="../css/style.css?v=2026-08-07b" />
   <style>

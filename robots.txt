@@ -3,4 +3,4 @@ Allow: /
 Disallow: /leads/
 Disallow: /scripts/
 
-Sitemap: https://lumina.qutaifan.com/sitemap.xml
+Sitemap: https://www.lumina-jo.com/sitemap.xml
