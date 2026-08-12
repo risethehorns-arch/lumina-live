@@ -1132,6 +1132,20 @@ Sell With Us / Enquire. There were four different navs calling the same thing th
 whatever JS their browser cached — this is not theoretical, it is how the landing page kept
 running an old picker after the file had changed. Bump the version in the HTML when
 shipping JS or CSS changes.
+
+**Bump it on EVERY change, not once per working session.** The version is a cache key, not
+a datestamp. On 2026-08-12 `consult-form.js` was bumped to `?v=2026-08-12a` on the first of
+three edits and left alone for the other two; Cloudflare, which fronts the live domain and
+serves `/js/*` with `max-age=86400`, had already cached the first version against that key
+and went on serving it. The deploy was green, the file on the origin was correct, and the
+live site ran the old script for hours — the seal still offered WhatsApp after the WhatsApp
+route had been deleted. `curl` with a *fresh* query string returns the new file and hides
+this completely, so it is not a check worth trusting.
+
+The check that actually catches it: fetch the versioned URL the HTML requests and a
+throwaway `?cb=<random>` URL, and compare. Same bytes means the CDN is current; different
+bytes means the version needs bumping. Do not compare against the local working copy —
+git normalises to LF while the checkout carries CRLF, so every file looks stale.
 - All six listings, their prices and specs
 - Neighbourhood JOD/m² figures (1,450 / 1,250 / 1,100 / 1,300)
 - Hero stats: 14 mandates, 61% off-market, 9 years
