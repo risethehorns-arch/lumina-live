@@ -482,30 +482,81 @@
   .st-brand{display:none}
 }
 @media (max-width:860px){
-  .st{height:auto}
-  /* position:relative, not static — .bp-grid inside is absolute at
-     inset:-20% and left to resolve against .st it hangs off both edges
-     and scrolls the page sideways. This codebase has shipped that bug
-     twice already. */
-  .st-pin{
-    /* no camera, no flanking: the objects stack in document order and
-       .st-cam's padding would just inset the whole column */
-    --flank-l:0px; --flank-r:0px; --sheet-h:0px;
-    position:relative; height:auto; overflow:clip;
-    padding:clamp(96px,15vh,130px) var(--gutter) clamp(30px,6vh,50px);
-    grid-template-rows:none; gap:26px;
+  /* The pin now runs here too — js/studio.js's pinned() no longer
+     excludes phone widths. This is a real restack, not a fallback:
+     there's no width left for flanking a camera with a reading panel
+     AND a phone, the way desktop does either side of it, so instead
+     the objects take their own vertical zones — intro, then the
+     browser-frame mock, then a read+phone row, then the act rail —
+     none overlapping another's box even though a couple of them are
+     only ever briefly visible at the same time as their neighbour
+     (intro fades .03–.19, the frame is still drawing at .05–.15).
+     .st-win is a normal centred grid item on desktop; here it goes
+     absolute like the rest so it can take a fixed zone instead of
+     .st-cam's one implicit centred cell.
+
+     --flank-l/--flank-r go to 0 because .st-brand and .st-phone read
+     them directly (see the comment on .st-pin above) — .st-brand is
+     already display:none by the ≤1000px tier, so only .st-phone's math
+     needs the zero. --sheet-h goes to 0 because .st-sheet (the title
+     block) stays hidden, same call room.html and invest.html both make
+     for their own supplementary meta tables. */
+  .st-pin{--flank-l:0px; --flank-r:0px; --sheet-h:0px}
+  .st-cam{padding:0}
+
+  /* .st-intro and .st-win are each positioned relative to a DIFFERENT
+     box than it looks like at a glance. .st-intro sits in .st-stage,
+     whose own top is ALREADY past .st-pin's --pin-top padding — so its
+     top: here is on top of that, not instead of it, and wants to be
+     small. .st-win sits in .st-cam, which is inset:0 on .st-stage AND
+     carries the camera's scale/translate — that transform's origin is
+     the CENTRE OF THE WHOLE STAGE, not of the frame, so anything not
+     near that centre visibly drifts as --cam-z/--cam-y move (this cost
+     a real collision against .st-read below before the numbers here
+     were corrected for it — first attempt read viewport-top, not
+     stage-local-top, and landed the frame ~100px lower than intended). */
+  .st-intro{
+    left:var(--gutter); right:var(--gutter); top:clamp(0px,1vh,10px); width:auto;
+    transform:translate3d(0,var(--intro-y,0px),0);
   }
-  .st-pin::after{display:none}
-  .st-stage{height:auto; display:grid; gap:24px}
-  .st-cam{position:static; transform:none; display:grid; gap:22px; place-items:stretch}
-  .st-win{width:100%; margin-inline:auto}
-  .st-intro{position:static; transform:none; opacity:1; filter:none; width:100%; order:-1}
-  .st-phone{position:static; width:120px; margin-inline:auto}
-  .st-rail,.st-skip,.st-sheet{display:none}
+  .st-intro h1{font-size:clamp(1.5rem,6.4vw,1.9rem); margin:12px 0 8px}
+  .st-intro .lede{max-width:none; font-size:.84rem}
+  .build-cue{margin-top:14px}
+
+  .st-win{
+    position:absolute; left:var(--gutter); right:var(--gutter);
+    top:clamp(120px,16vh,155px); width:auto; margin-inline:0;
+  }
+
+  /* read panel and phone share the same bottom row instead of flanking
+     the frame's full height — the phone keeps its own aspect-ratio, so
+     its width is what sets the row's split, and .st-read takes the
+     rest. Both are siblings of .st-cam, not children of it, so neither
+     rides the camera transform — their bottom offset is stable.
+
+     The gap between .st-win's bottom and this row is NOT just a vh
+     value — .st-read's own height is width-driven (narrower viewport →
+     less width for its fixed-size text → more wrapped lines → a taller
+     box eating into the gap from below), so a clearance that measured
+     fine at 390px came up 25px short of enough at 360. Padding and font
+     both come down a step here too, rather than leaning on offset alone
+     to absorb it. */
+  .st-phone{
+    right:var(--gutter); bottom:clamp(66px,10.6vh,84px); width:70px;
+  }
   .st-read{
-    position:static; width:100%; opacity:1; transform:none; pointer-events:auto;
-    background:linear-gradient(155deg,rgba(29,38,50,.4),rgba(11,16,24,.5));
+    left:var(--gutter); right:calc(70px + var(--gutter) + 12px); z-index:9;
+    bottom:clamp(66px,10.6vh,84px); width:auto; padding:clamp(13px,1.6vw,18px);
   }
+  .st-read h2{font-size:clamp(.96rem,4vw,1.1rem); margin-bottom:6px}
+  .st-read p{font-size:.76rem; line-height:1.4; min-height:0}
+
+  .st-rail{
+    left:var(--gutter); right:var(--gutter); bottom:clamp(12px,2.6vh,20px);
+    justify-content:space-between; height:auto;
+  }
+
+  .st-skip{padding:7px 12px; font-size:.66rem}
 }
 
 @media (prefers-reduced-motion:reduce){
@@ -516,10 +567,21 @@
   .st-pin::after{display:none}
   .st-stage{height:auto; display:grid; gap:24px}
   .st-cam{position:static; transform:none; display:grid; gap:22px; place-items:stretch}
-  .st-win{width:100%}
+  /* .st-win and .st-read now carry position:absolute from the ≤860px
+     tier above (added so the mobile pin could give them their own
+     fixed zones) — this block predates that and never touched either
+     property, so at a narrow width the two rules used to combine into
+     an absolute .st-win/.st-read sitting on top of a static, in-flow
+     .st-cam/.st-phone/.st-brand: three overlapping objects instead of
+     one stacked column. Both need position reset back to flow here,
+     same as every other object in this list already gets. */
+  .st-win{position:static; width:100%}
   .st-intro{position:static; transform:none; opacity:1; filter:none; width:100%; order:-1}
   .st-phone{position:static; width:120px; margin-inline:auto}
   .st-brand{position:static; transform:none; width:100%}
   .st-rail,.st-skip,.st-sheet{display:none}
-  .st-read{position:static; width:100%; opacity:1; transform:none; pointer-events:auto}
+  .st-read{
+    position:static; width:100%; opacity:1; transform:none; pointer-events:auto;
+    right:auto; bottom:auto;
+  }
 }

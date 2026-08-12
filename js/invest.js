@@ -404,12 +404,13 @@
     bld.style.setProperty('--bld-w', Math.round(clamp(430 * k, 300, 640)) + 'px');
   };
 
-  /* The pin only exists on a wide viewport with motion allowed —
-     invest.html drops it below 860px and under reduced motion, and a
-     static stack must not be driven by a scroll position that no
-     longer means anything. Re-checked on resize because crossing that
-     breakpoint mid-session is a real thing people do. */
-  const pinned = () => !reduce && matchMedia('(min-width: 861px)').matches;
+  /* The pin runs at every width now — only reduced motion turns it off.
+     invest.html's ≤1180px CSS tier already stacks the reading panel
+     under the building instead of beside it (built for tablet widths,
+     turns out to hold up fine down to a phone too); ≤860px only adds a
+     few phone-specific trims on top of it. Re-checked on resize because
+     reduced-motion can still change mid-session via the OS setting. */
+  const pinned = () => !reduce;
 
   const onScrollStack = () => {
     if (!pinned()) return;

@@ -325,12 +325,13 @@
     show(entries.length - 1);
   };
 
-  /* The pin only exists on a wide viewport with motion allowed. Below
-     861px — invest's breakpoint, not a new one — the stylesheet drops
-     the pin entirely, and a static mock must not be driven by a scroll
-     position that no longer means anything. Re-checked on resize
-     because crossing that breakpoint mid-session is a real thing. */
-  const pinned = () => !reduce && matchMedia('(min-width: 861px)').matches;
+  /* The pin runs at every width now — only reduced motion turns it off.
+     Below 860px css/studio.css restacks the brand/frame/phone/read/rail
+     into their own vertical zones instead of flanking the camera, since
+     there's no width left for that; it does not touch the pin itself.
+     Re-checked on resize because reduced-motion can still change
+     mid-session via the OS setting. */
+  const pinned = () => !reduce;
 
   const onScrollStudio = () => {
     if (!pinned()) return;
