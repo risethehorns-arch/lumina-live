@@ -367,8 +367,17 @@
     const btn = document.getElementById('pdShare');
     if (!btn) return;
 
-    const url = location.origin + location.pathname +
-      '?id=' + encodeURIComponent(t(listing.id));
+    /* Shares p/<id>.html?to=details rather than this page's own address, so the
+       preview carries this property's cover photograph instead of whatever
+       static og:image happens to sit in property-details.html. `?to=details`
+       is what keeps the landing behaviour: the card reads it and sends the
+       reader back here, while the gallery's own share button omits it and
+       sends them to the gallery. Same one card file, both destinations
+       preserved. See js/share-card.js. */
+    const url = new URL(
+      'p/' + encodeURIComponent(t(listing.id)) + '.html?to=details',
+      location.href
+    ).href;
     const title = t(listing.title);
     const where = t(listing.location_area || listing.location);
 
