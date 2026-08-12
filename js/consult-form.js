@@ -64,7 +64,7 @@
      `https://api.web3forms.com` must stay in connect-src in _headers, or
      the site's own CSP blocks the POST. */
   const MAIL_ENDPOINT = 'https://api.web3forms.com/submit';
-  const MAIL_KEY = '';
+  const MAIL_KEY = '54fac48f-824a-4728-bca5-a61b73bfa911';
   const MAIL_TO = 'info@lumina-jo.com';
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
