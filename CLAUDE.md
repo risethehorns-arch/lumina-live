@@ -171,6 +171,23 @@ Several bugs were already fixed here: `.hood p` was overriding `.hood .stat`, an
 was overriding `.form .fine`. When adding a rule scoped like `.section element`, check it
 does not outrank a `.section .class` rule that comes later. Prefer class selectors.
 
+**The header WhatsApp button is the worst case of this and is worth reading before you
+touch the bar.** `.nav a{padding:6px 0}` is 0-1-1. `.chip{padding:9px 17px}` and
+`.chip-icon{padding:14px}` are both 0-1-0, so *neither ever applied* — every chip in the
+elevated cluster rendered with **zero horizontal padding**, and the icon variant came out a
+23×35 lozenge rather than the circle it was written to be. Source order cannot save you
+here; only specificity can. Fixed 2026-08-12 by scoping to `.nav a.chip-icon` (and
+`.bar .nav a.chip-icon` in `css/nav.css`, which already scopes everything that way — which
+is exactly why the old cluster was never affected).
+
+**The button is now identical on all 19 pages: icon only, no label, 47px circle at desktop
+and 45px on phones, amber halo, `aria-label="WhatsApp"`.** The rule block is duplicated in
+`index.html`, `invest.html`, `css/elevated.css` and `css/nav.css` — the same trade the
+tokens make — plus a phone override in `css/mobile.css` that must stay in step, because
+`.bar .nav a.chip{padding:0 15px}` there would otherwise stretch the circle back into a
+pill. Change one, change all five. `js/nav-menu.js` filters the sheet on the `.chip` class,
+so the label can go without touching the phone menu, but the class cannot.
+
 **3. Parallax band bounds.**
 `.band-media img` is `scale(1.18)`, giving 9% overflow top and bottom. The scroll handler
 translates it ±7%. If you increase the translate, increase the scale first or an edge

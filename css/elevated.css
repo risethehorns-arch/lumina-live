@@ -258,6 +258,45 @@ h3.display{font-size:clamp(1.32rem,1.7vw,1.72rem); line-height:1.1}
 .chip:active{transform:translateY(0) scale(.985); transition-duration:.12s}
 .chip svg{width:15px; height:15px; flex:none}
 
+/* ── the header's icon-only WhatsApp chip ──────────────────────
+   Same pill, same nav slot, no label — so the padding goes symmetric and it
+   reads as a circle instead of a text-shaped pill with nothing to fill it.
+   Sized up and lit from behind so it is legible as the header's one active
+   call to action rather than blending into the plain links beside it.
+   isolation:isolate scopes the glow's negative z-index here, so the halo
+   bleeds past the circle's edge instead of vanishing behind the bar.
+
+   MUST be `.nav a.chip-icon` (0-2-1). A bare `.chip-icon` is 0-1-0 and loses
+   every shared property to `.nav a{padding:6px 0}` above it — which is exactly
+   how this shipped rendering 23x35 with no horizontal padding at all.
+
+   Duplicated verbatim in index.html, invest.html, css/elevated.css and
+   css/nav.css — the same trade the tokens make. Change one, change all four.
+   The phone override lives in css/mobile.css and has to stay in step. */
+.nav a.chip-icon{
+  padding:12px; position:relative; isolation:isolate;
+  border-color:rgba(255,178,90,.55);
+  background:rgba(255,178,90,.1);
+  box-shadow:0 0 26px -2px rgba(255,178,90,.6), inset 0 1px 0 rgba(255,255,255,.1);
+}
+.nav a.chip-icon svg{width:21px; height:21px}
+.nav a.chip-icon::before{
+  content:""; position:absolute; inset:-10px; z-index:-1; border-radius:50%;
+  background:radial-gradient(circle, rgba(255,178,90,.5), transparent 72%);
+  animation:chipGlow 2.8s ease-in-out infinite;
+}
+@keyframes chipGlow{
+  0%,100%{opacity:.55; transform:scale(.9)}
+  50%{opacity:1; transform:scale(1.1)}
+}
+@media (hover:hover) and (pointer:fine){
+  .nav a.chip-icon:hover{background:rgba(255,178,90,.18)}
+}
+@media (prefers-reduced-motion:reduce){
+  .nav a.chip-icon::before{animation:none; opacity:.8}
+}
+
+
 .spine{position:fixed; right:clamp(18px,2.2vw,40px); top:50%; transform:translateY(-50%);
   z-index:65; display:flex; flex-direction:column; align-items:center}
 .spine .rail{position:absolute; top:6px; bottom:6px; width:1px; background:var(--hair)}

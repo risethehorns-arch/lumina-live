@@ -342,14 +342,22 @@ h3.display{font-size:clamp(1.32rem,1.7vw,1.72rem); line-height:1.1}
    blending into the plain text links beside it. isolation:isolate scopes
    the glow's negative z-index to this element, so the halo bleeds out
    past the circle's edge instead of vanishing behind the header bar. */
-.chip-icon{
-  padding:14px; position:relative; isolation:isolate;
+/* MUST be selected as `.nav a.chip-icon`, and this is not pedantry — as a bare
+   `.chip-icon` (0-1-0) every one of these declarations that `.nav a` also sets
+   silently lost to `.nav a{padding:6px 0}` (0-1-1) forty lines up. The button
+   rendered 23x35 with NO horizontal padding at all: a lozenge drawn tight
+   around the glyph, which is the "circle looks too tight" this variant was
+   written to fix in the first place. Same trap as `.pd-cta button.pd-share`.
+   Duplicated verbatim in css/elevated.css, css/nav.css and invest.html —
+   change one, change all four. */
+.nav a.chip-icon{
+  padding:12px; position:relative; isolation:isolate;
   border-color:rgba(255,178,90,.55);
   background:rgba(255,178,90,.1);
   box-shadow:0 0 26px -2px rgba(255,178,90,.6), inset 0 1px 0 rgba(255,255,255,.1);
 }
-.chip-icon svg{width:21px; height:21px}
-.chip-icon::before{
+.nav a.chip-icon svg{width:21px; height:21px}
+.nav a.chip-icon::before{
   content:""; position:absolute; inset:-10px; z-index:-1; border-radius:50%;
   background:radial-gradient(circle, rgba(255,178,90,.5), transparent 72%);
   animation:chipGlow 2.8s ease-in-out infinite;
@@ -359,10 +367,10 @@ h3.display{font-size:clamp(1.32rem,1.7vw,1.72rem); line-height:1.1}
   50%{opacity:1; transform:scale(1.1)}
 }
 @media (hover:hover) and (pointer:fine){
-  .chip-icon:hover{background:rgba(255,178,90,.18)}
+  .nav a.chip-icon:hover{background:rgba(255,178,90,.18)}
 }
 @media (prefers-reduced-motion:reduce){
-  .chip-icon::before{animation:none; opacity:.8}
+  .nav a.chip-icon::before{animation:none; opacity:.8}
 }
 
 /* ═══ the showroom float ═══════════════════════════════════
@@ -1965,7 +1973,7 @@ footer.foot{position:relative; z-index:2; padding:clamp(46px,6vh,74px) var(--gut
   <link rel="manifest" href="site.webmanifest">
 
   <!-- last: phone-only overrides -->
-  <link rel="stylesheet" href="css/mobile.css?v=2026-08-07d" />
+  <link rel="stylesheet" href="css/mobile.css?v=2026-08-12a" />
 </head>
 <body>
 

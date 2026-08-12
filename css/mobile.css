@@ -57,6 +57,16 @@
     padding: 0 15px;
   }
 
+  /* The icon chip is a circle and must not take the labelled chip's
+     horizontal padding — `0 15px` above would stretch it back into a pill,
+     which is the one thing dropping the word was meant to stop. 11px round
+     the 21px glyph gives 45px, so the 44px touch target is still met without
+     min-height forcing a non-square box. */
+  .bar .nav a.chip-icon {
+    min-height: 0;
+    padding: 11px;
+  }
+
   /* ---- MENU BUTTON ----
      Injected by js/nav-menu.js so the markup stays in one place rather
      than being pasted into twelve files. */
