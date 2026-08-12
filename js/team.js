@@ -1,55 +1,88 @@
 // LUMINA — team.js
 //
-// Almost nothing, on purpose. The roster is built from the same
-// .prop-float shell as every property card, so reveal, levitation, tilt
-// and the pointer-tracked specular highlight all come from
-// js/property-card.js — the same code the listings grid and the landing
-// page run. This file only starts it, and handles the deep link a
-// scanned QR arrives on.
+// Two jobs: reveal the page on scroll, and land a scanned business card
+// somewhere sensible.
+//
+// This file used to call Lumina.activateCards from property-card.js,
+// because the roster was built from the same .prop-float shell as a
+// property card. The named cards were removed on 2026-08-13, so tilt,
+// levitation, cursor parallax and the lightbox have nothing to act on —
+// and pulling property-card.js plus property-viewer.js for one
+// IntersectionObserver was 31KB to do about twenty lines of work. The
+// observer lives here now, and the page loads neither.
+//
+// It is the same observer property-card.js installs, deliberately: same
+// rootMargin, same threshold, same reduced-motion behaviour, same
+// safety net. If the two ever need to differ, that is a bug.
 
 (function () {
   'use strict';
 
-  const start = () => {
-    const L = window.Lumina;
-    if (!L || typeof L.activateCards !== 'function') {
-      console.error('Lumina: property-card.js did not load — the roster will not animate');
-      /* Cards start at opacity 0 under .rv. If the shared code is
-         missing, show them rather than leaving a blank page. */
-      document.querySelectorAll('.prop-float.rv').forEach(el => el.classList.add('in'));
+  const REVEAL = '.rv:not(.in)';
+
+  const reveal = () => {
+    const pending = [...document.querySelectorAll(REVEAL)];
+    if (!pending.length) return;
+
+    /* Reduced motion: no staged arrival at all. .tm-rv and .tm-line both
+       collapse to their finished state in the stylesheet, so adding .in
+       here simply agrees with it. */
+    const reduce = window.matchMedia &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (reduce || !('IntersectionObserver' in window)) {
+      pending.forEach(el => el.classList.add('in'));
       return;
     }
-    L.activateCards(document);
-    focusDeepLink();
+
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(en => {
+        if (!en.isIntersecting) return;
+        en.target.classList.add('in');
+        io.unobserve(en.target);
+      });
+    }, { rootMargin: '0px 0px -12% 0px', threshold: .12 });
+
+    pending.forEach(el => io.observe(el));
+
+    /* Safety net, carried over from property-card.js. Everything on this
+       page starts at opacity 0, so an observer that never fires leaves a
+       blank page rather than a slightly flat one. A partial reveal means
+       the observer works and the rest are simply below the fold, so that
+       case is left alone. */
+    setTimeout(() => {
+      if (document.querySelector('.rv.in')) return;
+      pending.forEach(el => { el.classList.add('in'); io.unobserve(el); });
+    }, 1500);
   };
 
-  /* Every business card's QR encodes team.html#<slug>. Arriving that way
-     should land on that person, and say so — the reveal animation means
-     the browser's own scroll-to-anchor fires against an element that is
-     still transparent and 26px out of place. */
-  const focusDeepLink = () => {
-    const id = (window.location.hash || '').replace('#', '');
-    if (!id) return;
-    const target = document.getElementById(id);
-    if (!target) return;
+  /* Business cards in circulation carry a QR encoding team.html#<slug>,
+     one slug per person. Those anchors went with the named cards, so the
+     browser has nothing to scroll to and a scanned card lands at the top
+     of the page as if the QR were broken.
 
-    target.classList.add('in', 'tm-arrived');
+     Anything unrecognised is sent to the desk instead — the section that
+     answers the question a scanned card is asking. The slugs themselves
+     are not listed here on purpose: they are people's names, and this
+     file is served. */
+  const rescueDeepLink = () => {
+    const hash = (window.location.hash || '').replace('#', '');
+    if (!hash || document.getElementById(hash)) return;
+
+    const desk = document.getElementById('desk');
+    if (!desk) return;
 
     const reduce = window.matchMedia &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    /* Wait for the reveal to settle before scrolling, or the card moves
-       out from under the scroll position. */
+    /* Let the reveal settle first, or the section moves out from under
+       the scroll position while it is still 16px out of place. */
     setTimeout(() => {
-      target.scrollIntoView({
-        behavior: reduce ? 'auto' : 'smooth',
-        block: 'center'
-      });
+      desk.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
     }, reduce ? 0 : 260);
-
-    /* The ring is a hint, not a state — drop it once it has been seen. */
-    setTimeout(() => target.classList.remove('tm-arrived'), 4200);
   };
+
+  const start = () => { reveal(); rescueDeepLink(); };
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', start);

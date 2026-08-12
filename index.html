@@ -1777,119 +1777,6 @@ h3.display{font-size:clamp(1.32rem,1.7vw,1.72rem); line-height:1.1}
 .quote footer{margin-top:14px; font-family:var(--sans); font-size:.78rem; letter-spacing:.13em;
   text-transform:uppercase; color:var(--gold); text-shadow:0 0 14px rgba(255,178,90,.3)}
 
-/* ── the route to team.html, from the body of the page ──
-   The monogram discs are the same device team.html uses on each card,
-   shrunk and overlapped, so arriving there is recognisable rather than
-   a surprise. All seven of them: "Seven people, one desk" set against
-   four discs and a "+3" was a caption arguing with its own picture.
-   Decorative — aria-hidden on the container.
-
-   Two elements, not one, and for the usual reason (note 1): .team-cta
-   owns the reveal transform, .team-card owns the tilt the pointer
-   writes inline. On one element the first pointer crossing cancels a
-   reveal still in flight and the card snaps. */
-.team-cta{margin-top:34px}
-.team-card{
-  position:relative; isolation:isolate; overflow:hidden;
-  /* Discs and copy sit across the top; the pill needs ~700px to join
-     them and the advisory column is ~590px, so it wraps. row-gap and
-     the auto margin below make that wrap look chosen rather than
-     accidental — pill flush to the right edge, on its own line. */
-  display:flex; align-items:center; flex-wrap:wrap;
-  column-gap:clamp(14px,1.6vw,24px); row-gap:18px;
-  padding:22px clamp(18px,2vw,26px);
-  border:1px solid var(--hair); border-radius:var(--r-lg);
-  background:
-    radial-gradient(130% 150% at 6% 0%,rgba(255,178,90,.09),transparent 54%),
-    linear-gradient(150deg,rgba(29,38,50,.62),rgba(13,18,25,.62));
-  color:inherit; text-decoration:none;
-  transition:border-color .5s var(--ease), box-shadow .5s var(--ease);
-}
-/* the lit top edge every raised surface on this page has */
-.team-card::before{
-  content:""; position:absolute; inset:0 0 auto; height:1px; z-index:3; pointer-events:none;
-  background:linear-gradient(90deg,transparent,rgba(255,210,150,.5) 20%,rgba(255,210,150,.14) 64%,transparent);
-  opacity:.5; transition:opacity .5s var(--ease);
-}
-.team-card:hover{border-color:rgba(255,178,90,.34); box-shadow:0 24px 62px -28px rgba(255,178,90,.55)}
-.team-card:hover::before{opacity:1}
-.team-card:focus-visible{outline:2px solid var(--gold); outline-offset:4px}
-/* Pointer sheen. Same device as the property cards and driven by the
-   same --sx/--sy the tilt handler already writes, so this adds no
-   listener of its own — .tilt on the card is the whole wiring. */
-.team-spec{
-  position:absolute; inset:0; z-index:1; opacity:0; pointer-events:none;
-  background:radial-gradient(440px circle at var(--sx,50%) var(--sy,50%),
-    rgba(255,220,170,.17),rgba(127,217,232,.05) 44%,transparent 66%);
-  transition:opacity .5s var(--ease);
-}
-.team-card:hover .team-spec{opacity:1}
-.team-card>*:not(.team-spec){position:relative; z-index:2}
-
-.team-faces{display:flex; flex:none; padding-right:22px}
-.team-faces span{
-  width:42px; height:42px; margin-right:-13px; border-radius:50%;
-  display:grid; place-items:center; flex:none;
-  font-family:var(--display); font-size:.84rem; letter-spacing:.02em;
-  color:var(--gold-lt);
-  border:1px solid rgba(255,178,90,.28);
-  /* the light falls a little differently on each disc, so seven of them
-     read as seven people rather than one shape stamped seven times */
-  background:linear-gradient(calc(152deg + var(--i,0) * 13deg),#1F2937,#0C1118);
-  box-shadow:0 10px 22px -12px rgba(0,0,0,.95), inset 0 1px 0 rgba(255,214,160,.13);
-  transition:transform .55s var(--ease), border-color .55s var(--ease), box-shadow .55s var(--ease);
-  transition-delay:calc(var(--i,0) * 26ms);
-}
-/* the stack opens like a hand of cards — each disc a little further out
-   and a beat later than the one before it */
-.team-card:hover .team-faces span{
-  transform:translateX(calc(var(--i,0) * 3px)) translateY(-4px);
-  border-color:rgba(255,190,110,.5);
-  box-shadow:0 14px 26px -12px rgba(0,0,0,.95),
-             0 0 20px -6px rgba(255,178,90,.4),
-             inset 0 1px 0 rgba(255,214,160,.2);
-}
-
-.team-cta-copy{display:flex; flex-direction:column; gap:5px; min-width:0; flex:1 1 210px}
-.team-cta-copy b{font-family:var(--display); font-weight:400; font-size:1.16rem; color:var(--cream)}
-.team-cta-copy span{font-size:.86rem; color:var(--c-52); line-height:1.6}
-.team-cta-tags{
-  display:block; margin-top:7px; font-style:normal;
-  font-size:.65rem; letter-spacing:.19em; text-transform:uppercase;
-  color:var(--gold); opacity:.72; transition:opacity .5s var(--ease);
-}
-.team-card:hover .team-cta-tags{opacity:1}
-
-.team-cta-go{
-  flex:none; margin-left:auto;
-  display:inline-flex; align-items:center; gap:12px; white-space:nowrap;
-  padding:10px 11px 10px 22px; border-radius:999px;
-  border:1px solid rgba(244,239,230,.2);
-  font-size:.84rem; letter-spacing:.02em; color:var(--cream);
-  transition:border-color .45s var(--ease), background-color .45s var(--ease), box-shadow .45s var(--ease);
-}
-.team-go-arrow{
-  width:30px; height:30px; border-radius:50%; display:grid; place-items:center; flex:none;
-  border:1px solid rgba(244,239,230,.18);
-  transition:transform .45s var(--ease), border-color .45s var(--ease), background-color .45s var(--ease);
-}
-.team-go-arrow svg{width:13px; height:13px}
-.team-card:hover .team-cta-go{
-  border-color:var(--gold); background:rgba(255,178,90,.1);
-  box-shadow:0 0 30px -10px rgba(255,178,90,.5);
-}
-.team-card:hover .team-go-arrow{
-  transform:translateX(3px); border-color:var(--gold); background:rgba(255,178,90,.16);
-}
-@media (max-width:860px){
-  .team-card{padding:20px 18px}
-  .team-cta-go{width:100%; justify-content:space-between; padding-left:20px}
-}
-@media (prefers-reduced-motion:reduce){
-  .team-card:hover .team-faces span{transform:none}
-  .team-faces span{transition-delay:0ms}
-}
-
 /* ═══ contact ═════════════════════════════════════════════ */
 .contact{padding-bottom:clamp(70px,9vh,120px)}
 .contact-shell{display:grid; grid-template-columns:1fr minmax(0,480px); gap:clamp(30px,4vw,66px); align-items:start}
@@ -2089,14 +1976,17 @@ footer.foot{position:relative; z-index:2; padding:clamp(46px,6vh,74px) var(--gut
     <a href="listings.html" class="keep">Properties</a>
     <a href="services.html">Services</a>
     <a href="areas.html">Areas</a>
-    <!-- No Neighbourhoods and no Team link here. On this page the bar
-         is a set of in-page anchors (Properties and Services aside);
-         #hoods is reached by scrolling past it, and the team card in
-         #advisory is the route to team.html — a richer one than a word
-         in a bar. The footer keeps a text link to both, and
-         js/nav-menu.js builds the phone sheet from these links, so the
-         sheet drops them too. Every other page still carries its own
-         Areas and Team links in its own bar. -->
+    <!-- Team is a word in the bar again, 2026-08-13. It used to be left
+         out because the team card in #advisory was the route to
+         team.html, and a card is a richer route than a link. That card
+         has been removed, and without a replacement here the footer
+         would have been the only way to reach the page from the landing
+         page at all.
+         Neighbourhoods is still absent on purpose: #hoods is an in-page
+         section reached by scrolling past it, and the footer links it.
+         js/nav-menu.js builds the phone sheet from these links, so Team
+         returns to the sheet with it. -->
+    <a href="team.html">Team</a>
     <a href="#advisory">About</a>
     <a href="#contact">Contact</a>
     <a href="https://wa.me/962771505250" class="chip chip-icon keep" target="_blank" rel="noopener" aria-label="WhatsApp">
@@ -2478,31 +2368,6 @@ footer.foot{position:relative; z-index:2; padding:clamp(46px,6vh,74px) var(--gut
         <footer>Lumina · founding principle</footer>
       </blockquote>
 
-      <!-- The route to team.html from the body of the page — and since
-           the bar no longer carries a Team link on this page, the route.
-           The monograms are the page's own artwork, so the card carries
-           a stack of them rather than an icon. The whole card is the
-           link: one tab stop, and the click target is the object you
-           are already looking at rather than a pill at the end of it. -->
-      <div class="team-cta rv rv-lg" style="--rvd:260ms">
-        <a class="team-card tilt" href="team.html" aria-label="Meet the team — the seven advisors at Lumina">
-          <span class="team-spec" aria-hidden="true"></span>
-          <span class="team-faces" aria-hidden="true">
-            <span style="--i:0">SN</span><span style="--i:1">YT</span><span style="--i:2">AD</span><span style="--i:3">AS</span><span style="--i:4">AQ</span><span style="--i:5">TH</span><span style="--i:6">RH</span>
-          </span>
-          <span class="team-cta-copy">
-            <b>Seven people, one desk.</b>
-            <span>The same advisor from the first message to the keys.</span>
-            <em class="team-cta-tags">Leadership · Advisory · Client care</em>
-          </span>
-          <span class="team-cta-go">
-            Meet the team
-            <span class="team-go-arrow" aria-hidden="true">
-              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
-            </span>
-          </span>
-        </a>
-      </div>
     </div>
   </div>
 </section>

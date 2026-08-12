@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>The Team — Lumina Real Estate, Amman</title>
-  <meta name="description" content="The seven people behind Lumina in Amman — who holds which mandate, how an enquiry is handled, and how to reach any of us directly." />
+  <meta name="description" content="How the Lumina desk in Amman is put together — leadership, advisory and client care, one advisor per mandate, and one number that reaches all of them." />
   <meta name="robots" content="index, follow" />
   <meta name="author" content="Lumina Real Estate" />
   <meta name="theme-color" content="#05070B" />
@@ -15,7 +15,7 @@
   <meta property="og:url" content="https://www.lumina-jo.com/team.html" />
   <meta property="og:site_name" content="Lumina Real Estate" />
   <meta property="og:title" content="The Team — Lumina Real Estate, Amman" />
-  <meta property="og:description" content="The seven people behind Lumina in Amman — who holds which mandate, how an enquiry is handled, and how to reach any of us directly." />
+  <meta property="og:description" content="How the Lumina desk in Amman is put together — leadership, advisory and client care, one advisor per mandate, and one number that reaches all of them." />
   <meta property="og:image" content="https://www.lumina-jo.com/assets/hero-lumina.jpg" />
   <meta property="og:locale" content="en_JO" />
 
@@ -38,12 +38,14 @@
   <link rel="preload" as="font" type="font/woff2" href="assets/fonts/InstrumentSerif.woff2" crossorigin>
   <link rel="preload" as="font" type="font/woff2" href="assets/fonts/InstrumentSans.woff2" crossorigin>
 
-  <!-- the shared property card: same shell, reveal, levitation and
-       specular highlight the listings grid and landing page use -->
-  <link rel="stylesheet" href="css/property-ui.css?v=2026-08-07i" />
+  <!-- css/property-ui.css is deliberately NOT loaded any more. The roster
+       used to be built from the shared property card, so this page pulled
+       22KB of card CSS plus property-card.js and property-viewer.js for
+       shells it no longer renders. Nothing left on the page matches a
+       selector in that file. Re-add the link if the named cards return. -->
   <!-- everything page-specific, hero included — there is no inline
        <style> here on purpose, so the page reads from one file -->
-  <link rel="stylesheet" href="css/team.css?v=2026-08-07b" />
+  <link rel="stylesheet" href="css/team.css?v=2026-08-13b" />
 
   <!-- the landing page's brand bar, shared -->
   <link rel="stylesheet" href="css/nav.css?v=2026-08-12a" />
@@ -88,15 +90,15 @@
   <div class="container">
     <p class="label tm-rv rv">The people</p>
     <h1>
-      <span class="tm-lw rv" style="--rvd:80ms"><span class="tm-line">Seven people,</span></span>
-      <span class="tm-lw rv" style="--rvd:200ms"><span class="tm-line"><em>one desk.</em></span></span>
+      <span class="tm-lw rv" style="--rvd:80ms"><span class="tm-line">The whole firm,</span></span>
+      <span class="tm-lw rv" style="--rvd:200ms"><span class="tm-line"><em>one advisor.</em></span></span>
     </h1>
-    <p class="tm-lede tm-rv rv" style="--rvd:340ms">Lumina is small on purpose. A residence here is not passed between departments — it is held by one advisor from the first message to the keys, and the same number reaches every one of us.</p>
+    <p class="tm-lede tm-rv rv" style="--rvd:340ms">A residence here is not passed between departments. One advisor holds it from the first message to the keys, with the rest of the firm behind them — and the same number reaches all of us.</p>
 
     <div class="tm-hero-facts tm-rv rv" style="--rvd:440ms">
-      <span class="tm-fact"><b>7</b><span>People on the desk</span></span>
-      <span class="tm-fact"><b>1</b><span>Advisor per mandate</span></span>
-      <span class="tm-fact"><b>1</b><span>Number, on WhatsApp</span></span>
+      <span class="tm-fact"><b>Abdoun</b><span>Amman, Jordan</span></span>
+      <span class="tm-fact"><b>One</b><span>Advisor per mandate</span></span>
+      <span class="tm-fact"><b>One</b><span>Number, on WhatsApp</span></span>
     </div>
   </div>
 </section>
@@ -106,7 +108,7 @@
   <div class="container">
     <div class="tm-sec-head tm-rv rv">
       <h2>How we work.</h2>
-      <p>Most agencies route an enquiry through whoever is free. We do the opposite, because the useful thing about a small firm is that the person who answers has already stood in the property.</p>
+      <p>Most agencies route an enquiry through whoever is free. We do the opposite: the person who answers has already stood in the property, and stays with it until the keys change hands.</p>
     </div>
 
     <div class="tm-how-grid">
@@ -129,20 +131,25 @@
   </div>
 </section>
 
-<!-- THE ROSTER
-     Each person is the shared property card: .prop-float → .depth →
-     .lev → .card, one transform each. The float variables live on
-     .prop-float rather than on .lev so the cast shadow inside .depth
-     can inherit the same --dur and --delay and stay in phase with the
-     levitation. .lev reads them exactly as it always did.
+<!-- THE DESK
+     The roster of named cards was removed on 2026-08-13 at the client's
+     request — no names on the site for now, and no statement of how many
+     people are behind it either. What survives is the shape of the firm:
+     which mandates it holds and how they are grouped.
 
-     The ids are what the QR codes on the business cards point at
-     (team.html#saif and so on) — do not rename them. -->
-<section class="tm tm-scope">
+     Each row is a mandate, not a person. Nothing here counts: no
+     headcount, no seat totals, no numbered rows. When names return, a
+     name goes into the row it belongs to and nothing else has to move.
+
+     The hover language is deliberately the same as .tm-principle above
+     — warm wash, gold edge drawing down the left — so the two halves of
+     the page read as one system rather than two grids that happen to
+     share a palette. -->
+<section class="tm tm-scope" id="desk">
   <div class="container tm-inner">
     <div class="tm-sec-head tm-rv rv">
       <h2>The desk.</h2>
-      <p>Grouped by what each person actually does, rather than by seniority. Any of them can be reached directly — the enquiry does not have to start at the top.</p>
+      <p>Grouped by mandate rather than by seniority. Every one of them sits behind the same number, so an enquiry does not have to start at the top to reach the right person.</p>
     </div>
 
     <!-- LEADERSHIP -->
@@ -151,74 +158,21 @@
         <h3>Leadership</h3>
         <span></span>
       </div>
-      <div class="tm-grid grid-props">
-
-        <div class="prop-float rv" id="saif" style="--rvd:0ms; --d:15px; --dur:12.5s; --amp:9px; --delay:0s; --rot:.28deg">
-          <div class="depth">
-            <span class="tm-cast" aria-hidden="true"></span>
-            <div class="lev">
-              <article class="card tilt">
-                <span class="spec" aria-hidden="true"></span>
-                <div class="tm-plate">
-                  <span class="tm-num">i</span>
-                  <span class="tm-ring" aria-hidden="true"></span>
-                  <span class="tm-disc"><span class="tm-mono" aria-hidden="true">SN</span></span>
-                </div>
-                <div class="card-body">
-                  <p class="kicker">Sales Manager · Co-Founder</p>
-                  <h3>Saif Nawaf</h3>
-                  <p class="tm-say">Leads the sales desk, and co-founded the firm.</p>
-                  <div class="tm-rule"></div>
-                  <div class="tm-links">
-                    <a class="tm-link" style="--li:0" href="https://wa.me/962771505250?text=Hello%20Lumina%20%E2%80%94%20I%20would%20like%20to%20speak%20with%20Saif%20Nawaf." target="_blank" rel="noopener noreferrer" aria-label="Message Saif Nawaf on WhatsApp">
-                      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L3 21l1.9-6.4A8 8 0 1 1 21 12Z"/></svg>WhatsApp
-                    </a>
-                    <a class="tm-link" style="--li:1" href="mailto:saif-nawaf@lumina-jo.com" aria-label="Email Saif Nawaf">
-                      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="4.5" width="19" height="15" rx="1.5"/><path d="m3 6 9 6.5L21 6"/></svg>Email
-                    </a>
-                    <a class="tm-link" style="--li:2" href="https://www.instagram.com/lumina.amman" target="_blank" rel="noopener noreferrer" aria-label="Lumina on Instagram">
-                      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/></svg>Instagram
-                    </a>
-                  </div>
-                </div>
-              </article>
-            </div>
+      <div class="tm-seats">
+        <article class="tm-seat tm-rv rv">
+          <span class="tm-seat-mark" aria-hidden="true"></span>
+          <div>
+            <h4>Founder &amp; CEO</h4>
+            <p>Founded Lumina, and decides what the firm takes on.</p>
           </div>
-        </div>
-
-        <div class="prop-float rv" id="yazan" style="--rvd:90ms; --d:12px; --dur:10.2s; --amp:8px; --delay:-2.4s; --rot:.20deg">
-          <div class="depth">
-            <span class="tm-cast" aria-hidden="true"></span>
-            <div class="lev">
-              <article class="card tilt">
-                <span class="spec" aria-hidden="true"></span>
-                <div class="tm-plate">
-                  <span class="tm-num">ii</span>
-                  <span class="tm-ring" aria-hidden="true"></span>
-                  <span class="tm-disc"><span class="tm-mono" aria-hidden="true">YT</span></span>
-                </div>
-                <div class="card-body">
-                  <p class="kicker">CEO &amp; Founder</p>
-                  <h3>Yazan Tarawneh</h3>
-                  <p class="tm-say">Founded Lumina, and decides what the firm takes on.</p>
-                  <div class="tm-rule"></div>
-                  <div class="tm-links">
-                    <a class="tm-link" style="--li:0" href="https://wa.me/962771505250?text=Hello%20Lumina%20%E2%80%94%20I%20would%20like%20to%20speak%20with%20Yazan%20Tarawneh." target="_blank" rel="noopener noreferrer" aria-label="Message Yazan Tarawneh on WhatsApp">
-                      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L3 21l1.9-6.4A8 8 0 1 1 21 12Z"/></svg>WhatsApp
-                    </a>
-                    <a class="tm-link" style="--li:1" href="mailto:yazan@lumina-jo.com" aria-label="Email Yazan Tarawneh">
-                      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="4.5" width="19" height="15" rx="1.5"/><path d="m3 6 9 6.5L21 6"/></svg>Email
-                    </a>
-                    <a class="tm-link" style="--li:2" href="https://www.instagram.com/lumina.amman" target="_blank" rel="noopener noreferrer" aria-label="Lumina on Instagram">
-                      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/></svg>Instagram
-                    </a>
-                  </div>
-                </div>
-              </article>
-            </div>
+        </article>
+        <article class="tm-seat tm-rv rv" style="--rvd:90ms">
+          <span class="tm-seat-mark" aria-hidden="true"></span>
+          <div>
+            <h4>Sales Manager · Co-Founder</h4>
+            <p>Runs the sales desk, and co-founded the firm.</p>
           </div>
-        </div>
-
+        </article>
       </div>
     </div>
 
@@ -228,107 +182,21 @@
         <h3>Advisory</h3>
         <span></span>
       </div>
-      <div class="tm-grid grid-props">
-
-        <div class="prop-float rv" id="ahmad-diken" style="--rvd:0ms; --d:17px; --dur:14.2s; --amp:11px; --delay:-5.1s; --rot:.26deg">
-          <div class="depth">
-            <span class="tm-cast" aria-hidden="true"></span>
-            <div class="lev">
-              <article class="card tilt">
-                <span class="spec" aria-hidden="true"></span>
-                <div class="tm-plate">
-                  <span class="tm-num">iii</span>
-                  <span class="tm-ring" aria-hidden="true"></span>
-                  <span class="tm-disc"><span class="tm-mono" aria-hidden="true">AD</span></span>
-                </div>
-                <div class="card-body">
-                  <p class="kicker">Senior Sales Advisor</p>
-                  <h3>Ahmad Diken</h3>
-                  <p class="tm-say">Carries a mandate end to end, from the first viewing to the keys.</p>
-                  <div class="tm-rule"></div>
-                  <div class="tm-links">
-                    <a class="tm-link" style="--li:0" href="https://wa.me/962771505250?text=Hello%20Lumina%20%E2%80%94%20I%20would%20like%20to%20speak%20with%20Ahmad%20Diken." target="_blank" rel="noopener noreferrer" aria-label="Message Ahmad Diken on WhatsApp">
-                      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L3 21l1.9-6.4A8 8 0 1 1 21 12Z"/></svg>WhatsApp
-                    </a>
-                    <a class="tm-link" style="--li:1" href="mailto:info@lumina-jo.com" aria-label="Email Lumina">
-                      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="4.5" width="19" height="15" rx="1.5"/><path d="m3 6 9 6.5L21 6"/></svg>Email
-                    </a>
-                    <a class="tm-link" style="--li:2" href="https://www.instagram.com/lumina.amman" target="_blank" rel="noopener noreferrer" aria-label="Lumina on Instagram">
-                      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/></svg>Instagram
-                    </a>
-                  </div>
-                </div>
-              </article>
-            </div>
+      <div class="tm-seats">
+        <article class="tm-seat tm-rv rv">
+          <span class="tm-seat-mark" aria-hidden="true"></span>
+          <div>
+            <h4>Senior Sales Advisor</h4>
+            <p>Carries a mandate end to end, from the first viewing to the keys.</p>
           </div>
-        </div>
-
-        <div class="prop-float rv" id="abdelqader" style="--rvd:90ms; --d:11px; --dur:11.1s; --amp:9px; --delay:-1.3s; --rot:.34deg">
-          <div class="depth">
-            <span class="tm-cast" aria-hidden="true"></span>
-            <div class="lev">
-              <article class="card tilt">
-                <span class="spec" aria-hidden="true"></span>
-                <div class="tm-plate">
-                  <span class="tm-num">iv</span>
-                  <span class="tm-ring" aria-hidden="true"></span>
-                  <span class="tm-disc"><span class="tm-mono" aria-hidden="true">AS</span></span>
-                </div>
-                <div class="card-body">
-                  <p class="kicker">Sales Advisor</p>
-                  <h3>Abdelqader Saleh</h3>
-                  <p class="tm-say">Advises buyers and tenants through viewing and negotiation.</p>
-                  <div class="tm-rule"></div>
-                  <div class="tm-links">
-                    <a class="tm-link" style="--li:0" href="https://wa.me/962771505250?text=Hello%20Lumina%20%E2%80%94%20I%20would%20like%20to%20speak%20with%20Abdelqader%20Saleh." target="_blank" rel="noopener noreferrer" aria-label="Message Abdelqader Saleh on WhatsApp">
-                      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L3 21l1.9-6.4A8 8 0 1 1 21 12Z"/></svg>WhatsApp
-                    </a>
-                    <a class="tm-link" style="--li:1" href="mailto:info@lumina-jo.com" aria-label="Email Lumina">
-                      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="4.5" width="19" height="15" rx="1.5"/><path d="m3 6 9 6.5L21 6"/></svg>Email
-                    </a>
-                    <a class="tm-link" style="--li:2" href="https://www.instagram.com/lumina.amman" target="_blank" rel="noopener noreferrer" aria-label="Lumina on Instagram">
-                      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/></svg>Instagram
-                    </a>
-                  </div>
-                </div>
-              </article>
-            </div>
+        </article>
+        <article class="tm-seat tm-rv rv" style="--rvd:90ms">
+          <span class="tm-seat-mark" aria-hidden="true"></span>
+          <div>
+            <h4>Sales Advisor</h4>
+            <p>Introduce residences, and stay with them through viewing, negotiation and handover.</p>
           </div>
-        </div>
-
-        <div class="prop-float rv" id="ahmad-qutaishat" style="--rvd:180ms; --d:20px; --dur:13.4s; --amp:10px; --delay:-3.7s; --rot:.18deg">
-          <div class="depth">
-            <span class="tm-cast" aria-hidden="true"></span>
-            <div class="lev">
-              <article class="card tilt">
-                <span class="spec" aria-hidden="true"></span>
-                <div class="tm-plate">
-                  <span class="tm-num">v</span>
-                  <span class="tm-ring" aria-hidden="true"></span>
-                  <span class="tm-disc"><span class="tm-mono" aria-hidden="true">AQ</span></span>
-                </div>
-                <div class="card-body">
-                  <p class="kicker">Sales Advisor</p>
-                  <h3>Ahmad Qutaishat</h3>
-                  <p class="tm-say">Introduces residences, and stays with them to the handover.</p>
-                  <div class="tm-rule"></div>
-                  <div class="tm-links">
-                    <a class="tm-link" style="--li:0" href="https://wa.me/962771505250?text=Hello%20Lumina%20%E2%80%94%20I%20would%20like%20to%20speak%20with%20Ahmad%20Qutaishat." target="_blank" rel="noopener noreferrer" aria-label="Message Ahmad Qutaishat on WhatsApp">
-                      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L3 21l1.9-6.4A8 8 0 1 1 21 12Z"/></svg>WhatsApp
-                    </a>
-                    <a class="tm-link" style="--li:1" href="mailto:info@lumina-jo.com" aria-label="Email Lumina">
-                      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="4.5" width="19" height="15" rx="1.5"/><path d="m3 6 9 6.5L21 6"/></svg>Email
-                    </a>
-                    <a class="tm-link" style="--li:2" href="https://www.instagram.com/lumina.amman" target="_blank" rel="noopener noreferrer" aria-label="Lumina on Instagram">
-                      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/></svg>Instagram
-                    </a>
-                  </div>
-                </div>
-              </article>
-            </div>
-          </div>
-        </div>
-
+        </article>
       </div>
     </div>
 
@@ -338,76 +206,25 @@
         <h3>Client care &amp; operations</h3>
         <span></span>
       </div>
-      <div class="tm-grid grid-props">
-
-        <div class="prop-float rv" id="tuleen" style="--rvd:0ms; --d:14px; --dur:10.6s; --amp:10px; --delay:-6.2s; --rot:.30deg">
-          <div class="depth">
-            <span class="tm-cast" aria-hidden="true"></span>
-            <div class="lev">
-              <article class="card tilt">
-                <span class="spec" aria-hidden="true"></span>
-                <div class="tm-plate">
-                  <span class="tm-num">vi</span>
-                  <span class="tm-ring" aria-hidden="true"></span>
-                  <span class="tm-disc"><span class="tm-mono" aria-hidden="true">TH</span></span>
-                </div>
-                <div class="card-body">
-                  <p class="kicker">Customer Relations Officer</p>
-                  <h3>Tuleen Haddad</h3>
-                  <p class="tm-say">Usually the first reply, and the one who keeps you updated.</p>
-                  <div class="tm-rule"></div>
-                  <div class="tm-links">
-                    <a class="tm-link" style="--li:0" href="https://wa.me/962771505250?text=Hello%20Lumina%20%E2%80%94%20I%20would%20like%20to%20speak%20with%20Tuleen%20Haddad." target="_blank" rel="noopener noreferrer" aria-label="Message Tuleen Haddad on WhatsApp">
-                      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L3 21l1.9-6.4A8 8 0 1 1 21 12Z"/></svg>WhatsApp
-                    </a>
-                    <a class="tm-link" style="--li:1" href="mailto:info@lumina-jo.com" aria-label="Email Lumina">
-                      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="4.5" width="19" height="15" rx="1.5"/><path d="m3 6 9 6.5L21 6"/></svg>Email
-                    </a>
-                    <a class="tm-link" style="--li:2" href="https://www.instagram.com/lumina.amman" target="_blank" rel="noopener noreferrer" aria-label="Lumina on Instagram">
-                      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/></svg>Instagram
-                    </a>
-                  </div>
-                </div>
-              </article>
-            </div>
+      <div class="tm-seats">
+        <article class="tm-seat tm-rv rv">
+          <span class="tm-seat-mark" aria-hidden="true"></span>
+          <div>
+            <h4>Customer Relations Officer</h4>
+            <p>Usually the first reply, and the one who keeps you updated.</p>
           </div>
-        </div>
-
-        <div class="prop-float rv" id="rama" style="--rvd:90ms; --d:18px; --dur:12.9s; --amp:8px; --delay:-4.5s; --rot:.24deg">
-          <div class="depth">
-            <span class="tm-cast" aria-hidden="true"></span>
-            <div class="lev">
-              <article class="card tilt">
-                <span class="spec" aria-hidden="true"></span>
-                <div class="tm-plate">
-                  <span class="tm-num">vii</span>
-                  <span class="tm-ring" aria-hidden="true"></span>
-                  <span class="tm-disc"><span class="tm-mono" aria-hidden="true">RH</span></span>
-                </div>
-                <div class="card-body">
-                  <p class="kicker">Admin Officer</p>
-                  <h3>Rama Hindi</h3>
-                  <p class="tm-say">Contracts, registration and the paperwork behind a handover.</p>
-                  <div class="tm-rule"></div>
-                  <div class="tm-links">
-                    <a class="tm-link" style="--li:0" href="https://wa.me/962771505250?text=Hello%20Lumina%20%E2%80%94%20I%20would%20like%20to%20speak%20with%20Rama%20Hindi." target="_blank" rel="noopener noreferrer" aria-label="Message Rama Hindi on WhatsApp">
-                      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L3 21l1.9-6.4A8 8 0 1 1 21 12Z"/></svg>WhatsApp
-                    </a>
-                    <a class="tm-link" style="--li:1" href="mailto:info@lumina-jo.com" aria-label="Email Lumina">
-                      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="4.5" width="19" height="15" rx="1.5"/><path d="m3 6 9 6.5L21 6"/></svg>Email
-                    </a>
-                    <a class="tm-link" style="--li:2" href="https://www.instagram.com/lumina.amman" target="_blank" rel="noopener noreferrer" aria-label="Lumina on Instagram">
-                      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/></svg>Instagram
-                    </a>
-                  </div>
-                </div>
-              </article>
-            </div>
+        </article>
+        <article class="tm-seat tm-rv rv" style="--rvd:90ms">
+          <span class="tm-seat-mark" aria-hidden="true"></span>
+          <div>
+            <h4>Admin Officer</h4>
+            <p>Contracts, registration and the paperwork behind a handover.</p>
           </div>
-        </div>
-
+        </article>
       </div>
     </div>
+
+    <p class="tm-note tm-rv rv">One advisor stays on your file from the first message through to the handover. You are introduced to yours the moment your enquiry is picked up.</p>
 
     <!-- CLOSING -->
     <div class="tm-close tm-rv rv">
@@ -472,35 +289,33 @@
   <span>Contact Advisor</span>
 </a>
 
-<script src="js/site.js?v=2026-08-12a"></script>
-<!-- order matters: property-card.js provides activateCards, which team.js calls -->
-<script src="js/property-viewer.js?v=2026-08-12a"></script>
-<script src="js/property-card.js?v=2026-08-07b"></script>
-<script src="js/team.js?v=2026-08-04a"></script>
+<script src="js/site.js?v=2026-08-13a"></script>
+<!-- team.js now owns its own reveal. It used to call Lumina.activateCards
+     from property-card.js, which meant loading that file and
+     property-viewer.js — 31KB — for one IntersectionObserver, since the
+     tilt, levitation, cursor parallax and lightbox they also provide had
+     nothing left on this page to act on. -->
+<script src="js/team.js?v=2026-08-13b"></script>
 
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "AboutPage",
+  "@id": "https://www.lumina-jo.com/team.html#webpage",
   "url": "https://www.lumina-jo.com/team.html",
   "name": "The Team — Lumina Real Estate, Amman",
+  "description": "How the Lumina desk in Amman is put together — leadership, advisory and client care, one advisor per mandate, and one number that reaches all of them.",
+  "isPartOf": { "@id": "https://www.lumina-jo.com/#website" },
+  "about": { "@id": "https://www.lumina-jo.com/#organization" },
   "mainEntity": {
     "@type": "Organization",
+    "@id": "https://www.lumina-jo.com/#organization",
     "name": "Lumina Real Estate Advisory",
     "url": "https://www.lumina-jo.com/",
     "email": "info@lumina-jo.com",
     "telephone": "+962771505250",
     "areaServed": "Amman, Jordan",
-    "sameAs": ["https://www.instagram.com/lumina.amman"],
-    "employee": [
-      { "@type": "Person", "name": "Saif Nawaf", "jobTitle": "Sales Manager / Co-Founder", "email": "saif-nawaf@lumina-jo.com" },
-      { "@type": "Person", "name": "Yazan Tarawneh", "jobTitle": "CEO & Founder", "email": "yazan@lumina-jo.com" },
-      { "@type": "Person", "name": "Ahmad Diken", "jobTitle": "Senior Sales Advisor" },
-      { "@type": "Person", "name": "Abdelqader Saleh", "jobTitle": "Sales Advisor" },
-      { "@type": "Person", "name": "Ahmad Qutaishat", "jobTitle": "Sales Advisor" },
-      { "@type": "Person", "name": "Tuleen Haddad", "jobTitle": "Customer Relations Officer" },
-      { "@type": "Person", "name": "Rama Hindi", "jobTitle": "Admin Officer" }
-    ]
+    "sameAs": ["https://www.instagram.com/lumina.amman"]
   }
 }
 </script>

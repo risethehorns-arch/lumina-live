@@ -1,38 +1,42 @@
 /* ==========================================================================
    LUMINA — team.css
-   The roster on team.html.
+   Everything on team.html. There is no inline <style> on that page and
+   no second stylesheet of its own, on purpose.
 
-   The team card is still the property card underneath: team.html loads
-   css/property-ui.css and builds each person with the same
-   .prop-float → .depth → .lev → .card shell, so the reveal, the
-   levitation, the cursor parallax and the pointer-tracked specular
-   highlight are the same code the listings grid runs. Nothing here
-   forks that.
+   2026-08-13 — the named roster came out, and with it every statement
+   of how large the firm is.
 
-   What changed on 2026-08-04, and why:
+   The page used to carry one person card per advisor, each the shared
+   property card (.prop-float → .depth → .lev → .card) wearing a monogram
+   plate. Removing the names would have left a row of cards with a role
+   and a blank disc where the initials were, which reads as a page with
+   its content missing rather than a page that chose not to name anyone.
+   So the cards went, and what they carried — which mandates the firm
+   holds, and how they group — is now a ledger of roles.
 
-   - The plate used to be `.card-media.no-photo` — the site's honest
-     empty-frame treatment for listings with no photography, diagonal
-     hatch and all. On a listing that reads as "no photo yet". Under a
-     person's name it reads as "this person is missing", which is the
-     opposite of friendly. The plate is now its own surface: a warm
-     field, a slowly turning gold ring and the initials set in the
-     display face. No stock faces, still no invented photography.
-   - Each card carries a cast shadow that grows as the card falls and
-     shrinks as it rises, animated off the same --dur/--delay. The
-     levitation was always there; without something on the ground under
-     it, it read as a wobble rather than a float.
-   - Section furniture (heads, principles, tier rules, the closing
-     panel) now reveals on scroll like everything else on the site. It
-     was the only part of the page that arrived fully formed.
+   Nothing on this page counts anything: no headcount, no seat totals,
+   no numbered rows. If a count is ever added back, add it here too, or
+   the next person will strip it out again without knowing why.
 
-   The float variables are declared on .prop-float in the markup, not
-   on .lev, so both .lev and the cast shadow inherit the same numbers.
-   .lev reads them exactly as before.
+   Two consequences worth knowing:
 
-   Tokens come from property-ui.css, which scopes them under
-   .grid-props / .prop-float. Sections outside a card need their own
-   copy — that is what .tm-scope is for.
+   - team.html no longer loads css/property-ui.css, property-card.js or
+     property-viewer.js. Nothing on the page matches a selector or needs
+     a behaviour from any of them. That is ~53KB this page stopped
+     fetching, and it is why the reduced-motion block at the foot of
+     this file now has to answer for everything: property-ui.css used to
+     cover the card reveal and the levitation, and it is not there.
+   - This file therefore owns every token it uses. .tm-scope carries the
+     palette that .grid-props / .prop-float used to supply.
+
+   If the names come back: re-add the two script tags and the
+   property-ui.css link, and lift the card block out of git history —
+   it was removed whole, in one commit, for exactly that reason.
+
+   Hover states are gated behind (hover: hover) and (pointer: fine)
+   throughout. Nothing is hidden behind them; on a touch device an
+   ungated :hover latches on tap and leaves one panel lit as though it
+   had been selected.
    ========================================================================== */
 
 .tm-scope {
@@ -57,9 +61,10 @@ body.tm-body { background: #05070B; color: #F7F2E9; }
 
 /* ==========================================================================
    REVEAL
-   .rv is what js/property-card.js observes — it adds .in to every .rv in
-   scope, not only the cards. .tm-rv is the look, since property-ui.css
-   only dresses .prop-float.rv.
+   .rv is the marker js/team.js observes; it adds .in when the element
+   comes into view. .rv itself is styleless — the class is a hook shared
+   with the rest of the site, and .tm-rv is what this page dresses it
+   with. Both go on the same element.
    ========================================================================== */
 
 .tm-rv {
@@ -313,8 +318,16 @@ body.tm-body { background: #05070B; color: #F7F2E9; }
   transition: transform .7s var(--lum-ease);
 }
 
-.tm-principle:hover::before { opacity: 1; }
-.tm-principle:hover::after  { transform: scaleY(1); }
+/* Gated. Ungated, a tap on a phone latches the hover state on and it
+   stays lit until something else is touched — so one panel out of three
+   sits permanently highlighted, which reads as a selection the visitor
+   did not make. Nothing is hidden behind this: the numeral, the title
+   and the text are all fully legible at rest. */
+@media (hover: hover) and (pointer: fine) {
+  .tm-principle:hover::before { opacity: 1; }
+  .tm-principle:hover::after  { transform: scaleY(1); }
+  .tm-principle:hover .tm-principle-n { transform: translateX(4px); }
+}
 
 .tm-principle-n {
   display: block;
@@ -326,8 +339,6 @@ body.tm-body { background: #05070B; color: #F7F2E9; }
   margin-bottom: 18px;
   transition: transform .6s var(--lum-ease);
 }
-
-.tm-principle:hover .tm-principle-n { transform: translateX(4px); }
 
 .tm-principle h3 {
   position: relative;
@@ -384,299 +395,166 @@ body.tm-body { background: #05070B; color: #F7F2E9; }
 
 .tm-tier-head.in span { transform: scaleX(1); }
 
+/* A seat count used to sit at the far end of each rule. Removed
+   2026-08-13 with everything else that stated the size of the firm; the
+   rule now runs the full width and the tier name carries the line on its
+   own. */
+
 /* ==========================================================================
-   THE CARD
+   THE SEATS
+
+   What used to be here: one person card per advisor, each the shared
+   property card shell (.prop-float → .depth → .lev → .card) dressed with a
+   monogram plate, a turning ring, a cast shadow and three contact pills.
+   Removed 2026-08-13 — no names on the site for now. The whole block is
+   in git if it comes back; nothing else on the page depended on it, and
+   team.html no longer loads css/property-ui.css at all.
+
+   What replaced it is a ledger of mandates. A row is a role, so the page
+   states the shape of the desk without claiming anything about who is
+   sitting in it or how many of them there are, and a name later drops
+   into a row without moving anything else.
+
+   The panel is built exactly like .tm-how-grid above — 1px gaps over a
+   hairline background, one border, one radius, overflow clipped — and
+   the hover language is the principle's, at row scale. Two sections that
+   share a palette but not a grammar read as two pages; this is one.
    ========================================================================== */
 
-/* The cast shadow needs somewhere to hang from. .depth is the parallax
-   wrapper; giving it a positioning context does not touch its transform. */
-.tm-grid .depth { position: relative; }
-
-.tm-cast {
-  position: absolute;
-  left: 50%;
-  bottom: -22px;
-  width: 74%;
-  height: 34px;
-  z-index: -1;
-  pointer-events: none;
-  border-radius: 50%;
-  background: radial-gradient(ellipse at center, rgba(0, 0, 0, .82) 0%, rgba(0, 0, 0, .34) 46%, transparent 72%);
-  transform: translateX(-50%) scale(.9);
-  opacity: .34;
-  /* Counter-phase to lum-lev: the card is at its highest at 0% and
-     100%, so the shadow is tightest and faintest there. Same --dur and
-     --delay, inherited from .prop-float, or the two drift apart. */
-  animation: tm-cast var(--dur, 11s) var(--lum-ease) var(--delay, 0s) infinite;
-}
-
-@keyframes tm-cast {
-  0%, 100% { transform: translateX(-50%) scale(.86); opacity: .28; }
-  50%      { transform: translateX(-50%) scale(1.05); opacity: .52; }
-}
-
-/* ---- THE PLATE ----
-   No portraits exist and stock faces under real names are not an
-   option, so this is a monogram. It is deliberately NOT the listings
-   `.no-photo` frame any more — see the note at the top of this file. */
-
-.tm-plate {
-  position: relative;
-  aspect-ratio: 16 / 8.4;
+.tm-seats {
   display: grid;
-  place-items: center;
-  overflow: hidden;
-  background:
-    radial-gradient(72% 96% at 50% 108%, rgba(255, 178, 90, .16), transparent 62%),
-    linear-gradient(158deg, var(--lum-navy-3) 0%, var(--lum-navy) 72%);
-  /* a rim light along the top edge, so the plate reads as a surface
-     rather than a hole cut in the card */
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .055);
-}
-
-/* Fine warm dot field. Texture without the "missing asset" read a
-   diagonal hatch carries. */
-.tm-plate::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(rgba(247, 242, 233, .07) 1px, transparent 1px);
-  background-size: 13px 13px;
-  -webkit-mask-image: radial-gradient(84% 84% at 50% 50%, #000 12%, transparent 78%);
-          mask-image: radial-gradient(84% 84% at 50% 50%, #000 12%, transparent 78%);
-  opacity: .9;
-}
-
-/* Light sweeping across the plate on hover. */
-.tm-plate::after {
-  content: '';
-  position: absolute;
-  inset: -30% -60%;
-  background: linear-gradient(100deg, transparent 38%, rgba(255, 224, 176, .14) 50%, transparent 62%);
-  transform: translate3d(-62%, 0, 0);
-  transition: transform 1.05s var(--lum-ease);
-  pointer-events: none;
-}
-
-.prop-float .card:hover .tm-plate::after,
-.prop-float .card:focus-within .tm-plate::after { transform: translate3d(62%, 0, 0); }
-
-/* The turning ring. A conic gradient masked to an annulus — one
-   element, transform-only animation, no SVG and no filter. */
-/* Centred with margins rather than a translate, because the animation
-   owns `transform` — a translate here would be overwritten the moment
-   the rotation starts. */
-.tm-ring {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 128px;
-  height: 128px;
-  margin: -64px 0 0 -64px;
-  border-radius: 50%;
-  background: conic-gradient(from 0deg,
-    rgba(255, 178, 90, 0) 0deg,
-    rgba(255, 178, 90, .55) 62deg,
-    rgba(255, 224, 176, .85) 96deg,
-    rgba(255, 178, 90, .18) 150deg,
-    rgba(255, 178, 90, 0) 240deg,
-    rgba(255, 178, 90, 0) 360deg);
-  -webkit-mask: radial-gradient(circle, transparent 0 45.5%, #000 46.5% 49.5%, transparent 50.5%);
-          mask: radial-gradient(circle, transparent 0 45.5%, #000 46.5% 49.5%, transparent 50.5%);
-  opacity: .55;
-  animation: tm-turn 26s linear infinite;
-  transition: opacity .7s var(--lum-ease);
-  pointer-events: none;
-}
-
-@keyframes tm-turn { to { transform: rotate(360deg); } }
-
-.prop-float .card:hover .tm-ring,
-.prop-float .card:focus-within .tm-ring { opacity: 1; }
-
-/* The monogram disc. A circle under a name reads as a person; the
-   16/6.5 empty rectangle it replaced read as a missing photograph. */
-.tm-disc {
-  position: relative;
-  z-index: 2;
-  width: 94px;
-  height: 94px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  border: 1px solid rgba(255, 178, 90, .26);
-  background:
-    radial-gradient(100% 100% at 50% 8%, rgba(255, 224, 176, .12), transparent 64%),
-    linear-gradient(168deg, rgba(26, 36, 49, .96), rgba(11, 16, 24, .96));
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, .07),
-    0 18px 34px -18px rgba(0, 0, 0, .9);
-  transition: transform .8s var(--lum-ease),
-              border-color .6s var(--lum-ease),
-              box-shadow .6s var(--lum-ease);
-}
-
-.prop-float .card:hover .tm-disc,
-.prop-float .card:focus-within .tm-disc {
-  transform: translateY(-3px) scale(1.045);
-  border-color: rgba(255, 178, 90, .58);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, .1),
-    0 22px 44px -18px rgba(0, 0, 0, .95),
-    0 0 42px -12px rgba(255, 178, 90, .5);
-}
-
-.tm-mono {
-  font-family: var(--lum-display);
-  font-size: 2.05rem;
-  line-height: 1;
-  letter-spacing: .05em;
-  /* gradient-filled type; the fallback colour is what shows if
-     background-clip:text is unsupported, so it has to be legible */
-  color: rgba(247, 242, 233, .74);
-  background: linear-gradient(168deg, #FFE0B0 0%, #FFB25A 58%, #B8763A 100%);
-  -webkit-background-clip: text;
-          background-clip: text;
-  -webkit-text-fill-color: transparent;
-  transition: filter .7s var(--lum-ease);
-}
-
-.prop-float .card:hover .tm-mono,
-.prop-float .card:focus-within .tm-mono {
-  filter: drop-shadow(0 0 16px rgba(255, 178, 90, .42));
-}
-
-.tm-num {
-  position: absolute;
-  top: 14px;
-  left: 18px;
-  z-index: 3;
-  font-family: var(--lum-sans);
-  font-size: .58rem;
-  font-weight: 500;
-  letter-spacing: .26em;
-  text-transform: uppercase;
-  color: var(--lum-c-38);
-  transition: color .5s var(--lum-ease);
-}
-
-.prop-float .card:hover .tm-num,
-.prop-float .card:focus-within .tm-num { color: var(--lum-gold); }
-
-/* ---- CARD BODY ----
-   .kicker and h3 come straight from property-ui.css, so the role and
-   name match a listing's area-kicker and title exactly. */
-
-.tm-say {
-  font-family: var(--lum-sans);
-  font-size: .84rem;
-  line-height: 1.78;
-  color: var(--lum-c-52);
-  margin: -4px 0 18px;
-}
-
-/* Two layers: a hairline that is always there, and the gold that draws
-   across it on hover. The previous version scaled the only layer from
-   zero, so at rest the card had a 1px band of nothing between the
-   descriptor and the links — a gap that read as a mistake. */
-.tm-rule {
-  position: relative;
-  height: 1px;
-  margin: 2px 0 0;
+  gap: 1px;
   background: var(--lum-hair);
+  border: 1px solid var(--lum-hair);
+  border-radius: var(--lum-r);
+  overflow: hidden;
 }
 
-.tm-rule::after {
+.tm-seat {
+  position: relative;
+  display: grid;
+  grid-template-columns: 26px 1fr;
+  align-items: baseline;
+  column-gap: 20px;
+  padding: 26px 30px;
+  background: var(--lum-navy);
+  transition: background-color .6s var(--lum-ease);
+}
+
+.tm-seat::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, var(--lum-gold), rgba(255, 178, 90, .05));
-  transform: scaleX(0);
-  transform-origin: left center;
+  opacity: 0;
+  pointer-events: none;
+  background: radial-gradient(120% 100% at 8% 0%, rgba(255, 178, 90, .10), transparent 66%);
+  transition: opacity .6s var(--lum-ease);
+}
+
+.tm-seat::after {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, var(--lum-gold), rgba(255, 178, 90, 0));
+  transform: scaleY(0);
+  transform-origin: top center;
   transition: transform .7s var(--lum-ease);
 }
 
-.prop-float .card:hover .tm-rule::after,
-.prop-float .card:focus-within .tm-rule::after { transform: scaleX(1); }
+/* This column held a roman numeral — i, ii, iii … vii — which was a
+   headcount written in a nicer typeface, and the whole point of
+   2026-08-13 is that the page states no headcount at all. An ornament
+   keeps the column rhythm the rows were tuned around and counts nothing.
 
-.tm-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: auto;
-  padding-top: 20px;
+   Drawn rather than typed: a rotated square, not a ◆ glyph. Instrument
+   Serif has no geometric-shape coverage, so a glyph would fall through
+   to whatever the system happened to supply and land at a different
+   size and weight on every machine. */
+.tm-seat-mark {
+  position: relative;
+  justify-self: end;
+  align-self: start;
+  width: 7px;
+  height: 7px;
+  /* pushed onto the title's optical centre line rather than its box top */
+  margin-top: .62em;
+  transform: rotate(45deg);
+  background: linear-gradient(135deg, var(--lum-gold-lt), var(--lum-gold));
+  box-shadow: 0 0 18px rgba(255, 178, 90, .5);
+  transition: transform .6s var(--lum-ease), box-shadow .6s var(--lum-ease);
 }
 
-.tm-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 8px 13px;
-  border: 1px solid var(--lum-hair);
-  border-radius: 999px;
+.tm-seat h4 {
+  position: relative;
+  font-family: var(--lum-display);
+  font-size: 1.24rem;
+  font-weight: 400;
+  line-height: 1.3;
+  color: var(--lum-cream);
+  margin: 0 0 9px;
+}
+
+.tm-seat p {
+  position: relative;
   font-family: var(--lum-sans);
-  font-size: .6rem;
-  font-weight: 500;
-  letter-spacing: .16em;
-  text-transform: uppercase;
+  font-size: .88rem;
+  line-height: 1.85;
   color: var(--lum-c-52);
-  text-decoration: none;
-  transition: color .3s var(--lum-ease), border-color .3s var(--lum-ease),
-              background-color .3s var(--lum-ease), transform .3s var(--lum-ease);
+  margin: 0;
 }
 
-/* The three warm up left to right rather than all at once. The links
-   are always visible and always tappable — only the colour is staged,
-   so nothing is hidden behind a hover a touch device cannot perform. */
-.prop-float .card:hover .tm-link {
-  border-color: rgba(255, 178, 90, .30);
-  color: var(--lum-c-70);
-  transition-delay: calc(var(--li, 0) * 70ms);
+/* Wide: the row opens out into three columns instead of stacking the
+   descriptor under the title.
+
+   Stacked, a 1,182px row carries a 50-character sentence and then about
+   700px of nothing, twice per tier — the panel reads as mostly empty
+   even though every row is full. Side by side, the titles form a column
+   you can run an eye down, the descriptors form another, and the rows
+   lose about 20px of height each.
+
+   `display: contents` on the wrapper promotes h4 and p to grid items so
+   they take columns 2 and 3 directly. It is the only reason that div
+   exists at all — below 900px they need to be one stacked unit again,
+   and this puts them back without a second markup shape.
+
+   The title column is sized in px, not in %. At 32% it came to 242px of
+   usable width on a 1024 screen and broke "Sales Manager · Co-Founder"
+   across two lines while the row beside it sat empty — the longest title
+   here needs about 250px, and that number does not scale with the
+   viewport the way a percentage does. */
+@media (min-width: 900px) {
+  .tm-seat { grid-template-columns: 26px minmax(250px, 320px) minmax(0, 1fr); }
+  .tm-seat > div { display: contents; }
+  .tm-seat h4 { margin: 0; padding-right: 24px; }
+  /* Nudged onto the title's baseline: the two are different faces at
+     different sizes, so grid's baseline alignment lands the sans a
+     touch high. */
+  .tm-seat p { max-width: 58ch; padding-top: .1em; }
 }
 
-.tm-link svg {
-  width: 12px;
-  height: 12px;
-  flex-shrink: 0;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.5;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+/* Same gate, same reason as .tm-principle. */
+@media (hover: hover) and (pointer: fine) {
+  .tm-seat:hover::before { opacity: 1; }
+  .tm-seat:hover::after  { transform: scaleY(1); }
+  .tm-seat:hover .tm-seat-mark {
+    transform: rotate(45deg) scale(1.24);
+    box-shadow: 0 0 26px rgba(255, 178, 90, .8);
+  }
 }
 
-/* Direct hover on the pill itself always wins, with no stagger delay. */
-.prop-float .card .tm-link:hover,
-.tm-link:hover {
-  color: #0A0E14;
-  background: var(--lum-gold);
-  border-color: var(--lum-gold);
-  transform: translateY(-1px);
-  transition-delay: 0ms;
+/* A quiet answer to the obvious question, rather than leaving the absence
+   of names to read as an oversight. */
+.tm-note {
+  font-family: var(--lum-sans);
+  font-size: .86rem;
+  line-height: 1.9;
+  color: var(--lum-c-38);
+  max-width: 620px;
+  margin: 34px 0 0;
+  padding-left: 18px;
+  border-left: 1px solid rgba(255, 178, 90, .30);
 }
-
-.tm-link:focus-visible {
-  outline: 2px solid var(--lum-gold);
-  outline-offset: 2px;
-}
-
-/* The QR that opens this person's card on the site. */
-.tm-link--qr {
-  border-color: rgba(255, 178, 90, .34);
-  color: var(--lum-gold);
-}
-
-/* ---- ARRIVED FROM A QR ----
-   A scanned card lands on team.html#<slug>. The ring says "this one",
-   then gets out of the way. */
-.prop-float.tm-arrived .card {
-  border-color: rgba(255, 178, 90, .55);
-  box-shadow: var(--lum-shadow-lift), 0 0 74px -18px rgba(255, 178, 90, .5);
-}
-
-.prop-float.tm-arrived .tm-rule::after { transform: scaleX(1); }
-.prop-float.tm-arrived .tm-ring { opacity: 1; }
-.prop-float.tm-arrived .tm-disc { border-color: rgba(255, 178, 90, .58); }
 
 /* ==========================================================================
    CLOSING
@@ -796,12 +674,12 @@ body.tm-body { background: #05070B; color: #F7F2E9; }
 
   /* Nothing below 11.5px on a phone — the floor the mobile pass set.
      These are all uppercase and tracked, which is where it bites: at
-     9.3px with .26em of letter-spacing a roman numeral is a smudge. */
+     9.3px with .26em of letter-spacing they turn into smudges. */
   .tm-hero .label,
   .tm-tier-head h3,
-  .tm-num,
   .tm-fact span { font-size: .72rem; }
 
+  .tm-seat { padding: 24px 22px; column-gap: 16px; }
   .tm-close .btn-gold { font-size: .74rem; }
   .whatsapp-float.advisor-float {
     height: 46px;
@@ -812,25 +690,33 @@ body.tm-body { background: #05070B; color: #F7F2E9; }
 
 @media (max-width: 560px) {
   .tm-close { padding: 34px 24px; }
-  .tm-plate { aspect-ratio: 16 / 9.2; }
-  .tm-disc { width: 82px; height: 82px; }
-  .tm-ring { width: 112px; height: 112px; margin: -56px 0 0 -56px; }
-  .tm-mono { font-size: 1.8rem; }
-  /* The cast shadow sits below the card; in a one-column grid that gap
-     is the grid gap, so pull it in or consecutive cards overlap. */
-  .tm-cast { bottom: -14px; height: 26px; }
+
+  /* The numeral drops above the title rather than beside it. A 56px
+     column plus a 16px gap is a quarter of a 320px screen spent on four
+     characters, and it forces "Customer Relations Officer" to wrap
+     three times. */
+  .tm-seat {
+    grid-template-columns: 1fr;
+    row-gap: 10px;
+    padding: 22px 20px;
+  }
+
+  /* Left-aligned above the title, where it reads as a bullet opening the
+     row rather than a mark hanging off nothing. */
+  .tm-seat-mark { justify-self: start; margin-top: 4px; }
+
+  .tm-note { margin-top: 26px; padding-left: 14px; }
 }
 
 /* ==========================================================================
    REDUCED MOTION
-   property-ui.css already stops the levitation and the card reveal;
-   this covers everything declared in this file.
+   This page no longer loads property-ui.css, so nothing else is covering
+   it — everything animated on team.html is declared in this file and has
+   to be answered here.
    ========================================================================== */
 
 @media (prefers-reduced-motion: reduce) {
   .tm-hero-bg { animation: none; transform: scale(1.06); }
-  .tm-ring { animation: none; }
-  .tm-cast { animation: none; opacity: .38; }
 
   .tm-rv,
   .tm-line {
@@ -841,18 +727,20 @@ body.tm-body { background: #05070B; color: #F7F2E9; }
     transition-delay: 0ms !important;
   }
 
-  .tm-rule::after,
+  /* Anything that draws itself in is shown already drawn, not hidden —
+     these are edges and rules, and their absence would read as a
+     rendering fault rather than as restraint. */
   .tm-tier-head span { transform: scaleX(1); }
-  .tm-principle::after { transform: scaleY(1); }
-  .tm-plate::after { display: none; }
+  .tm-principle::after,
+  .tm-seat::after { transform: scaleY(1); }
 
-  .tm-mono,
-  .tm-disc,
-  .tm-num,
-  .tm-link,
   .tm-principle,
   .tm-principle::before,
   .tm-principle-n,
+  .tm-seat,
+  .tm-seat::before,
+  .tm-seat-mark,
+  .tm-close .btn-gold,
   .whatsapp-float.advisor-float {
     transition-duration: .01ms !important;
   }

@@ -18,16 +18,20 @@
   /* Addresses this file is allowed to overwrite. Everything else in a
      mailto: is left alone — the substitution exists to fill in
      placeholders, and it used to rewrite every mailto on the page to
-     config.email regardless. That silently redirected real addresses:
-     the team page shows saif-nawaf@lumina-jo.com and the link went to
-     info@qutaifan.com, with nothing on screen to say so. */
-  /* Lumina@lumina-jo.com joined this list on 2026-08-12. It was the general
+     config.email regardless. That silently redirected addresses that were
+     already correct, including individual staff mailboxes, to
+     info@qutaifan.com, with nothing on screen to say so.
+
+     Which is the whole reason this is an allow-list and not "rewrite
+     every mailto on the page": a personal address must survive the sweep
+     untouched, and the only safe way to guarantee that is to name the
+     addresses that may be replaced rather than the ones that may not.
+
+     Lumina@lumina-jo.com joined the list on 2026-08-12. It was the general
      address until then and is now retired in favour of info@lumina-jo.com;
      leaving it here means any page that still carries it repairs itself
      instead of pointing at a mailbox nobody reads. It is safe to sweep
-     because no individual uses it — Saif and Yazan have their own addresses,
-     which is exactly why this list is an allow-list and not "rewrite every
-     mailto on the page". */
+     precisely because no individual uses it. */
   const PLACEHOLDER_EMAILS = [
     'info@qutaifan.com',
     'lumina@qutaifan.com',
