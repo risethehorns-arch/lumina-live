@@ -247,6 +247,7 @@ All media is the client's own. There is no stock photography and none should be 
 | `villa-band.jpg` | the above, Lanczos-upscaled 2× to 1870×1752 | already upscaled; do not upscale further |
 | `advisory.jpg`, `still-01..03.jpg` | re-grabbed 2026-07-27 from the re-cut film at varied timestamps/crops | more frames can be pulled from `lumina-film.mp4` with ffmpeg |
 | `villa-detail.jpg` | glazing crop, low-res | only used blurred behind an off-market seal |
+| `assets/invest/*.jpg` | client drop `Lumina Invest/` (2026-08-17), eight photographs of the contractor's completed buildings — `SHOW/` gave the two single plates, `Swipe/` the six in the gallery. Imported at max side 1280, JPEG q80, EXIF applied then stripped | the **only** assets on the site that do not depict the Dabouq villa (see the hero render note for the other deliberate exception). They are the contractor's work, not Lumina's, and no caption may name an address — see the plate rules under `invest.html` below. The originals are outside the deploy, at `C:\Users\Yazan\Desktop\Lumina Invest\` |
 
 **`lumina-film.mp4` was re-cut on 2026-07-27 — read this before touching it again.** The
 original 15.04s / 1280×720 file was not clean b-roll: it was a screen recording of an
@@ -574,6 +575,72 @@ area, any price, any yield or return, any completion date. Every one of those re
   as `team.html`, because there is no photograph of him on file. Ask before adding one.
 - If the client supplies real particulars, the honest order is: real data into `LEVELS`
   first, then remove the schematic note, then add figures. Not the other way round.
+
+### The section plates — the page's only photographs (added 2026-08-17)
+
+`#why`, `#role` and `#engineer` each open with a photograph beside the heading. `.sec-head`
+is capped at 760px inside a 1440px `.sec`, so above about 1150px every one of those sections
+used to open on a sentence with 400–500px of empty ink next to it. The client's photographs
+of the contractor's finished buildings fill exactly that column; nothing else moved.
+
+**The captions are governed by the same rule as the rest of the page.** These are the
+contractor's buildings, photographed after completion, and they are **not** of a named
+address. No caption, alt text or filename here may acquire a location, a floor area, a
+price, a unit mix or a completion date — the drawing above them says `INDICATIVE / NTS /
+ON APPLICATION` and the photographs say "indicative of the specification, not of any one
+address" for the same reason. If the client ever supplies particulars for a specific
+building, that is a new component with a real address on it, not a re-caption of these.
+
+Each plate is the page's ordinary four-element float stack (`.float > .depth > .lev >` the
+card), with one deliberate difference: the three wrappers are `height:auto` here. Everywhere
+else they pass `height:100%` through so a card can fill its grid row; the plate is centred
+against a taller head, so 100% would resolve against a box it is not stretched to.
+
+Three things about the photographs themselves:
+
+- **They do not depict the Dabouq villa.** "Every asset depicts the same property" no longer
+  holds site-wide — this is the second knowing exception after the hero render, and it is
+  the right one here, because the whole page is about buildings that are *not* the villa.
+- **They carry a wash, and it is not decoration.** Shot in full Amman daylight, white stone
+  under a saturated sky, they were the brightest thing on a page whose base is `#06080C` and
+  read as photographs pasted over the design. `.plate-shot::after` / `.gal-shot::after` bank
+  the top and foot into the ink and lay the page's own warm/cool pair over the middle — the
+  same thing `body::before` does to the page — and the images carry a static
+  `saturate(.9) contrast(1.02)`. The filter rasters once because nothing beneath it changes;
+  the only animation on a plate is `transform`, which is composited. **Do not make either of
+  them animate**, and do not add a filter that has to re-raster.
+- **`.plate` joins the 1024px-gated `backdrop-filter` list.** Three more panels, at desktop
+  only, and they are what makes the frame read as glass rather than as a border.
+
+**The gallery on `#engineer` swipes because it is a scroll container, not because of the
+script.** `.gal-track` is `overflow-x:auto` + `scroll-snap-type:x mandatory`, so touch, the
+trackpad, the keyboard and the accessibility tree all work before `js/invest-gallery.js`
+runs — and what is on screen cannot desynchronise from what the script believes is on
+screen, which is the failure mode of every transform-driven track. The script owns only the
+counter, the dots and the two arrows: it *reads* `scrollLeft` and writes it in exactly three
+places, each a direct response to a click, a key or the end of a drag. Four further points:
+
+1. **That plate has no `.tilt`**, alone among the cards on this page. The tilt handler in
+   `js/lumina.js` writes an inline transform on every `pointermove`, and a card that leans
+   away while you are dragging it sideways reads as the drag having missed. The `.spec` sheen
+   is driven from `invest-gallery.js` instead — the same trade `js/services.js` makes for its
+   bubbles — which is why `.plate-gal:hover .spec` is named separately from `.tilt:hover
+   .spec` in the stylesheet.
+2. **`loading="lazy"` inside a horizontal scroller is measured against the track's scroll
+   port, not the viewport.** Six slides at 100% width means the browser leaves slides 4–6
+   unfetched until they are already being swiped onto. `warm()` promotes the current slide's
+   neighbours to `eager`, which starts the fetch a step before it is needed. Slide 6 is
+   warmed at start-up too, because the arrows wrap.
+3. **The arrows wrap rather than disabling at the ends.** Six photographs is short enough
+   that a dead arrow is the worse answer, and a `[disabled]` rule would in any case lose to
+   `.plate-gal:hover .gal-nav{opacity:1}` on specificity and light back up.
+4. **The hint under the gallery exists twice** — `.gal-hint-touch` and `.gal-hint-fine`. The
+   arrows are revealed only to `(hover:hover) and (pointer:fine)`, so a single line reading
+   "or use the arrows" was promising a control that is not on a phone.
+
+`scrollTo()` is deliberately called with no `behavior`, so it inherits the element's computed
+`scroll-behavior` — smooth in the stylesheet, `auto` under the reduced-motion block. The
+preference is honoured without the file testing for it.
 
 ### `#build` — the scroll-assembled section, and the four traps in it
 

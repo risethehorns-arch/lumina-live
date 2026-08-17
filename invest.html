@@ -200,7 +200,7 @@ h3.display{font-size:clamp(1.32rem,1.7vw,1.72rem); line-height:1.1}
    the pinned build stage; on a phone these surfaces fall back to the
    translucent gradient underneath, which is most of the look anyway. */
 @media (min-width:1024px){
-  .why-card,.eng-card,.role-card,.reg-form,.terms>div,.prog-step,.creds>ul>li{
+  .why-card,.eng-card,.role-card,.reg-form,.terms>div,.prog-step,.creds>ul>li,.plate{
     -webkit-backdrop-filter:blur(15px) saturate(132%);
     backdrop-filter:blur(15px) saturate(132%);
   }
@@ -216,7 +216,10 @@ h3.display{font-size:clamp(1.32rem,1.7vw,1.72rem); line-height:1.1}
   transition:opacity .5s var(--ease);
 }
 @media (hover:hover) and (pointer:fine){
-  .tilt:hover .spec{opacity:1}
+  /* .plate-gal is the one card here with no .tilt — see the note above
+     it in the markup — so it needs naming separately or its sheen
+     never lights. js/invest-gallery.js writes its --sx/--sy. */
+  .tilt:hover .spec,.plate-gal:hover .spec{opacity:1}
 }
 
 .rv{opacity:0; transform:translate3d(0,26px,0) scale(.975); filter:blur(7px);
@@ -487,6 +490,175 @@ h3.display{font-size:clamp(1.32rem,1.7vw,1.72rem); line-height:1.1}
   transition:transform .45s var(--ease),border-color .45s var(--ease),background-color .45s var(--ease);
 }
 .more-go svg{width:12px; height:12px}
+
+/* ═══ SECTION PLATES ══════════════════════════════════════
+   The photographs beside the three section heads.
+
+   Why they exist: .sec-head is capped at 760px and .sec runs to
+   1440, so from about 1150px up every one of these sections opened
+   on a heading with 400–500px of empty ink beside it. The client's
+   photographs of the contractor's completed buildings fill exactly
+   that column and nothing else moved.
+
+   HONESTY — read the invest.html section of CLAUDE.md before writing
+   a caption here. These are the client's own photographs of finished
+   buildings by the same contractor. They are NOT of a named address
+   and no caption may imply one, and none of them may acquire a floor
+   area, a price, a unit mix or a completion date — the same rule the
+   drawing above already follows with its INDICATIVE / NTS / ON
+   APPLICATION title block. "Indicative of the specification" is the
+   strongest claim available and it is the one the captions make.
+
+   The plate is the same four-element float stack as every card on
+   this page (.float > .depth > .lev > the card — see CLAUDE.md), with
+   one deliberate difference: height. The wrappers normally pass
+   height:100% through so a card can fill its grid row. Here the plate
+   is centred against a head that is usually taller, so 100% would
+   resolve against a box the plate is not stretched to and the
+   levitation would run inside a frame the wrong height. */
+.sec-lead{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,clamp(300px,34vw,468px));
+  gap:clamp(26px,3.4vw,60px); align-items:center;
+  margin-bottom:clamp(40px,5vw,68px);
+}
+.sec-lead>.sec-head{margin-bottom:0}
+.sec-lead>.float,
+.sec-lead>.float>.depth,
+.sec-lead>.float>.depth>.lev{height:auto}
+
+.plate{
+  position:relative; isolation:isolate; overflow:hidden; margin:0;
+  padding:11px 11px 0; border-radius:var(--r-lg);
+  border:1px solid var(--hair);
+  background:linear-gradient(155deg,rgba(29,38,50,.5),rgba(11,16,24,.58));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07),var(--shadow-float);
+  transition:border-color .5s var(--ease),box-shadow .5s var(--ease);
+}
+/* the same lit top edge the why-cards carry, so a plate reads as one
+   more object in the same set rather than as a photograph dropped in */
+.plate::before{
+  content:""; position:absolute; inset:0 0 auto; height:1px; z-index:4;
+  background:linear-gradient(90deg,transparent,rgba(255,210,150,.5) 30%,transparent);
+  opacity:.6; transition:opacity .5s var(--ease);
+}
+.plate:hover{border-color:rgba(255,178,90,.3);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 34px 74px -30px rgba(255,178,90,.5)}
+.plate:hover::before{opacity:1}
+.plate>*:not(.spec){position:relative; z-index:2}
+
+.plate-shot{
+  display:block; position:relative; overflow:hidden;
+  border-radius:calc(var(--r-lg) - 5px);
+  aspect-ratio:4/3; background:var(--navy);
+}
+/* ── the wash ─────────────────────────────────────────────
+   These were photographed in full Amman daylight: white stone under a
+   saturated blue sky, dropped onto a page whose darkest value is
+   #06080C. Untreated, the facade read as a photograph pasted over the
+   design rather than as part of it — the sky was the brightest thing
+   on the page by a wide margin.
+
+   Two corrections, both cheap. A gradient overlay banks the top and
+   foot down into the ink and lays the page's own warm/cool pair over
+   the middle, which is exactly what body::before does to the page
+   itself. And a static saturate/contrast on the image — a filter that
+   rasters once, because nothing under it ever changes; the only
+   animation on these plates is transform, which is composited and
+   does not re-raster the layer. Do not make either of them animate. */
+.plate-shot::after,.gal-shot::after{
+  content:""; position:absolute; inset:0; z-index:2; pointer-events:none;
+  border-radius:inherit;
+  background:
+    linear-gradient(180deg,rgba(6,8,12,.34),transparent 26%,
+      transparent 60%,rgba(6,8,12,.44)),
+    linear-gradient(150deg,rgba(255,178,90,.07),transparent 46%,
+      rgba(127,217,232,.045)),
+    radial-gradient(130% 96% at 50% 42%,transparent 38%,rgba(6,8,12,.34));
+}
+.plate-shot img{width:100%; height:100%; object-fit:cover;
+  filter:saturate(.9) contrast(1.02);
+  transform:scale(1.01); transition:transform 1.2s var(--ease)}
+@media (hover:hover) and (pointer:fine){
+  .plate:hover .plate-shot img{transform:scale(1.05)}
+}
+.plate-cap{display:grid; gap:8px; padding:15px 6px 16px}
+.plate-cap .mono{color:var(--gold); opacity:.88}
+.plate-cap .cap-t{margin:0; font-size:.83rem; line-height:1.62; color:var(--c-52)}
+
+/* ── the swipeable plate ──────────────────────────────────
+   The third one holds six photographs rather than one. The swipe
+   itself is native overflow-x + scroll-snap, NOT a script: a real
+   scroll container gets touch, trackpad, the keyboard and the
+   accessibility tree for free, and it cannot desynchronise from
+   what is on screen the way a transform-driven track can. That
+   leaves js/invest-gallery.js owning only the counter, the dots and
+   the two arrows — it reads the scroll position and never writes
+   it except when something is clicked. */
+.gal-shot{
+  position:relative; overflow:hidden; border-radius:calc(var(--r-lg) - 5px);
+  background:var(--navy);
+}
+.gal-track{
+  display:flex; overflow-x:auto; overscroll-behavior-x:contain;
+  scroll-snap-type:x mandatory; scroll-behavior:smooth;
+  scrollbar-width:none; -ms-overflow-style:none;
+}
+.gal-track::-webkit-scrollbar{display:none}
+.gal-track:focus-visible{outline-offset:-5px}
+.gal-slide{flex:0 0 100%; margin:0; scroll-snap-align:center; aspect-ratio:4/3}
+.gal-slide img{width:100%; height:100%; object-fit:cover;
+  filter:saturate(.9) contrast(1.02)}
+/* set while a mouse is dragging the track: snap has to be off or the
+   browser fights every frame of the drag for the nearest slide */
+.gal-track.is-drag{scroll-snap-type:none}
+/* no backdrop-filter on either of these — the page is already at its
+   panel budget and both sit over a photograph, which is opaque */
+.gal-nav{
+  position:absolute; top:50%; z-index:3; width:38px; height:38px; margin-top:-19px;
+  display:grid; place-items:center; border-radius:50%; color:var(--cream);
+  background:rgba(8,12,18,.6); border:1px solid rgba(244,239,230,.16);
+  opacity:0;
+  transition:opacity .4s var(--ease),background-color .4s var(--ease),
+    border-color .4s var(--ease);
+}
+.gal-nav svg{width:13px; height:13px}
+.gal-prev{left:12px}
+.gal-next{right:12px}
+.gal-nav:focus-visible{opacity:1}
+@media (hover:hover) and (pointer:fine){
+  .gal-nav{opacity:.5}
+  .plate-gal:hover .gal-nav{opacity:1}
+  .gal-nav:hover{background:rgba(255,178,90,.24); border-color:rgba(255,178,90,.45)}
+}
+.gal-count{
+  position:absolute; z-index:3; right:12px; top:12px; padding:5px 9px;
+  border-radius:99px; color:var(--cream); background:rgba(8,12,18,.6);
+  border:1px solid rgba(244,239,230,.14);
+}
+.gal-dots{display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin-top:2px}
+/* the bar is 22×2, which is not a touch target — the button is 22×16
+   and the bar is drawn inside it */
+.gal-dot{
+  position:relative; width:22px; height:16px; padding:0; background:none;
+  border:0; border-radius:3px;
+}
+.gal-dot::before{
+  content:""; position:absolute; left:0; right:0; top:7px; height:2px;
+  border-radius:2px; background:rgba(244,239,230,.22);
+  transition:background-color .45s var(--ease),box-shadow .45s var(--ease);
+}
+.gal-dot.on::before{background:var(--gold); box-shadow:0 0 12px rgba(255,178,90,.55)}
+/* Two hints, one shown at a time. The arrows are revealed only to a
+   fine pointer — a touch device swipes and does not need them — so a
+   single line reading "or use the arrows" was promising a control that
+   is not on a phone at all. */
+.gal-hint{color:var(--c-38)}
+.gal-hint-fine{display:none}
+@media (hover:hover) and (pointer:fine){
+  .gal-hint-touch{display:none}
+  .gal-hint-fine{display:inline}
+}
 
 /* ═══ WHY ═════════════════════════════════════════════════ */
 .why{display:grid; grid-template-columns:repeat(auto-fit,minmax(252px,1fr)); gap:clamp(16px,1.6vw,24px)}
@@ -1199,6 +1371,17 @@ footer.foot{position:relative; z-index:2; padding:clamp(46px,6vh,74px) var(--gut
   .title-block{display:none}
 }
 @media (max-width:860px){
+  /* The plate stacks under its head here rather than at 1080 with the
+     engineer card. Two columns are still worth having at 1024: the
+     plate is 348px and the head keeps 523, which is three lines of a
+     40px serif — where stacking leaves 350px of empty ink beside the
+     head and makes the section a screen and a half taller for
+     nothing. 860 is where the page already becomes its narrow self
+     (the spine goes, the build stops pinning), so the plate joins
+     that rather than inventing a breakpoint of its own. Capped
+     instead of full-bleed and left-aligned under the head. */
+  .sec-lead{grid-template-columns:minmax(0,1fr); gap:clamp(26px,4vw,38px)}
+  .sec-lead>.float{width:100%; max-width:560px}
   .spine{display:none}
   /* Reverted (2026-08-12) from a pinned/scrubbed mobile version back to
      this flat fallback — it ran laggy on a real phone even though CDP
@@ -1438,10 +1621,31 @@ footer.foot{position:relative; z-index:2; padding:clamp(46px,6vh,74px) var(--gut
 
 <!-- ═══ WHY ═════════════════════════════════════════════ -->
 <section class="sec" id="why">
-  <div class="sec-head rv">
-    <p class="kicker">Why this route</p>
-    <h2 class="display">Buying a finished flat is the last chance to influence it.</h2>
-    <p class="lede">Coming in while a building is still going up is not only about price. It is the only point at which the layout, the finish and the delivery date are still questions rather than facts.</p>
+  <div class="sec-lead">
+    <div class="sec-head rv">
+      <p class="kicker">Why this route</p>
+      <h2 class="display">Buying a finished flat is the last chance to influence it.</h2>
+      <p class="lede">Coming in while a building is still going up is not only about price. It is the only point at which the layout, the finish and the delivery date are still questions rather than facts.</p>
+    </div>
+
+    <div class="float rv" style="--rvd:180ms">
+      <div class="depth" style="--d:22px">
+        <div class="lev" style="--dur:15.1s;--amp:10px;--rot:.16deg;--delay:-5.4s">
+          <figure class="plate tilt">
+            <span class="spec" aria-hidden="true"></span>
+            <span class="plate-shot">
+              <img src="assets/invest/building-01.jpg"
+                   alt="The front elevation of a completed building — stone facing, curved balconies and a full-height glazed entrance."
+                   width="1280" height="926" loading="lazy" decoding="async">
+            </span>
+            <figcaption class="plate-cap">
+              <span class="mono">Completed · same contractor</span>
+              <p class="cap-t">A building of the kind these come from, photographed after completion. Indicative of the specification rather than of any one address — the current ones are on application.</p>
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Four nested elements per card, and the --dur/--amp/--rot/--delay
@@ -1510,10 +1714,31 @@ footer.foot{position:relative; z-index:2; padding:clamp(46px,6vh,74px) var(--gut
      real number the client has not given us yet. When they do, it
      goes in the .role-fee line and nowhere else. -->
 <section class="sec" id="role">
-  <div class="sec-head rv">
-    <p class="kicker">Our role</p>
-    <h2 class="display">We market these buildings. We do not own them.</h2>
-    <p class="lede">Worth saying plainly, because it changes what our advice is worth. The contractor builds and owns; we introduce, advise and negotiate; and we are paid a commission on completion that is agreed before you commit to anything.</p>
+  <div class="sec-lead">
+    <div class="sec-head rv">
+      <p class="kicker">Our role</p>
+      <h2 class="display">We market these buildings. We do not own them.</h2>
+      <p class="lede">Worth saying plainly, because it changes what our advice is worth. The contractor builds and owns; we introduce, advise and negotiate; and we are paid a commission on completion that is agreed before you commit to anything.</p>
+    </div>
+
+    <div class="float rv" style="--rvd:180ms">
+      <div class="depth" style="--d:24px">
+        <div class="lev" style="--dur:15.8s;--amp:11px;--rot:.15deg;--delay:-1.9s">
+          <figure class="plate tilt">
+            <span class="spec" aria-hidden="true"></span>
+            <span class="plate-shot">
+              <img src="assets/invest/entrance-01.jpg"
+                   alt="The entrance hall of a completed building — marble floor, full-height glazing onto the street and planting."
+                   width="1200" height="1134" loading="lazy" decoding="async">
+            </span>
+            <figcaption class="plate-cap">
+              <span class="mono">Their work · our introduction</span>
+              <p class="cap-t">An entrance hall as handed over. The building is the contractor's and so is the warranty; what is ours is the introduction, the advice and a commission that is on the table before you are.</p>
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="role">
@@ -1580,10 +1805,84 @@ footer.foot{position:relative; z-index:2; padding:clamp(46px,6vh,74px) var(--gut
 
 <!-- ═══ THE ENGINEER ════════════════════════════════════ -->
 <section class="sec" id="engineer">
-  <div class="sec-head rv">
-    <p class="kicker">The engineer</p>
-    <h2 class="display">We deal with one person on the contractor’s side.</h2>
-    <p class="lede">Not a sales office, not a rotating site manager. Every building we bring you is supervised by the same lead engineer, and he is the one who answers for it.</p>
+  <div class="sec-lead">
+    <div class="sec-head rv">
+      <p class="kicker">The engineer</p>
+      <h2 class="display">We deal with one person on the contractor’s side.</h2>
+      <p class="lede">Not a sales office, not a rotating site manager. Every building we bring you is supervised by the same lead engineer, and he is the one who answers for it.</p>
+    </div>
+
+    <!-- The one plate that holds more than a single photograph. The
+         swipe is the scroll container's own; js/invest-gallery.js only
+         reports where it has got to. No .tilt on this one: the tilt
+         handler writes an inline transform on every pointermove, and a
+         card that leans away while you are dragging it sideways reads
+         as the drag having missed. The sheen is driven from the
+         gallery script instead — the same trade services.js makes for
+         its bubbles. -->
+    <div class="float rv" style="--rvd:180ms">
+      <div class="depth" style="--d:20px">
+        <div class="lev" style="--dur:16.4s;--amp:9px;--rot:.14deg;--delay:-9.6s">
+          <figure class="plate plate-gal" data-gal>
+            <span class="spec" aria-hidden="true"></span>
+            <div class="gal-shot">
+              <div class="gal-track" data-gal-track tabindex="0"
+                   role="group" aria-roledescription="carousel"
+                   aria-label="Inside a completed building, six photographs">
+                <figure class="gal-slide">
+                  <img src="assets/invest/interior-01.jpg"
+                       alt="An empty reception with a stone staircase rising to the floor above, marble floor and a recessed ceiling."
+                       width="1280" height="960" loading="lazy" decoding="async">
+                </figure>
+                <figure class="gal-slide">
+                  <img src="assets/invest/interior-02.jpg"
+                       alt="An empty reception with full-height sliding doors onto a terrace and a second window to the side."
+                       width="1280" height="961" loading="lazy" decoding="async">
+                </figure>
+                <figure class="gal-slide">
+                  <img src="assets/invest/interior-03.jpg"
+                       alt="An empty reception lit from two sides, with sliding doors onto a balcony."
+                       width="1280" height="960" loading="lazy" decoding="async">
+                </figure>
+                <figure class="gal-slide">
+                  <img src="assets/invest/interior-04.jpg"
+                       alt="A finished bathroom in large-format stone tile, with a walk-in shower and a wall-hung basin."
+                       width="1280" height="960" loading="lazy" decoding="async">
+                </figure>
+                <figure class="gal-slide">
+                  <img src="assets/invest/interior-05.jpg"
+                       alt="A private terrace outside the sliding doors, walled and paved."
+                       width="1280" height="961" loading="lazy" decoding="async">
+                </figure>
+                <figure class="gal-slide">
+                  <img src="assets/invest/interior-06.jpg"
+                       alt="A roof terrace above the building, looking out over Amman."
+                       width="1280" height="960" loading="lazy" decoding="async">
+                </figure>
+              </div>
+              <button class="gal-nav gal-prev" type="button" aria-label="Previous photograph">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M15 5 8 12l7 7"/>
+                </svg>
+              </button>
+              <button class="gal-nav gal-next" type="button" aria-label="Next photograph">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="m9 5 7 7-7 7"/>
+                </svg>
+              </button>
+              <span class="gal-count mono" data-gal-count aria-hidden="true">01 / 06</span>
+            </div>
+            <figcaption class="plate-cap">
+              <span class="mono">Inside one <span class="gal-hint gal-hint-touch">· swipe for the rest</span><span class="gal-hint gal-hint-fine">· drag, or use the arrows</span></span>
+              <p class="cap-t">A completed building before anyone moved in — reception, bathroom, terrace and the roof. Indicative of the specification, not of a particular residence.</p>
+              <div class="gal-dots" data-gal-dots></div>
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="eng">
@@ -1810,5 +2109,6 @@ footer.foot{position:relative; z-index:2; padding:clamp(46px,6vh,74px) var(--gut
 <script src="js/lumina.js?v=2026-08-07d" defer></script>
 <script src="js/nav-menu.js?v=2026-08-07b" defer></script>
 <script src="js/invest.js?v=2026-08-07b" defer></script>
+<script src="js/invest-gallery.js?v=2026-08-17a" defer></script>
 </body>
 </html>
