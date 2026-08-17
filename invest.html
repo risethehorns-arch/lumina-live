@@ -1634,7 +1634,7 @@ footer.foot{position:relative; z-index:2; padding:clamp(46px,6vh,74px) var(--gut
           <figure class="plate tilt">
             <span class="spec" aria-hidden="true"></span>
             <span class="plate-shot">
-              <img src="assets/invest/building-01.jpg"
+              <img src="assets/invest/building-01.jpg?v=2026-08-17b"
                    alt="The front elevation of a completed building — stone facing, curved balconies and a full-height glazed entrance."
                    width="1280" height="926" loading="lazy" decoding="async">
             </span>
@@ -1727,7 +1727,7 @@ footer.foot{position:relative; z-index:2; padding:clamp(46px,6vh,74px) var(--gut
           <figure class="plate tilt">
             <span class="spec" aria-hidden="true"></span>
             <span class="plate-shot">
-              <img src="assets/invest/entrance-01.jpg"
+              <img src="assets/invest/entrance-01.jpg?v=2026-08-17b"
                    alt="The entrance hall of a completed building — marble floor, full-height glazing onto the street and planting."
                    width="1200" height="1134" loading="lazy" decoding="async">
             </span>
@@ -1812,6 +1812,20 @@ footer.foot{position:relative; z-index:2; padding:clamp(46px,6vh,74px) var(--gut
       <p class="lede">Not a sales office, not a rotating site manager. Every building we bring you is supervised by the same lead engineer, and he is the one who answers for it.</p>
     </div>
 
+    <!-- These photographs carry ?v= and nothing else on the site's
+         images does. It is not decoration: on 2026-08-17 the live
+         origin was probed for them BEFORE the deploy had landed, and
+         that origin answers a missing file with 200 and its own index
+         HTML rather than a 404. Cloudflare cached that HTML under the
+         real asset keys with max-age=86400, so building-01.jpg and
+         invest-gallery.js served a day-long soft-404 to the Amman
+         colo after the correct files had shipped. A new cache key is
+         the only lever that does not need the Cloudflare account, and
+         it is the one CLAUDE.md already documents. Two rules follow
+         from it: never fetch a canonical asset URL on the live origin
+         until the deploy has landed (use a throwaway query), and bump
+         these when the photographs change. -->
+
     <!-- The one plate that holds more than a single photograph. The
          swipe is the scroll container's own; js/invest-gallery.js only
          reports where it has got to. No .tilt on this one: the tilt
@@ -1830,32 +1844,32 @@ footer.foot{position:relative; z-index:2; padding:clamp(46px,6vh,74px) var(--gut
                    role="group" aria-roledescription="carousel"
                    aria-label="Inside a completed building, six photographs">
                 <figure class="gal-slide">
-                  <img src="assets/invest/interior-01.jpg"
+                  <img src="assets/invest/interior-01.jpg?v=2026-08-17b"
                        alt="An empty reception with a stone staircase rising to the floor above, marble floor and a recessed ceiling."
                        width="1280" height="960" loading="lazy" decoding="async">
                 </figure>
                 <figure class="gal-slide">
-                  <img src="assets/invest/interior-02.jpg"
+                  <img src="assets/invest/interior-02.jpg?v=2026-08-17b"
                        alt="An empty reception with full-height sliding doors onto a terrace and a second window to the side."
                        width="1280" height="961" loading="lazy" decoding="async">
                 </figure>
                 <figure class="gal-slide">
-                  <img src="assets/invest/interior-03.jpg"
+                  <img src="assets/invest/interior-03.jpg?v=2026-08-17b"
                        alt="An empty reception lit from two sides, with sliding doors onto a balcony."
                        width="1280" height="960" loading="lazy" decoding="async">
                 </figure>
                 <figure class="gal-slide">
-                  <img src="assets/invest/interior-04.jpg"
+                  <img src="assets/invest/interior-04.jpg?v=2026-08-17b"
                        alt="A finished bathroom in large-format stone tile, with a walk-in shower and a wall-hung basin."
                        width="1280" height="960" loading="lazy" decoding="async">
                 </figure>
                 <figure class="gal-slide">
-                  <img src="assets/invest/interior-05.jpg"
+                  <img src="assets/invest/interior-05.jpg?v=2026-08-17b"
                        alt="A private terrace outside the sliding doors, walled and paved."
                        width="1280" height="961" loading="lazy" decoding="async">
                 </figure>
                 <figure class="gal-slide">
-                  <img src="assets/invest/interior-06.jpg"
+                  <img src="assets/invest/interior-06.jpg?v=2026-08-17b"
                        alt="A roof terrace above the building, looking out over Amman."
                        width="1280" height="960" loading="lazy" decoding="async">
                 </figure>
@@ -2109,6 +2123,6 @@ footer.foot{position:relative; z-index:2; padding:clamp(46px,6vh,74px) var(--gut
 <script src="js/lumina.js?v=2026-08-07d" defer></script>
 <script src="js/nav-menu.js?v=2026-08-07b" defer></script>
 <script src="js/invest.js?v=2026-08-07b" defer></script>
-<script src="js/invest-gallery.js?v=2026-08-17a" defer></script>
+<script src="js/invest-gallery.js?v=2026-08-17b" defer></script>
 </body>
 </html>

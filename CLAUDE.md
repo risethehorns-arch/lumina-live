@@ -1213,6 +1213,32 @@ The check that actually catches it: fetch the versioned URL the HTML requests an
 throwaway `?cb=<random>` URL, and compare. Same bytes means the CDN is current; different
 bytes means the version needs bumping. Do not compare against the local working copy —
 git normalises to LF while the checkout carries CRLF, so every file looks stale.
+
+**The live origin is Cloudflare Pages, not GitHub Pages, and it soft-404s.** Established
+2026-08-17. `www.lumina-jo.com` resolves to Cloudflare proxy IPs; `curl --resolve` to
+GitHub's Pages IPs with that Host header does not connect at all, and the origin strips
+`.html` (308 `/invest.html` → `/invest`) and honours `_headers`, which GitHub Pages ignores
+entirely. GitHub's own `pages` Action going green therefore says nothing about the live
+site — it took **20 minutes** after that Action completed for the Cloudflare build to
+appear. Two traps follow:
+
+1. **`risethehorns-arch.github.io/lumina-live` is not a second, independent host.** The repo
+   carries a CNAME, so GitHub 301s it to the custom domain and any fetcher that follows
+   redirects — `urllib` does, by default — checks the same origin twice and reports
+   agreement as corroboration. It is not.
+2. **A missing file returns `200` with the site's own HTML, not a 404 — and Cloudflare
+   caches that for `max-age=86400`.** So probing a canonical asset URL before the deploy
+   lands *poisons the real key for a day*. It happened: `assets/invest/building-01.jpg` and
+   `js/invest-gallery.js?v=2026-08-17a` served HTML from the Amman colo after the correct
+   files had shipped, `cf-cache-status: HIT`. `nosniff` makes the failure clean rather than
+   dangerous — the browser refuses to run HTML as script or draw it as an image — but the
+   asset is simply broken until the TTL expires. **While waiting on a deploy, only ever
+   fetch with a throwaway `?cb=<random>`**, and never `curl` the canonical URL. Recovery
+   without the Cloudflare account is a new cache key, which is why those eight photographs
+   carry `?v=` when no other image on the site does.
+
+Purging the edge needs the Cloudflare dashboard, which is in a third party's account — that
+is a request to the user, not something to work around.
 - All six listings, their prices and specs
 - Neighbourhood JOD/m² figures (1,450 / 1,250 / 1,100 / 1,300)
 - Hero stats: 14 mandates, 61% off-market, 9 years
