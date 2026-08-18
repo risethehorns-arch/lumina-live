@@ -1,0 +1,257 @@
+/* ══════════════════════════════════════════════════════════════════════
+   LUMINA — the Zyrn credit in the footer
+
+   The mirror of the Lumina credit that sits in Zyrn's own footer bar
+   (assets/css/footer.css, rule `.lum`). The reasoning there applies here
+   in reverse, and is worth restating because it is the whole point:
+
+     another firm's mark is not recoloured to fit ours.
+
+   So this is Zyrn's wordmark under Zyrn's own treatment — Space Grotesk
+   at 500, the sheared halves, the Pulse seam at #6E56F8, and the glitch
+   burst — printed on Lumina's ground without a drop of amber on it. The
+   violet is the one foreign hue on this site and it is correct.
+
+   THREE THINGS THAT WILL BREAK IF YOU TOUCH THEM
+   ----------------------------------------------
+   1. The face is SELF-HOSTED. `_headers` sets font-src 'self' data:, so
+      a Google Fonts @import silently falls back to Instrument Sans and
+      the mark stops being Zyrn's. The woff2 is the Google latin subset,
+      13KB, OFL-1.1 — see assets/fonts/.
+
+   2. The unicode-range is pinned to the four letters in the word. The
+      file carries the whole latin set; without the range a later
+      `font-family:'Space Grotesk'` anywhere would render real content in
+      a face that belongs to another brand.
+
+   3. The glitch animates the WRAPPER and the clones — never the halves.
+      The halves carry the shear latch (`.is-sheared`), and a transform
+      written onto them by a keyframe would erase it. This is the same
+      rule as the float stack on invest.html: one transform per element,
+      because the last declaration simply wins, silently.
+
+   Ported from Zyrn's assets/css/styles.css + field.css. Kept in step by
+   hand — if the glitch changes there, it changes here.
+   ══════════════════════════════════════════════════════════════════════ */
+
+@font-face{
+  font-family:'Space Grotesk';
+  font-style:normal; font-weight:500; font-display:swap;
+  src:url('../assets/fonts/SpaceGrotesk-500.woff2') format('woff2');
+  unicode-range:U+004E,U+0052,U+0059,U+005A;   /* N R Y Z — nothing else */
+}
+
+.zc{
+  --pulse:#6E56F8;
+  --vapor:#F2F3F5;
+  --gd:300ms;
+  /* 14px, not 9: the seam overhangs the word by 8px on each side, so a
+     tighter gap puts a violet rule through Lumina's own colon. */
+  display:inline-flex; align-items:center; gap:14px;
+  line-height:0; vertical-align:middle;
+}
+/* Lumina's voice, Lumina's colour — the lead-in is ours, the mark is not */
+.zc__lead{
+  font-size:.68rem; letter-spacing:.02em; line-height:1;
+  color:var(--c-38,rgba(247,242,233,.40));
+  white-space:nowrap;
+}
+.zc__link{
+  display:inline-flex; align-items:center; line-height:0; padding:2px 0;
+  transition:transform .5s cubic-bezier(.16,1,.3,1);
+}
+.zc__link:focus-visible{outline:2px solid var(--vapor); outline-offset:4px; border-radius:2px}
+@media (hover:hover) and (pointer:fine){
+  .zc__link:hover{transform:translateY(-1px)}
+}
+
+/* ── the shear ──────────────────────────────────────────────────────
+   Two copies of the word clipped to its top and bottom halves, pulled
+   apart by a fifth of an em, with a Pulse rule drawn through the cut.
+   `margin-top:-1em` is what stacks the second copy back over the first;
+   the halves are block-level so they would otherwise sit on two lines. */
+.shear{
+  position:relative; display:inline-block;
+  font-family:'Space Grotesk',system-ui,sans-serif;
+  font-weight:500; font-size:var(--shear-size,15px);
+  letter-spacing:.06em; line-height:1; color:var(--vapor);
+}
+.shear__half{display:block}
+.shear__half--top{clip-path:inset(0 0 50% 0)}
+.shear__half--bot{clip-path:inset(50% 0 0 0); margin-top:-1em}
+.shear__seam{
+  position:absolute; left:-8px; right:-8px; top:50%; margin-top:-1px;
+  display:block; height:2px; background:var(--pulse);
+  transform:scaleX(0); opacity:0;
+}
+/* the auto variant latches open shortly after load and stays open */
+.shear--auto .shear__half,
+.shear--auto .shear__seam{
+  transition:transform 650ms cubic-bezier(.83,0,.17,1),
+             opacity 650ms cubic-bezier(.83,0,.17,1);
+}
+.shear--auto.is-sheared .shear__half--top{transform:translateX(-.1em)}
+.shear--auto.is-sheared .shear__half--bot{transform:translateX(.1em)}
+.shear--auto.is-sheared .shear__seam{transform:scaleX(1); opacity:1}
+
+/* ── the glitch ─────────────────────────────────────────────────────
+   Four artefacts on one burst: the wrapper kicks and skews, the type
+   splits into two chroma ghosts, two cloned bands are thrown sideways,
+   and two scan lines cut across in opposite directions.
+
+   js/zyrn-credit.js fires it at irregular intervals — a fixed interval
+   reads as a metronome, which is the opposite of a glitch. */
+.zc .glitch{position:relative; display:inline-block}
+.zc .glitch.is-glitching--micro{--gd:130ms}
+
+/* 1 · jolt */
+.zc .glitch.is-glitching,
+.zc .glitch.is-glitching--micro{animation:zc-jolt var(--gd) steps(1,end) both}
+@keyframes zc-jolt{
+  0%  {transform:translate3d(0,0,0) skewX(0deg)}
+  8%  {transform:translate3d(-4px,1px,0) skewX(-1.4deg)}
+  18% {transform:translate3d(3px,-1px,0) skewX(1deg) scaleX(1.02)}
+  27% {transform:translate3d(-2px,0,0) skewX(0deg)}
+  38% {transform:translate3d(5px,1px,0) skewX(1.6deg)}
+  49% {transform:translate3d(-2px,-1px,0) skewX(-.8deg) scaleX(.99)}
+  61% {transform:translate3d(2px,0,0) skewX(0deg)}
+  73% {transform:translate3d(-5px,1px,0) skewX(-1.2deg)}
+  86% {transform:translate3d(1px,0,0) skewX(.4deg)}
+  100%{transform:translate3d(0,0,0) skewX(0deg)}
+}
+
+/* 2 · chromatic split, in Zyrn's two emitted colours */
+.zc .glitch.is-glitching .shear,
+.zc .glitch.is-glitching--micro .shear{animation:zc-chroma var(--gd) steps(1,end) both}
+@keyframes zc-chroma{
+  0%,100%{text-shadow:none}
+  9%  {text-shadow:2px 0 #6E56F8,-2px 0 #33C9DE}
+  22% {text-shadow:-2px 0 #6E56F8,2px 0 #33C9DE}
+  35% {text-shadow:none}
+  52% {text-shadow:3px 0 #6E56F8,-2px 0 #33C9DE}
+  64% {text-shadow:none}
+  79% {text-shadow:-3px 0 #6E56F8,2px 0 #33C9DE}
+  92% {text-shadow:none}
+}
+
+/* 3 · slice displacement — clones thrown sideways, built at fire time */
+.zc .glitch__ghost{
+  position:absolute; left:0; top:0;
+  pointer-events:none; opacity:0;
+  will-change:transform,clip-path;
+}
+.zc .glitch__ghost .shear__seam{opacity:1; transform:scaleX(1)}
+.zc .glitch__ghost--a .shear{color:#6E56F8}
+.zc .glitch__ghost--b .shear{color:#33C9DE}
+.zc .glitch.is-glitching .glitch__ghost--a{animation:zc-slice-a var(--gd) steps(1,end) both}
+.zc .glitch.is-glitching .glitch__ghost--b{animation:zc-slice-b var(--gd) steps(1,end) both}
+@keyframes zc-slice-a{
+  0%,100%{opacity:0}
+  10%{opacity:1; clip-path:inset(4% 0 72% 0); transform:translate3d(-9px,-1px,0)}
+  24%{opacity:1; clip-path:inset(34% 0 48% 0); transform:translate3d(7px,0,0)}
+  33%{opacity:0}
+  58%{opacity:1; clip-path:inset(66% 0 14% 0); transform:translate3d(-6px,1px,0)}
+  70%{opacity:0}
+  88%{opacity:1; clip-path:inset(18% 0 62% 0); transform:translate3d(4px,0,0)}
+  96%{opacity:0}
+}
+@keyframes zc-slice-b{
+  0%,100%{opacity:0}
+  14%{opacity:1; clip-path:inset(52% 0 30% 0); transform:translate3d(7px,1px,0)}
+  27%{opacity:0}
+  46%{opacity:1; clip-path:inset(10% 0 76% 0); transform:translate3d(-7px,0,0)}
+  56%{opacity:0}
+  76%{opacity:1; clip-path:inset(72% 0 8% 0); transform:translate3d(5px,-1px,0)}
+  85%{opacity:0}
+}
+
+/* 4 · scan lines, running against each other */
+.zc .glitch::after,
+.zc .glitch::before{
+  content:''; position:absolute; left:-10px; right:-10px;
+  opacity:0; pointer-events:none;
+}
+.zc .glitch::after{
+  top:38%; height:2px; background:#6E56F8;
+  box-shadow:0 0 10px rgba(110,86,248,.95),0 0 3px rgba(110,86,248,1);
+}
+.zc .glitch::before{
+  top:56%; height:1px; background:#33C9DE;
+  box-shadow:0 0 8px rgba(51,201,222,.8);
+}
+.zc .glitch.is-glitching::after{animation:zc-scan-a var(--gd) steps(1,end) both}
+.zc .glitch.is-glitching::before{animation:zc-scan-b var(--gd) steps(1,end) both}
+@keyframes zc-scan-a{
+  0%,100%{opacity:0; top:38%}
+  18%{opacity:1; top:24%}
+  34%{opacity:0; top:24%}
+  52%{opacity:.85; top:66%}
+  66%{opacity:0; top:66%}
+  84%{opacity:.6; top:44%}
+}
+@keyframes zc-scan-b{
+  0%,100%{opacity:0; top:56%}
+  14%{opacity:.9; top:72%}
+  28%{opacity:0; top:72%}
+  58%{opacity:.75; top:30%}
+  70%{opacity:0; top:30%}
+  90%{opacity:.55; top:60%}
+}
+
+/* the seam stutters in brightness only, never in position */
+.zc .glitch.is-glitching .shear__seam{animation:zc-seam var(--gd) steps(1,end) both}
+@keyframes zc-seam{
+  0%,100%{filter:none}
+  22%{filter:brightness(2.2)}
+  40%{filter:none}
+  60%{filter:brightness(.4)}
+  78%{filter:brightness(1.8)}
+}
+
+/* the site-wide rule: reduced motion means none of it. The shear still
+   latches — it is the mark's resting state, not an animation. */
+@media (prefers-reduced-motion:reduce){
+  .zc .glitch.is-glitching,
+  .zc .glitch.is-glitching--micro,
+  .zc .glitch.is-glitching::after,
+  .zc .glitch.is-glitching::before,
+  .zc .glitch.is-glitching .shear,
+  .zc .glitch.is-glitching .shear__seam,
+  .zc .glitch__ghost{animation:none !important; opacity:0}
+  .zc .glitch.is-glitching .shear{opacity:1}
+  .shear--auto .shear__half,
+  .shear--auto .shear__seam{transition:none}
+}
+
+/* ── placement ──────────────────────────────────────────────────────
+   The two footers on this site end differently — the elevated cluster
+   closes with `p.fine > span`, the older one with `.footer-bottom > span`
+   — so the credit is styled for both rather than for one.
+
+   `margin-left:auto` on the elevated bar pushes it to the right edge,
+   which is where Zyrn's own bar puts the Lumina mark. */
+.foot .foot-in>p.fine>.zc{margin-left:auto}
+.footer-bottom>.zc{margin-left:auto}
+
+@media (max-width:720px){
+  .zc{--shear-size:14px}
+  /* The elevated footer's closing bar is a wrapping flex row. Left to
+     itself the credit tucks in beside "Figures indicative, not a
+     valuation" and reads as a fourth clause of that sentence — so it
+     takes a row of its own. The older footer is already a centred
+     column and needs nothing.
+
+     No min-height reset here: css/mobile.css gives every link in this
+     bar a 44px touch target and this is a link like any other. */
+  .foot .foot-in>p.fine>.zc{flex-basis:100%; margin-left:0}
+  .footer-bottom>.zc{margin-left:0}
+
+  /* index.html parks a fixed CTA pill in the bottom-left corner, so the
+     last row of its footer is permanently underneath it — before this
+     credit that row was "Figures indicative, not a valuation", and it was
+     half-covered too. The sibling combinator keeps the clearance on the
+     one page that actually has the pill: 27px of bottom offset plus a
+     54px pill, plus a comfortable margin above it. Measured: 40px of
+     clearance between the credit and the top of the pill. */
+  .fab ~ .foot .foot-in{padding-bottom:64px}
+}

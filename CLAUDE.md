@@ -38,14 +38,16 @@ do not reintroduce the old values piecemeal.
 
 | Token | Hex | Use |
 |---|---|---|
-| `--ink` | `#06080C` | page base |
-| `--navy` | `#0D1219` | brand base, panels |
-| `--navy-2` / `--navy-3` | `#141B25` / `#1D2632` | raised surfaces |
-| `--cream` | `#F4EFE6` | text |
+| `--ink` | `#05070B` | page base |
+| `--navy` | `#0B1018` | brand base, panels |
+| `--navy-2` / `--navy-3` | `#121A24` / `#1A2431` | raised surfaces |
+| `--cream` | `#F7F2E9` | text |
 | `--gold` | `#FFB25A` | amber accent — CTA border/fill, kickers, numerals |
-| `--gold-lt` | `#FFD7A3` | glow highlights |
-| `--gold-dp` | `#B8763A` | hairlines |
+| `--gold-lt` | `#FFE0B0` | glow highlights |
+| `--gold-dp` | `#C07F3E` | hairlines |
 | `--plinth` | `#7FD9E8` | cyan plinth glow (hero only) |
+
+Six of these were transcribed a shade off when this table was written and were corrected against the stylesheets on 2026-08-18. The shipped values are the ones in `index.html`, `invest.html` and `css/elevated.css`; those three agree with each other exactly, and with `<meta name="theme-color">`. If this table and the CSS ever disagree again, the CSS is right.
 
 Previous set, for reference if a revert is ever wanted: ink `#060C18`, navy
 `#0E1729`, navy-2/3 `#16223A`/`#1E2C48`, cream `#F6F1E7`, gold `#D6BF9E`,
@@ -1246,6 +1248,77 @@ is a request to the user, not something to work around.
 
 WhatsApp `+962 77 150 5250` **is** real and is wired throughout, including the contact form,
 which composes the enquiry text and opens `wa.me` — there is no backend and none is needed.
+
+## The Zyrn credit in the footer (added 2026-08-18)
+
+Every one of the 19 pages closes with `Powered by: ZYRN`, linking out to
+https://zyrn.org/. It is the mirror of the Lumina credit that sits in Zyrn's own footer
+bar (`assets/css/footer.css`, rule `.lum`, in the Zyrn repo), and the reasoning is the
+same in both directions:
+
+> another firm's mark is not recoloured to fit ours.
+
+So this is Zyrn's wordmark under **Zyrn's** treatment — Space Grotesk 500, the sheared
+halves, the Pulse seam at `#6E56F8`, and the glitch burst — printed on Lumina's ground
+with no amber on it. The violet is the only foreign hue on this site and it is correct.
+The `Powered by:` lead-in is ours and stays in `--c-38`.
+
+Three files, and none of them touch anything that already existed:
+
+| File | What it is |
+|---|---|
+| `css/zyrn-credit.css` | the face, the shear, the four glitch layers, and the two footer placements |
+| `js/zyrn-credit.js` | the shear latch and the irregular glitch schedule |
+| `assets/fonts/SpaceGrotesk-500.woff2` | Google's latin subset, 13 KB, OFL-1.1 |
+
+### What will break silently if you touch it
+
+**The face is self-hosted, and it has to be.** `_headers` sets `font-src 'self' data:`,
+so a Google Fonts `@import` is refused by the live origin and the mark falls back to
+Instrument Sans — which looks like a design choice rather than a failure. Same trap on the
+JS: `script-src 'self'` means an inline `<script>` is refused and the mark simply never
+shears. Both are external files for that reason.
+
+**The `unicode-range` is pinned to `U+004E,U+0052,U+0059,U+005A`** — N, R, Y, Z. The woff2
+carries the whole latin set, and without the range any later `font-family:'Space Grotesk'`
+would set real Lumina copy in another brand's face.
+
+**The glitch animates the wrapper and the clones, never the halves.** The halves carry the
+shear latch, and a keyframe transform on them erases it. Same rule as the float stack on
+`invest.html`: one transform per element, because the last declaration wins with no error.
+
+**The clones are built at fire time, not at init** — they snapshot the current shear state.
+Built once at start-up they would snapshot an un-sheared wordmark and every burst after the
+latch would throw a straight ghost across a sheared original.
+
+**The schedule is deliberately irregular.** 1.8–5.2 s quiet, then a double or a triple at
+110–350 ms apart, and 42% of firings are a 130 ms micro-twitch with no slices. A fixed
+`setInterval` reads as a metronome, which is the opposite of a glitch. It also never fires
+while the mark is off screen — which, in a footer, is nearly the whole visit.
+
+### The two footers
+
+The site has two closing bars and both are handled:
+
+- elevated cluster — `p.fine > span`, credit pushed right with `margin-left:auto`
+- older cluster — `.footer-bottom > span`, already a centred column, nothing needed
+
+Below 720px the credit takes a row of its own in the elevated bar, or it tucks in beside
+"Figures indicative, not a valuation" and reads as a fourth clause of that sentence.
+
+`index.html` also parks a fixed CTA pill bottom-left, which permanently covers the last
+row of its footer. `.fab ~ .foot .foot-in{padding-bottom:64px}` buys the clearance, and the
+sibling combinator keeps it on the one page that has the pill. Measured: 40px between the
+credit and the top of the pill at 390px.
+
+### Verified
+
+`cdp_zyrn.py` and `smoke_zyrn.py` (job tmp): 19 pages x 1440/390 all clean — credit inside
+the footer, face resolving to real Space Grotesk (measured against a forced serif, because a
+silent fallback renders identically to a typo), shear latched, seam still `rgb(110,86,248)`,
+no horizontal overflow, no console errors. Glitch observed firing with ghosts; under
+`prefers-reduced-motion` zero bursts and every animation-name resolves to `none`, while the
+shear stays latched — it is the mark's resting state, not an animation.
 
 ## Non-negotiables
 
