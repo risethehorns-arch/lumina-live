@@ -73,14 +73,14 @@
 .shear{
   position:relative; display:inline-block;
   font-family:'Space Grotesk',system-ui,sans-serif;
-  font-weight:500; font-size:var(--shear-size,15px);
+  font-weight:500; font-size:var(--shear-size,20px);
   letter-spacing:.06em; line-height:1; color:var(--vapor);
 }
 .shear__half{display:block}
 .shear__half--top{clip-path:inset(0 0 50% 0)}
 .shear__half--bot{clip-path:inset(50% 0 0 0); margin-top:-1em}
 .shear__seam{
-  position:absolute; left:-8px; right:-8px; top:50%; margin-top:-1px;
+  position:absolute; left:-.55em; right:-.55em; top:50%; margin-top:-1px;
   display:block; height:2px; background:var(--pulse);
   transform:scaleX(0); opacity:0;
 }
@@ -224,34 +224,19 @@
 }
 
 /* ── placement ──────────────────────────────────────────────────────
-   The two footers on this site end differently — the elevated cluster
-   closes with `p.fine > span`, the older one with `.footer-bottom > span`
-   — so the credit is styled for both rather than for one.
+   The credit sits in the footer's brand column, directly under the
+   advisory line — `Private real estate advisory · Amman, Jordan` on the
+   elevated cluster, `.footer-desc` on the older one. Both columns are
+   plain block flow, so a top margin is the whole placement; the mark is
+   inline-flex and takes its own line because nothing follows it.
 
-   `margin-left:auto` on the elevated bar pushes it to the right edge,
-   which is where Zyrn's own bar puts the Lumina mark. */
-.foot .foot-in>p.fine>.zc{margin-left:auto}
-.footer-bottom>.zc{margin-left:auto}
+   It reads as a second, smaller signature beneath Lumina's own mark, at
+   roughly 60% of its height — near enough to belong to the same stack,
+   far enough that the hierarchy is never in question. */
+.zc{margin-top:16px}
+.foot .foot-in>div>.zc{margin-top:15px}
+.footer-grid>div>.zc{margin-top:14px}
 
 @media (max-width:720px){
-  .zc{--shear-size:14px}
-  /* The elevated footer's closing bar is a wrapping flex row. Left to
-     itself the credit tucks in beside "Figures indicative, not a
-     valuation" and reads as a fourth clause of that sentence — so it
-     takes a row of its own. The older footer is already a centred
-     column and needs nothing.
-
-     No min-height reset here: css/mobile.css gives every link in this
-     bar a 44px touch target and this is a link like any other. */
-  .foot .foot-in>p.fine>.zc{flex-basis:100%; margin-left:0}
-  .footer-bottom>.zc{margin-left:0}
-
-  /* index.html parks a fixed CTA pill in the bottom-left corner, so the
-     last row of its footer is permanently underneath it — before this
-     credit that row was "Figures indicative, not a valuation", and it was
-     half-covered too. The sibling combinator keeps the clearance on the
-     one page that actually has the pill: 27px of bottom offset plus a
-     54px pill, plus a comfortable margin above it. Measured: 40px of
-     clearance between the credit and the top of the pill. */
-  .fab ~ .foot .foot-in{padding-bottom:64px}
+  .zc{--shear-size:17px; margin-top:13px}
 }

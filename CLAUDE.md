@@ -1251,8 +1251,8 @@ which composes the enquiry text and opens `wa.me` — there is no backend and no
 
 ## The Zyrn credit in the footer (added 2026-08-18)
 
-Every one of the 19 pages closes with `Powered by: ZYRN`, linking out to
-https://zyrn.org/. It is the mirror of the Lumina credit that sits in Zyrn's own footer
+Every one of the 19 pages carries `Powered by: ZYRN` in its footer's brand column — directly
+under the advisory line, beneath Lumina's own mark — linking out to https://zyrn.org/. It is the mirror of the Lumina credit that sits in Zyrn's own footer
 bar (`assets/css/footer.css`, rule `.lum`, in the Zyrn repo), and the reasoning is the
 same in both directions:
 
@@ -1296,25 +1296,34 @@ latch would throw a straight ghost across a sheared original.
 `setInterval` reads as a metronome, which is the opposite of a glitch. It also never fires
 while the mark is off screen — which, in a footer, is nearly the whole visit.
 
-### The two footers
+### The two footers, and the size
 
-The site has two closing bars and both are handled:
+The site has two footer shapes and the credit sits in the brand column of both:
 
-- elevated cluster — `p.fine > span`, credit pushed right with `margin-left:auto`
-- older cluster — `.footer-bottom > span`, already a centred column, nothing needed
+- elevated cluster — after `<p class="fine">Private real estate advisory · Amman, Jordan</p>`
+- older cluster — after `<p class="footer-desc">`
 
-Below 720px the credit takes a row of its own in the elevated bar, or it tucks in beside
-"Figures indicative, not a valuation" and reads as a fourth clause of that sentence.
+Both columns are plain block flow, so a top margin is the whole placement. It reads as a
+second, smaller signature under Lumina's own mark.
 
-`index.html` also parks a fixed CTA pill bottom-left, which permanently covers the last
-row of its footer. `.fab ~ .foot .foot-in{padding-bottom:64px}` buys the clearance, and the
-sibling combinator keeps it on the one page that has the pill. Measured: 40px between the
-credit and the top of the pill at 390px.
+**The size is set against the Lumina mark, not chosen in the abstract.** That mark measures
+34px in the elevated footer and 36px in the older one at 1440, and 26–28px at 390. The shear
+is `20px` desktop / `17px` mobile, which lands at **56–65%** of it — near enough to belong to
+the same stack, far enough that the hierarchy is never in question. If either logo rule
+changes, re-measure: `smoke_zyrn.py` fails the page if the ratio leaves 45–70%.
+
+The seam's overhang is `-.55em`, not a pixel value, so it tracks the size instead of
+shrinking in proportion as the mark grows.
+
+**Moving this block is not a copy-paste job.** The credit is six nested `<span>`s, so a lazy
+`<span class="zc">.*?</span>` match cuts it in half and leaves the tail behind — which is
+exactly what happened on the first attempt at the relocation, on all 19 pages at once.
+Balance the tags, and count `<span>` against `</span>` before and after as a guard.
 
 ### Verified
 
-`cdp_zyrn.py` and `smoke_zyrn.py` (job tmp): 19 pages x 1440/390 all clean — credit inside
-the footer, face resolving to real Space Grotesk (measured against a forced serif, because a
+`cdp_zyrn.py` and `smoke_zyrn.py` (job tmp): 19 pages x 1440/390 all clean — credit in the
+footer's brand column at 56–65% of the Lumina mark, face resolving to real Space Grotesk (measured against a forced serif, because a
 silent fallback renders identically to a typo), shear latched, seam still `rgb(110,86,248)`,
 no horizontal overflow, no console errors. Glitch observed firing with ghosts; under
 `prefers-reduced-motion` zero bursts and every animation-name resolves to `none`, while the
