@@ -871,6 +871,98 @@ there and the glass had nothing to blur — the hero headline read straight thro
 sheets on a phone. The top highlight and border are what make it read as glass; the blur was
 only ever making it legible.
 
+### The hero panels — all four are interactive now (2026-08-22)
+
+The four panels on the right of the hero used to be two readouts and two buttons. They are
+four controls now, and the two that changed did so in the two different ways this site
+already distinguishes between:
+
+| Panel | What it does | Affordance |
+|---|---|---|
+| `150+ · Listings in prime locations` | **navigates** to `listings.html` | `.stat-card--nav`, disc **translates** |
+| `25°C · Clear in Amman` | **opens** the weather map sheet | `.stat-card--act`, disc **rotates** |
+| `Commission Structure` | opens the commission sheet | unchanged |
+| `Where should you live?` | opens the district quiz | unchanged |
+
+**That distinction is not decoration.** `.cm-go` rotates 90° because those panels unfold in
+place; `.ib-go`/`.fab-go` translate because those buttons go somewhere. The listings panel
+goes somewhere, so `.stat-card--nav` replaces the rotation with the travel. Keep it if you
+add a fifth panel.
+
+**Two rules the two changed panels needed putting back.** `.stat-card--act b` is a *title*
+scale (1.3rem) and both of these lead with a *reading* — a temperature and a count — so
+`.wx-read` and `.stat-card--nav .num` restore the panel scale (2.1rem) their neighbours use.
+And `a.stat-card--act` needs `text-decoration:none; color:inherit`, because the shell was
+written for a `<button>`.
+
+**`150+` is the client's figure and stays.** The portfolio holds 129, and the panel is now a
+link that lands on a page announcing 129 — so the click makes the gap visible. That was
+raised and the client kept `150+`; it is their number, and it belongs on the placeholder-stats
+list above rather than being quietly corrected. It was briefly wired to count from the data
+(`js/home-collection.js` already has the JSON open); if that is ever wanted back it is four
+lines writing `data.length` into a `[data-live-count]` attribute.
+
+**The `+` is set in `--sun`, not `--gold`.** It answers the sun on the panel directly below it,
+and both carry a small halo — a `text-shadow` on the `+`, a second `drop-shadow` on the sun.
+The halo is scoped to `svg.wx-i-sun`, a class on the sun icon's own root, and deliberately not
+to `.wx-icon`: a warm glow around an overcast cloud or a rain shower is a claim about the
+weather that is not true. `--sun` is `#FFC64D`, and **both icon sets draw from it** —
+`fill="var(--sun,#FFC64D)"` in `hero-panels.js` and `weather-map.js` — so the token and the
+artwork cannot drift. The fallback in the `var()` is what keeps the icons right on any page
+that does not define the token.
+
+### The weather map (`#wxs`, `js/weather-map.js`)
+
+**Why it is a map.** One temperature for a city built on hills is the least interesting true
+thing you can say about Amman's weather. The interesting one is that the hills make their own:
+Khalda at 990 m runs two to three degrees cooler than the ridges above the old centre at
+840 m, and that is a difference somebody choosing a district can actually use. So the sheet is
+ten districts, each with its own reading, and the lede states the day's spread.
+
+**It is the third sheet and it reuses the whole shell** — `initSheet('wx', 'wxs')` in
+`hero-panels.js`, so veil, panel, close, Escape, scroll lock and focus trap have one
+implementation across three dialogs. The weather panel already carried `id="wx"` for
+`paintWeather`, so it is its own opener and needs no second id. `weather-map.js` renders into
+`#wxsBody` and owns nothing else — same contract as `quiz.js`.
+
+**One request, ten places.** Open-Meteo takes comma-separated coordinates and answers with an
+array in the same order, so the map costs a single call to the host already in `connect-src`.
+It fires **lazily, on first open** — the hero card keeps its own single-point request and the
+landing page does not pay for a dialog most visitors never open. Reopening does not refetch.
+
+**Five things here are load-bearing:**
+
+1. **The nodes are real `<button>`s over an SVG bed, not SVG `<g tabindex>`.** The shared focus
+   trap collects `a[href], button:not([disabled])` — anything else is skipped when tabbing and
+   the map becomes unreachable from a keyboard. This is why the map is HTML positioned in
+   percentages rather than one SVG.
+2. **The colour ramp is relative to the day's spread**, running `--plinth` → `--gold` so no new
+   hue enters the palette. Two degrees is a real difference in Amman and an absolute scale
+   would render all ten the same colour. The legend therefore says *cooler / warmer* and never
+   claims to be an absolute scale — do not relabel it with numbers.
+3. **Label visibility is a `@container` query on the map, not a media query on the window.**
+   At 768px the two-column layout leaves the map 394px and four pairs of labels collide; at
+   700px the stacked layout gives it 582px and none do. The viewport rule below it stays as
+   the fallback for browsers without container queries.
+4. **Node spacing is measured, not eyeballed.** A node's box is its dot *plus* the name under
+   it — roughly `y-6` to `y+10`. Three pairs were inside that and looked fine in a screenshot
+   until the boxes were measured. `wxoverlap.py` (job tmp) checks all 45 pairs at eight widths;
+   re-run it if you move a district.
+5. **Nothing is ever invented.** A failed request replaces the map with a sentence saying the
+   service is not answering, exactly as the hero card falls back to naming the city rather than
+   showing a made-up number.
+
+**Khalda is on the map and is not in the portfolio.** It is the highest ground in West Amman
+and the pattern is hard to read without it, so it is drawn a shade quieter (`.wxm-node--near`)
+rather than dressed up as inventory. A weather map that stopped at our own stock would be the
+stranger object.
+
+**The areas plan had the same class of bug and now cannot repeat it.** `areas.html`'s map
+printed its per-district counts as plain `<text>` that nothing ever updated — `areas-index.js`
+only rewrites `[data-count]` — so after the 2026-08-22 import it still read 68/10/4 against
+75/13/5. Each node's count now carries `data-count`, which puts it under that same rule. All
+25 literals on the page are checked against the data.
+
 ### Sharing a property from the gallery — the main route
 
 `.pv-share` sits in the viewer footer beside **Ask about this**, as a paper-plane outline. It
@@ -1311,6 +1403,8 @@ is a request to the user, not something to work around.
 - Neighbourhood JOD/m² figures (1,450 / 1,250 / 1,100 / 1,300)
 - Hero stats: 14 mandates, 61% off-market, 9 years
 - The band caption's "sold in eleven days" claim
+- The hero's `150+` listings panel — the portfolio holds 129, and that panel now links
+  straight to the page that says so. Raised 2026-08-22; the client kept `150+`
 
 WhatsApp `+962 77 150 5250` **is** real and is wired throughout, including the contact form,
 which composes the enquiry text and opens `wa.me` — there is no backend and none is needed.

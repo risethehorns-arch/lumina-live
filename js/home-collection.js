@@ -163,6 +163,7 @@
     })
     .then(data => {
       if (!Array.isArray(data) || !data.length) throw new Error('empty');
+
       const build = window.Lumina && window.Lumina.buildPropertyCard;
       if (typeof build !== 'function') throw new Error('property-card.js did not load');
 

@@ -61,6 +61,11 @@
   --gold-dp:#C07F3E;
   --plinth:#7FD9E8;
   --plinth-soft:rgba(127,217,232,.42);
+  /* the weather icons' own yellow. It is a lighter, purer note than
+     --gold and it is drawn into the sun in js/hero-panels.js and
+     js/weather-map.js, which both read it as var(--sun,#FFC64D) so the
+     hex cannot drift from this line. */
+  --sun:#FFC64D;
 
   --c-70:rgba(247,242,233,.72);
   --c-52:rgba(247,242,233,.54);
@@ -769,6 +774,26 @@ h3.display{font-size:clamp(1.32rem,1.7vw,1.72rem); line-height:1.1}
 .cm-go svg{width:12px; height:12px}
 .stat-card--act:hover .cm-go{
   transform:rotate(90deg); border-color:var(--gold); background:rgba(255,178,90,.16)}
+/* the one panel that goes somewhere instead of unfolding: same disc, the
+   .ib-go/.fab-go travel. Later in source at equal specificity, so it
+   simply replaces the rotation above. */
+.stat-card--nav:hover .cm-go{transform:translateX(3px)}
+a.stat-card--act{text-decoration:none; color:inherit}
+/* The weather panel takes .stat-card--act now, and with it that rule's
+   title-sized b. Its b is a temperature, not a title — put the readout
+   back at the panel scale its neighbours use, and keep it clear of the
+   disc. */
+.stat-card--act .wx-read{font-size:2.1rem; font-weight:600; margin-bottom:7px;
+  padding-right:34px}
+/* and the listings panel's figure is the same kind of thing as that
+   temperature — a reading, not a heading. At --act's title scale it was
+   the only number in the row rendered small. */
+.stat-card--nav .num{font-size:2.1rem}
+/* The + is set in the weather icons' yellow rather than --gold, so it
+   answers the sun on the panel directly below it. Both carry a small
+   halo: text-shadow here, and a second drop-shadow on the sun itself. */
+.stat-card--nav .num i{color:var(--sun);
+  text-shadow:0 0 6px rgba(255,198,77,.85),0 0 18px rgba(255,198,77,.45)}
 
 /* weather */
 .wx-read{display:flex; align-items:baseline; gap:1px}
@@ -783,6 +808,14 @@ h3.display{font-size:clamp(1.32rem,1.7vw,1.72rem); line-height:1.1}
 .wx-icon{display:inline-flex; width:26px; height:26px; flex:none}
 .wx-icon svg{width:100%; height:100%; display:block;
   filter:drop-shadow(0 2px 8px rgba(0,0,0,.5))}
+/* Scoped to the sun by the class on its own <svg>, not applied to
+   .wx-icon: a warm halo around an overcast cloud or a rain shower would
+   be saying something about the weather that is not true. Static, so it
+   rasters once — do not animate it. */
+.wx-icon svg.wx-i-sun,.wxm-d-icon svg.wx-i-sun{
+  filter:drop-shadow(0 2px 8px rgba(0,0,0,.5))
+         drop-shadow(0 0 7px rgba(255,198,77,.75))
+         drop-shadow(0 0 16px rgba(255,198,77,.4))}
 .wx-icon:empty{display:none}
 /* The reading and its icon are held back until the request lands, then
    fade up. This is the one genuinely live thing on the page and it used
@@ -1027,6 +1060,169 @@ h3.display{font-size:clamp(1.32rem,1.7vw,1.72rem); line-height:1.1}
 @media (prefers-reduced-motion:reduce){
   .qz-card{animation:none}
   .qz-opt:hover{transform:none}
+}
+
+/* ═══ the weather map ══════════════════════════════
+   Third sheet, same shell: .cmx veil, .cmx-panel, .cmx-x and the focus
+   trap in hero-panels.js. Only the interior below is its own, exactly as
+   the quiz does it — three dialogs that behave identically and one
+   implementation of the behaviour.
+
+   The nodes are real <button>s positioned over an SVG bed rather than
+   SVG <g>s with tabindex. That is not a style preference: the shared
+   focus trap collects `a[href], button:not([disabled])`, so anything
+   that is not one of those is skipped when tabbing and the map would be
+   unreachable from a keyboard. */
+/* This sheet is wider than its two siblings. It has a map in it, and at
+   760px the map was tall enough to push the readings below the fold of an
+   88vh panel — so the sheet read as a map and nothing else. */
+.wxs .cmx-panel{width:min(940px,100%)}
+.wxm-stage{position:relative; display:grid; gap:clamp(16px,2.2vw,24px);
+  align-items:start}
+/* 720, not 900: a 768px tablet held the stacked layout, where the map is
+   full-panel width and tall enough to push the readings past the foot. Two
+   columns fit from 720 up — the map column is still ~400px there. */
+@media (min-width:720px){
+  .wxm-stage{grid-template-columns:minmax(0,1.5fr) minmax(238px,.85fr)}
+}
+.wxm-col{min-width:0}
+
+.wxm-lede{position:relative; color:var(--c-70); font-size:.98rem; line-height:1.8;
+  max-width:60ch; margin:0 0 clamp(18px,2.4vw,26px)}
+.wxm-lede b{color:var(--cream); font-weight:500}
+
+/* Taller than it looks like it needs to be: in the two-column layout the
+   map column is ~525px, and at 1000/620 that is only 325px of height for
+   ten dots that are 44px across with a name under each. */
+.wxm{container-type:inline-size;
+  position:relative; width:100%; aspect-ratio:1000/760; margin:0 0 14px;
+  border:1px solid var(--hair); border-radius:16px; overflow:hidden;
+  background:radial-gradient(120% 90% at 18% 6%,rgba(18,26,36,.9),rgba(7,10,16,.92))}
+.wxm-bed{position:absolute; inset:0; width:100%; height:100%; display:block}
+.wxm-nodes{position:absolute; inset:0}
+
+.wxm-node{
+  position:absolute; left:var(--x); top:var(--y); transform:translate(-50%,-50%);
+  appearance:none; -webkit-appearance:none; background:none; border:0; padding:0;
+  font:inherit; color:inherit; cursor:pointer; display:grid; justify-items:center;
+  gap:6px; width:max-content;
+  /* the map draws itself in, west to east; --i is the node's index */
+  opacity:0; transition:opacity .5s var(--ease) calc(var(--i) * 45ms),
+                        transform .5s var(--ease) calc(var(--i) * 45ms);
+}
+.wxm-in .wxm-node{opacity:1}
+/* reduced motion still needs the nodes to arrive — it is the delay and
+   the travel that go, not the visibility */
+.wxm-still .wxm-node{transition:none}
+
+.wxm-dot{
+  display:grid; grid-auto-flow:column; align-items:baseline; justify-content:center;
+  width:clamp(40px,5.4vw,54px); height:clamp(40px,5.4vw,54px); border-radius:50%;
+  border:1px solid color-mix(in srgb,var(--tint) 55%,transparent);
+  background:color-mix(in srgb,var(--tint) 15%,rgba(8,12,18,.72));
+  color:var(--tint); font-family:var(--sans); line-height:1;
+  transition:transform .4s var(--ease),box-shadow .4s var(--ease),
+             border-color .4s var(--ease),background-color .4s var(--ease);
+}
+/* color-mix is not everywhere yet; without it the tint would fall back to
+   nothing and the dot would vanish into the bed. A flat translucent
+   ground underneath keeps every node legible on its own. */
+@supports not (color: color-mix(in srgb,#fff 50%,#000)){
+  .wxm-dot{background:rgba(8,12,18,.78); border-color:rgba(247,242,233,.28)}
+}
+.wxm-dot b{font-size:clamp(1rem,1.5vw,1.24rem); font-weight:600; letter-spacing:-.01em}
+.wxm-dot i{font-style:normal; font-size:.7em; opacity:.8; align-self:start;
+  margin-top:.1em}
+
+.wxm-name{font-family:var(--sans); font-size:clamp(.58rem,.82vw,.68rem);
+  letter-spacing:.13em; text-transform:uppercase; color:var(--c-52);
+  white-space:nowrap; transition:color .4s var(--ease)}
+
+/* Khalda is the one district on this map we do not hold stock in. It is
+   here because it is the highest ground in West Amman and the pattern is
+   hard to read without it — so it is drawn a shade quieter rather than
+   dressed up as inventory. */
+.wxm-node--near .wxm-name{opacity:.62}
+
+@media (hover:hover) and (pointer:fine){
+  .wxm-node:hover .wxm-dot{transform:scale(1.06)}
+}
+.wxm-node.is-on .wxm-dot{
+  transform:scale(1.1);
+  border-color:var(--tint);
+  background:color-mix(in srgb,var(--tint) 26%,rgba(8,12,18,.6));
+  box-shadow:0 0 0 4px color-mix(in srgb,var(--tint) 14%,transparent),
+             0 8px 26px -6px color-mix(in srgb,var(--tint) 45%,transparent);
+}
+.wxm-node.is-on .wxm-name{color:var(--cream)}
+.wxm-node:focus-visible{outline:none}
+.wxm-node:focus-visible .wxm-dot{outline:2px solid var(--gold); outline-offset:4px}
+
+.wxm-key{display:flex; align-items:center; gap:10px; margin:0}
+.wxm-key .mono{font-size:.6rem; letter-spacing:.2em; text-transform:uppercase;
+  color:var(--c-38)}
+.wxm-key .mono:first-of-type{order:-1}
+.wxm-key-scale{flex:1; height:3px; border-radius:3px; max-width:180px;
+  background:linear-gradient(90deg,var(--plinth),var(--gold))}
+
+/* the selected district, and nothing else about it */
+.wxm-detail{position:relative; border:1px solid var(--hair); border-radius:16px;
+  padding:clamp(16px,2vw,22px); background:rgba(255,255,255,.02)}
+.wxm-d-head{display:flex; align-items:center; gap:14px}
+.wxm-d-icon{width:38px; height:38px; flex:none; display:block}
+.wxm-d-icon svg{width:100%; height:100%; display:block;
+  filter:drop-shadow(0 2px 8px rgba(0,0,0,.5))}
+.wxm-d-who{flex:1; min-width:0}
+.wxm-d-who b{display:block; font-family:var(--display); font-size:1.24rem;
+  font-weight:400; color:var(--cream); line-height:1.2}
+.wxm-d-who span{display:block; font-size:.76rem; color:var(--c-52); margin-top:3px}
+.wxm-d-read{display:flex; align-items:baseline; gap:1px; flex:none;
+  font-family:var(--sans)}
+.wxm-d-read b{font-size:1.9rem; font-weight:600; color:var(--cream); line-height:1;
+  text-shadow:0 0 24px rgba(255,210,150,.25)}
+.wxm-d-read i{font-style:normal; font-size:.9rem; font-weight:500; color:var(--gold)}
+
+.wxm-d-facts{display:grid; grid-template-columns:repeat(3,1fr); gap:12px;
+  margin:16px 0 0; padding-top:16px; border-top:1px solid var(--hair)}
+.wxm-d-facts dt{font-family:var(--sans); font-size:.58rem; letter-spacing:.2em;
+  text-transform:uppercase; color:var(--c-38); margin:0 0 5px}
+.wxm-d-facts dd{margin:0; font-family:var(--sans); font-size:.98rem; font-weight:500;
+  color:var(--cream)}
+
+.wxm-stamp{margin:14px 0 0; font-size:.6rem; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--c-38)}
+.wxm-wait{margin:0; font-size:.66rem; letter-spacing:.2em; text-transform:uppercase;
+  color:var(--c-38)}
+.wxm-dead{margin:0; color:var(--c-70); font-size:.95rem; line-height:1.8; max-width:56ch}
+
+/* Ten names need about 470px of map to sit side by side. Whether there
+   is that much depends on the MAP, not the window: at 768 the two-column
+   layout leaves the map 394px and four pairs of labels collided, while at
+   700 the stacked layout gives it 582px and none do. So the query is on
+   the container. The viewport rule below stays as the fallback for
+   browsers without container queries — on a phone the answer is the same
+   either way. */
+@container (max-width:470px){
+  .wxm-name{display:none}
+}
+@media (max-width:560px){
+  /* Ten labels do not fit across a phone. The dots keep their readings
+     and stay tappable; the names come back with the selection, which is
+     what the detail panel below is for. */
+  .wxm-name{display:none}
+  .wxm{aspect-ratio:1000/820}
+  /* the three figures stay on ONE row here. Wrapped to two they pushed
+     humidity past the foot of the panel, which is the one number a
+     reader has to scroll for and the least likely to be missed on
+     purpose. They fit: ~105px a column at 390. */
+  .wxm-d-facts{gap:8px}
+  .wxm-d-head{flex-wrap:wrap}
+  .wxm-d-read{width:100%; justify-content:flex-start}
+  .wxm-lede{font-size:.92rem; line-height:1.72}
+}
+@media (prefers-reduced-motion:reduce){
+  .wxm-node,.wxm-dot{transition:none}
+  .wxm-node{opacity:1}
 }
 
 /* ═══ consultation form ════════════════════════════════════ */
@@ -2046,26 +2242,46 @@ footer.foot{position:relative; z-index:2; padding:clamp(46px,6vh,74px) var(--gut
       <div class="depth" style="--d:26px">
         <div class="rv rv-glass">
           <div class="lev" style="--dur:11s;--amp:9px;--delay:.2s">
-            <div class="stat-card">
+            <!-- It reads as a statistic and it is one, but it is also the
+                 shortest route to the portfolio, so it is a link. The disc
+                 translates rather than rotates: the two sheets beside it
+                 unfold in place, this one goes somewhere, and .cm-go's
+                 rotation is reserved for the former.
+
+                 150+ is the client's figure and is kept at their request.
+                 The portfolio holds 129, and this panel now lands on a page
+                 that says so — raised, and their call. It was briefly wired
+                 to count from the data; if that is ever wanted back, it is
+                 four lines in js/home-collection.js writing data.length
+                 into a [data-live-count] attribute here. -->
+            <a class="stat-card stat-card--act stat-card--nav" href="listings.html">
               <b class="num">150<i>+</i></b>
               <span>Listings in prime locations</span>
-            </div>
+              <span class="cm-go" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span>
+            </a>
           </div>
         </div>
       </div>
       <!-- live: js/hero-panels.js fills these from Open-Meteo. The dash
            is what shows if the request fails; it is never replaced with
-           a made-up figure. -->
+           a made-up figure.
+
+           It is also the third sheet's opener. One temperature for a city
+           built on hills is the least interesting true thing about
+           Amman's weather; js/weather-map.js opens the district map that
+           says the interesting one. -->
       <div class="depth" style="--d:15px">
         <div class="rv rv-glass" style="--rvd:130ms">
           <div class="lev" style="--dur:13.5s;--amp:7px;--delay:1.2s;--rot:.4deg">
-            <div class="stat-card wx" id="wx">
+            <button class="stat-card stat-card--act wx" id="wx" type="button"
+                    aria-haspopup="dialog">
               <b class="wx-read"><span data-wx-temp>—</span><i class="wx-deg">°C</i></b>
               <span class="wx-line">
                 <span class="wx-icon" data-wx-icon aria-hidden="true"></span>
                 <span data-wx-desc>Amman</span>
               </span>
-            </div>
+              <span class="cm-go" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span>
+            </button>
           </div>
         </div>
       </div>
@@ -2552,6 +2768,36 @@ footer.foot{position:relative; z-index:2; padding:clamp(46px,6vh,74px) var(--gut
   </div>
 </div>
 
+<!-- ═══ the weather map ═════════════════════
+     The third sheet, and the same object as the other two: same veil,
+     same panel, same close button, same focus trap and scroll lock in
+     hero-panels.js. A dialog that behaved differently from its two
+     neighbours would be a third thing to learn.
+
+     js/weather-map.js renders into #wxsBody and owns nothing else. It
+     fetches only when the sheet is first opened — most visitors never
+     open it, and the landing page should not pay for them. -->
+<div class="cmx wxs" id="wxs" hidden>
+  <div class="cmx-veil" data-cmx-close aria-hidden="true"></div>
+  <div class="cmx-panel" role="dialog" aria-modal="true" aria-labelledby="wxsTitle">
+    <button class="cmx-x" type="button" data-cmx-close aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+        <path d="M6 6l12 12M18 6L6 18"/>
+      </svg>
+    </button>
+
+    <p class="cmx-kick">Lumina</p>
+    <h2 class="display" id="wxsTitle">Amman, right now</h2>
+
+    <!-- Everything below arrives from the request: the lede is written
+         from the day's own spread, so on a flat afternoon it says so
+         rather than insisting on a pattern that is not there. With the
+         script blocked the sheet never opens, so there is nothing to
+         degrade. -->
+    <div id="wxsBody"></div>
+  </div>
+</div>
+
 <!-- ═══ consultation form ═══════════════════════════════ -->
 <div class="cf" id="cf" hidden>
   <div class="cf-veil" data-cf-close aria-hidden="true"></div>
@@ -2676,11 +2922,14 @@ footer.foot{position:relative; z-index:2; padding:clamp(46px,6vh,74px) var(--gut
      home-collection.js asks the builder to build -->
 <script src="js/property-viewer.js?v=2026-08-12a" defer></script>
 <script src="js/property-card.js?v=2026-08-07b" defer></script>
-<script src="js/home-collection.js?v=2026-08-22a" defer></script>
-<script src="js/hero-panels.js?v=2026-08-07c" defer></script>
+<script src="js/home-collection.js?v=2026-08-22b" defer></script>
+<script src="js/hero-panels.js?v=2026-08-22a" defer></script>
 <!-- after hero-panels.js: that file exposes the sheet machinery the
      quiz reuses, and defer preserves document order -->
 <script src="js/quiz.js?v=2026-08-22a" defer></script>
+<!-- same reason as quiz.js: it renders into a sheet whose open/close,
+     scroll lock and focus trap hero-panels.js owns. -->
+<script src="js/weather-map.js?v=2026-08-22a" defer></script>
 <script src="js/nav-menu.js?v=2026-08-07b" defer></script>
 <script src="js/consult-form.js?v=2026-08-22a" defer></script>
 

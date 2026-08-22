@@ -1,6 +1,8 @@
 // LUMINA — hero-panels.js
-// The two live hero panels: Amman's current weather, and the commission
-// structure sheet.
+// Amman's current weather on the hero panel, and the sheet machinery the
+// three dialogs share: commission, the district quiz, and the weather
+// map. js/quiz.js and js/weather-map.js render their own interiors and
+// nothing else.
 //
 // Loaded only by index.html. No storage (see CLAUDE.md), no dependency,
 // no inline script — the deploy CSP is script-src 'self'.
@@ -42,14 +44,14 @@
      an emoji, per the no-emoji rule. */
   const ICONS = {
     sun:
-      '<svg viewBox="0 0 24 24" aria-hidden="true">' +
-      '<circle cx="12" cy="12" r="4.6" fill="#FFC64D"/>' +
-      '<g stroke="#FFC64D" stroke-width="1.7" stroke-linecap="round">' +
+      '<svg class="wx-i-sun" viewBox="0 0 24 24" aria-hidden="true">' +
+      '<circle cx="12" cy="12" r="4.6" fill="var(--sun,#FFC64D)"/>' +
+      '<g stroke="var(--sun,#FFC64D)" stroke-width="1.7" stroke-linecap="round">' +
       '<path d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2' +
       'M5.4 5.4l1.6 1.6M17 17l1.6 1.6M18.6 5.4L17 7M7 17l-1.6 1.6"/></g></svg>',
     partly:
       '<svg viewBox="0 0 24 24" aria-hidden="true">' +
-      '<circle cx="9" cy="8.6" r="3.6" fill="#FFC64D"/>' +
+      '<circle cx="9" cy="8.6" r="3.6" fill="var(--sun,#FFC64D)"/>' +
       '<path d="M17.4 19H8.2a3.6 3.6 0 0 1 0-7.2 4.9 4.9 0 0 1 9.2 1.3 2.95 2.95 0 0 1 0 5.9Z" fill="#C9D3E0"/></svg>',
     cloud:
       '<svg viewBox="0 0 24 24" aria-hidden="true">' +
@@ -77,7 +79,7 @@
     thunder:
       '<svg viewBox="0 0 24 24" aria-hidden="true">' +
       '<path d="M17 12.8H7a3.6 3.6 0 0 1 0-7.2 4.9 4.9 0 0 1 9.2 1.3 2.95 2.95 0 0 1 .8 5.9Z" fill="#8D99A9"/>' +
-      '<path d="M12.6 14.2l-3.4 5h2.5l-.9 4 4.1-5.6h-2.6l1.4-3.4Z" fill="#FFC64D"/></svg>'
+      '<path d="M12.6 14.2l-3.4 5h2.5l-.9 4 4.1-5.6h-2.6l1.4-3.4Z" fill="var(--sun,#FFC64D)"/></svg>'
   };
 
   const conditionFor = code => {
@@ -226,6 +228,9 @@
     paintWeather();
     initSheet('cmOpen', 'cmx');
     initSheet('qzOpen', 'qz');
+    /* The weather panel is its own opener — it already carries id="wx"
+       for paintWeather above, so it does not need a second one. */
+    initSheet('wx', 'wxs');
   };
 
   if (document.readyState === 'loading') {
