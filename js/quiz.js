@@ -244,7 +244,7 @@
     const n = el.dataset.keys.split(',').reduce((s, k) => s + (tally.get(k.trim()) || 0), 0);
     if (n) el.textContent = String(n);
   };
-  fetch('data/lumina-demo-leads.json?v=2026-08-06')
+  fetch('data/lumina-demo-leads.json?v=2026-08-22')
     .then(r => r.ok ? r.json() : null)
     .then(data => {
       if (!Array.isArray(data)) return;

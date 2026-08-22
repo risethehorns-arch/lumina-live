@@ -102,7 +102,7 @@
      stale on a re-import and start the pages lying; this is the cheap
      fix for that. Fails silently — a wrong-by-a-few count is much
      better than an empty one. */
-  fetch('data/lumina-demo-leads.json?v=2026-08-06')
+  fetch('data/lumina-demo-leads.json?v=2026-08-22')
     .then(r => r.ok ? r.json() : null)
     .then(data => {
       if (!Array.isArray(data) || !data.length) return;

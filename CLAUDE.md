@@ -230,7 +230,7 @@ reveal still in flight. The card's pointer sheen reuses the `--sx`/`--sy` custom
 reduced motion `bindTilt` never binds, so the sheen simply stays off.
 
 **9. `quality_score` is record completeness, not photo quality.**
-It comes from the Excel import and 86 of 118 records score 5. It is fine as a "did this row
+It comes from the Excel import and 97 of 129 records score 5. It is fine as a "did this row
 arrive whole" filter and useless as a ranking signal for how good a listing looks. Nothing
 in the data describes the photographs — that is why the shop-window covers are curated by
 eye in the JSON rather than scored.
@@ -440,9 +440,75 @@ no two records sharing a file, no duplicate cover images.
 **`data/lumina-demo-leads.json` now carries `?v=` like every other asset.**
 It did not, so a returning visitor kept the copy their browser had cached —
 which after a clean-up means they keep the records that were removed. All
-five fetches of it (`listings.js`, `areas.js`, `home-collection.js`,
-`property-details.js`, `consult-form.js`) carry the marker; bump all five
-together whenever the data changes.
+**eight** fetches of it (`listings.js`, `areas.js`, `areas-index.js`,
+`home-collection.js`, `property-details.js`, `consult-form.js`, `quiz.js`,
+`room.js`) carry the marker; bump all eight together whenever the data
+changes — and bump each of those scripts' own `?v=` in the HTML at the same
+time, or the browser keeps the old script and with it the old data URL.
+
+### The 2026-08-22 drop — 118 records became 129
+
+Eleven listings added from a new sheet and a new photo drop. Sources, and
+neither answers an anonymous request — both were read through the
+signed-in browser session:
+
+- **Sheet** — Google Sheets, *Saif's Updated data*, tab `Listings Log 26`.
+  186 rows, refs 015–200. Same column order as `Lumina 2026.xlsx`.
+- **Photos** — OneDrive, `Lumina/Listing Updates/Listing V.02/Rent`,
+  13 folders named `2026-<ref>`.
+
+**The method is a ref diff, not a re-import.** Compare the refs already in
+`data/lumina-demo-leads.json` against the sheet; take only refs that are new
+*and* have a photo folder. The existing 118 records were not touched — the
+writer uses `indent=2` with no trailing newline, which round-trips them
+byte-for-byte, so the diff shows only what actually changed.
+
+**Five of the eleven are records the 2026-08-05 clean-up removed** (151, 154,
+155, 156, 158). They were cut for having no photographs; this drop supplies
+them, so they now satisfy the rule above — "a record survives if it has at
+least one photograph that is its own". `../_removed-listings-2026-08-05/`
+still holds the archive.
+
+**Not one row in this drop carries a price.** Every one of the eleven is
+`price_jod_raw: null` with `needs_price_review: true`, which renders "Price
+on request" on the card, the details page and the share card, and keeps the
+record off the landing page (`js/home-collection.js`). This is the same path
+the five monthly-rent records already use. Setting a real price later is a
+one-field edit per record.
+
+**The photo folders cannot be globbed.** Three of the thirteen would have
+shipped the wrong thing:
+
+| ref | what the folder holds |
+|---|---|
+| 151 | numbered `00–09` plus 15 WhatsApp files that re-shoot the same rooms — took the numbered set |
+| 163 | numbered `1–12` plus 7 WhatsApp files **of a different apartment** — dark modern kitchen and marble bathroom against this listing's chandeliers and blue velvet. Globbing would have published two properties as one |
+| 165 | `3.jpeg` is byte-identical to `2.jpeg` |
+| 166 | `4.jpeg` carries a *"free version of Watermarkly"* promo bar; `5.jpeg` is the same shot without it |
+
+The rule from the 2026-08-04 import still holds and still matters: **root
+level only, the `New folder` subdirectories are the raw unsorted dump.**
+Look at the photographs before publishing them — a contact sheet per folder
+takes a minute and is the only thing that catches a mixed folder.
+
+**Two refs were held back**, and both need the sender, not a guess:
+
+- **157** is the same apartment as **155** — identical sheet row (Abdoun,
+  1st, 162 m², 3 bed, 3 bath) and the photographs show the same rooms from
+  different angles: same zebra armchair, same horse print, same dining set
+  and clock, same green kitchen. Two shoots of one unit. The 2026-08-04
+  import reached the same conclusion independently.
+- **167**'s 23 photographs cover more than one apartment — four to five
+  distinct living rooms and two different white kitchens. Nothing in the
+  folder says which set is 167.
+
+**Also in the drop and still unusable:** `Sale/` holds three folders named by
+area (`Shmesani`, `Um uthaina`, `Um uthaina 01`) with no ref number, so they
+cannot be matched to a sheet row. Refs 162, 164 and 171–200 are ref numbers
+with nothing behind them yet — 30 empty placeholder rows.
+
+Full record at `data/import-report-2026-08-22.json`.
+
 
 ### Photos
 
@@ -478,7 +544,7 @@ an obviously stronger opening shot, that photo was moved to the front of `images
 Move the photo to the **front of `images`**, never just repoint `image_url` — the
 viewer opens at `images[0]`, so repointing alone makes the gallery open on a different
 room than the card showed. No record ever takes a photo that is not its own, so covers
-stay unique across all 118.
+stay unique across all 129.
 
 ## The consultation form — and why it hands off the way it does
 
@@ -873,7 +939,7 @@ WhatsApp, iMessage, Slack and Facebook build a preview from Open Graph tags in t
 **static** HTML at the URL they are handed, and **never run JavaScript**. Every property
 here is fetched client-side from `data/lumina-demo-leads.json`, so a link to
 `listings.html?property=lumina-016` gave the crawler *listings.html's own* tags — every
-one of the 118 properties previewed as the same generic villa. A query string cannot
+one of the 129 properties previewed as the same generic villa. A query string cannot
 change static HTML and there is no server to change it on. **Do not try to fix this by
 writing OG tags at runtime; no crawler will ever see them.**
 
@@ -898,7 +964,7 @@ Five things here are load-bearing:
    destinations — the two buttons were *deliberately* different and still are.
 3. **1200×630 is not a preference.** WhatsApp downgrades anything roughly square or
    portrait to a small thumbnail card, and gives up entirely on large files — 54 of the
-   118 covers are over 300KB as shot. The generated crops run 61–250KB.
+   129 covers are over 300KB as shot. The generated crops run 61–250KB.
 4. **`p/` must stay ALLOWED in `robots.txt`.** The cards carry `noindex` so 118
    near-identical redirect pages stay out of search results, but preview crawlers do not
    consult the meta — a `Disallow` would stop them fetching the card at all.
@@ -935,7 +1001,7 @@ and the two cannot disagree.
 nodes on a map**; lighting all three and centring on their midpoint is the case that rule
 exists for.
 
-**Every number on the page is counted, not estimated.** Nine districts, 118 records, from
+**Every number on the page is counted, not estimated.** Nine districts, 129 records, from
 `data/lumina-demo-leads.json`. Each figure ships as a literal so the page is right with the
 script blocked, and `areas-index.js` re-counts from the data on load and corrects it — the
 `[data-count]` attribute holds the data's own location strings (note `Shmesani`, which is how

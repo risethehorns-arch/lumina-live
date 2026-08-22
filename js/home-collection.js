@@ -12,7 +12,7 @@
   const grid = document.getElementById('home-collection-grid');
   if (!grid) return;
 
-  const DATA_URL = 'data/lumina-demo-leads.json?v=2026-08-06';
+  const DATA_URL = 'data/lumina-demo-leads.json?v=2026-08-22';
 
   /* Eight, not six, and the count is load-bearing. The first card spans
      two columns, so six cards over the home grid's three columns left
@@ -44,7 +44,7 @@
     if (num(l.photo_count) < 6 || !l.image_url) return false;   // enough to fill the viewer
     if (l.needs_price_review || l.price_unit === 'per_sqm') return false;  // renders "Price on request"
     /* quality_score is the import's record-completeness grade, not a
-       judgement on the photography — 86 of 118 records score 5. It only
+       judgement on the photography — 97 of 129 records score 5. It only
        filters out the sparse rows that would render half a card. */
     if (num(l.quality_score) < 4) return false;
     /* "Sale or Rent" records carry a rent figure — 30,000 JOD against a

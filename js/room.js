@@ -586,7 +586,7 @@
      hardcoded counts go stale on re-import and start the pages lying. */
   const stock = document.getElementById('stockCount');
   if (stock) {
-    fetch('data/lumina-demo-leads.json?v=2026-08-06')
+    fetch('data/lumina-demo-leads.json?v=2026-08-22')
       .then(r => r.ok ? r.json() : null)
       .then(d => { if (Array.isArray(d) && d.length) stock.textContent = String(d.length); })
       .catch(() => {});

@@ -1,0 +1,129 @@
+{
+ "generated": "2026-08-22",
+ "batch": "Listing V.02 drop",
+ "sources": {
+  "sheet": "Google Sheets — \"Saif's Updated data\", tab \"Listings Log 26\" (186 rows, refs 015–200)",
+  "photos": "OneDrive — Lumina/Listing Updates/Listing V.02/Rent (13 folders named 2026-<ref>)",
+  "read_via": "the signed-in browser session; both sources refuse anonymous requests (the sheet returns 401 to an export fetch)"
+ },
+ "method": "Compared the ref numbers already on the site against the sheet, then took only refs that are new AND have a photo folder. Field wording, vocabulary and photo rules follow data/import-report.json so the new records are indistinguishable from the 2026-08-04 ones.",
+ "records_before": 118,
+ "records_after": 129,
+ "added": [
+  {
+   "ref": "151",
+   "title": "Two-bedroom apartment on the ground floor, 100 m²",
+   "photos": 10
+  },
+  {
+   "ref": "154",
+   "title": "Four-bedroom apartment on the level −2, 285 m²",
+   "photos": 6
+  },
+  {
+   "ref": "155",
+   "title": "Three-bedroom apartment on the 1st floor, 162 m²",
+   "photos": 9
+  },
+  {
+   "ref": "156",
+   "title": "Three-bedroom apartment on the ground floor, 280 m²",
+   "photos": 9
+  },
+  {
+   "ref": "158",
+   "title": "Two-bedroom apartment on the 1st floor, 120 m²",
+   "photos": 9
+  },
+  {
+   "ref": "163",
+   "title": "Three-bedroom apartment on the 2nd floor, 210 m²",
+   "photos": 12
+  },
+  {
+   "ref": "165",
+   "title": "Two-bedroom apartment on the 2nd floor, 110 m²",
+   "photos": 8
+  },
+  {
+   "ref": "166",
+   "title": "Three-bedroom apartment on the 2nd floor, 200 m²",
+   "photos": 10
+  },
+  {
+   "ref": "168",
+   "title": "Three-bedroom apartment with a 180 m² terrace, 250 m²",
+   "photos": 11
+  },
+  {
+   "ref": "169",
+   "title": "Two-bedroom apartment on the 2nd floor, 163 m²",
+   "photos": 10
+  },
+  {
+   "ref": "170",
+   "title": "Two-bedroom apartment on the ground floor, 120 m²",
+   "photos": 10
+  }
+ ],
+ "no_row_in_this_drop_carries_a_price": {
+  "refs": [
+   "151",
+   "154",
+   "155",
+   "156",
+   "158",
+   "163",
+   "165",
+   "166",
+   "168",
+   "169",
+   "170"
+  ],
+  "handling": "price_jod_raw and price_jod_test_margin are null and needs_price_review is true, which renders \"Price on request\" on the card, the details page and the share card, and keeps the record off the landing-page collection (js/home-collection.js). Setting a price later is a one-field edit per record.",
+  "note": "The Price column is populated for every older ref and empty for every new one."
+ },
+ "held_back": [
+  {
+   "ref": "157",
+   "reason": "the same apartment as 155 — identical sheet row (Abdoun, 1st, 162 m², 3 bed, 3 bath) and the photographs show the same rooms: same zebra armchair, same horse print, same dining set and clock, same green kitchen. Two shoots of one unit. The 2026-08-04 import flagged 157 as a duplicate of 155 independently.",
+   "photos_available": 10
+  },
+  {
+   "ref": "167",
+   "reason": "the 23 photographs cover more than one apartment — four to five distinct living rooms and two different white kitchens. Nothing in the folder says which set is 167, and a gallery mixing two units is worse than no gallery. Needs the sender to split the folder.",
+   "photos_available": 23
+  }
+ ],
+ "photo_rules": {
+  "scope": "root level of each 2026-<ref> folder only; the \"New folder\" subdirectories are the raw unsorted dump, exactly as in the previous import",
+  "cap": 12,
+  "max_side_px": 1920,
+  "jpeg_quality": 82,
+  "cover": "the lowest-numbered file becomes 01.jpg",
+  "exif": "stripped — every file is re-encoded, so no camera or GPS data ships"
+ },
+ "photo_decisions": {
+  "151": "took the numbered set 00–09 (10); the 15 WhatsApp-named files alongside them re-shoot the same rooms",
+  "163": "took the numbered set 1–12 (12); the 7 WhatsApp-named files are a DIFFERENT apartment — dark modern kitchen and marble bathroom against this listing's chandeliers and blue velvet. Globbing the folder would have published two properties as one.",
+  "165": "3.jpeg is byte-identical to 2.jpeg — dropped, leaving 8",
+  "166": "4.jpeg carries a \"free version of Watermarkly\" promo bar across the bottom; 5.jpeg is the same shot without it, so 4.jpeg was dropped"
+ },
+ "data_quality_notes": [
+  "sheet spells Cooling as \"Cuntral AC\" on refs 154, 155, 156, 157 — read as Central AC",
+  "sheet spells the district \"DairGhbar\" on ref 166 — read as Dair Ghbar",
+  "sheet spells \"4th circle\" on ref 165 — read as 4th Circle",
+  "refs 154 and 167 give Floor as \"-2\" — read as Level −2, as the existing records write it",
+  "ref 156 has no Kitchen value — left null rather than assumed",
+  "ref 168 gives Outdoor as \"180sqm Terrace\" — read as \"180 m² terrace\", matching ref 078",
+  "refs 162, 164 and 171–200 are ref numbers with no data behind them yet — 30 empty placeholder rows, nothing to import",
+  "Sale/ holds three folders named by area (Shmesani, Um uthaina, Um uthaina 01) with no ref number, so they cannot be matched to a sheet row",
+  "29 older refs in the sheet are still absent from the site — they were dropped by the 2026-08-04 import for missing photographs, and this drop adds photographs for only 151, 154–158 of them"
+ ],
+ "excluded_from_output": "Owner No. and Guard No. columns — personal phone numbers, and this JSON is served publicly. They were never written to disk.",
+ "also_updated": [
+  "regenerated p/ and assets/og/ via scripts/build-share-cards.py (118 → 129)",
+  "bumped ?v= on data/lumina-demo-leads.json in all 8 fetchers and on the 8 scripts themselves",
+  "areas.html no-JS fallback counts, and the table row order (4th Circle now outranks Swefieh)"
+ ]
+}

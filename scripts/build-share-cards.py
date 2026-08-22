@@ -128,7 +128,7 @@ TEMPLATE = '''<!DOCTYPE html>
      crawler stops here and reads the tags below; a browser runs
      js/share-card.js and is replaced onto the real page before this paints.
 
-     noindex, follow: 118 near-identical redirect pages are thin content and
+     noindex, follow: {n} near-identical redirect pages are thin content and
      have no business in a search result. Preview crawlers do not consult it —
      it does not suppress the card. robots.txt must keep /p/ ALLOWED, or
      WhatsApp and Facebook cannot fetch this at all. -->
@@ -216,7 +216,7 @@ def main():
             # still better than previewing with another property's picture.
             no_cover.append(pid)
         (CARDS / f'{pid}.html').write_text(TEMPLATE.format(
-            host=HOST, id=esc(pid), ver=esc(ver),
+            host=HOST, id=esc(pid), ver=esc(ver), n=len(recs),
             title=esc(rec.get('title') or 'Property'),
             desc=esc(describe(rec)),
         ), encoding='utf-8')

@@ -451,7 +451,7 @@
     return;
   }
 
-  fetch('data/lumina-demo-leads.json?v=2026-08-06')
+  fetch('data/lumina-demo-leads.json?v=2026-08-22')
     .then(r => (r.ok ? r.json() : Promise.reject()))
     .then(data => {
       const listing = Array.isArray(data) ? data.find(item => item.id === id) : null;

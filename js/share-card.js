@@ -11,7 +11,7 @@
      - Inline would violate the site's own CSP (`script-src 'self'`, no
        'unsafe-inline' — see _headers). GitHub Pages ignores _headers today, but
        shipping something the declared policy forbids is how a future move back
-       to Netlify turns into 118 broken pages.
+       to Netlify turns into 129 broken pages.
      - A <meta http-equiv="refresh"> in <head> fires for crawlers too. Several
        follow it and preview the DESTINATION, which is listings.html — whose own
        og:image is the generic villa. That is the exact bug this replaces. The

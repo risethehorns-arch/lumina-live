@@ -43,13 +43,13 @@
        from a card is not a dead end. */
     listing.__askUrl = whatsappUrl(listingMessage(listing));
     return window.Lumina.buildPropertyCard(listing, index, {
-      /* No `wide` card here. The home grid features one; on a 118-card
+      /* No `wide` card here. The home grid features one; on a 129-card
          portfolio a double-width item just breaks the rhythm. */
       wide: false,
       /* On by name only: the builder caps the delay at the first nine
          cards, so the opening screen assembles and everything below the
          fold still reveals the moment it is scrolled to. Staggering all
-         118 would leave the last card waiting eleven seconds. */
+         129 would leave the last card waiting twelve seconds. */
       stagger: true,
       actions: [
         { label: 'Request Details',  href: whatsappUrl(listingMessage(listing)), primary: true },
@@ -481,7 +481,7 @@
   if (grid) {
     /* Relative, not root-absolute: a GitHub Pages project deploy serves
        this from /lumina/, where a leading slash 404s. */
-    fetch('data/lumina-demo-leads.json?v=2026-08-06')
+    fetch('data/lumina-demo-leads.json?v=2026-08-22')
       .then(response => {
         if (!response.ok) throw new Error('HTTP ' + response.status);
         return response.json();
