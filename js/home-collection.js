@@ -12,7 +12,7 @@
   const grid = document.getElementById('home-collection-grid');
   if (!grid) return;
 
-  const DATA_URL = 'data/lumina-demo-leads.json?v=2026-08-22';
+  const DATA_URL = 'data/lumina-demo-leads.json?v=2026-08-25b';
 
   /* Eight, not six, and the count is load-bearing. The first card spans
      two columns, so six cards over the home grid's three columns left

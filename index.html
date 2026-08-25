@@ -15,17 +15,35 @@
 <meta property="og:site_name" content="Lumina">
 <meta property="og:title" content="Lumina — Private Real Estate Advisory, Amman">
 <meta property="og:description" content="Exclusive villas and residences in Amman's most prestigious neighbourhoods.">
-<meta property="og:image" content="https://www.lumina-jo.com/assets/pod-hero.jpg">
+<meta property="og:image" content="https://www.lumina-jo.com/assets/og/home.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
 <meta property="og:url" content="https://www.lumina-jo.com/">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Lumina — Private Real Estate Advisory, Amman">
 <meta name="twitter:description" content="Exclusive villas and residences in Amman's most prestigious neighbourhoods.">
-<meta name="twitter:image" content="https://www.lumina-jo.com/assets/pod-hero.jpg">
+<meta name="twitter:image" content="https://www.lumina-jo.com/assets/og/home.jpg">
 
 <link rel="preload" as="font" type="font/woff2" href="assets/fonts/InstrumentSerif.woff2" crossorigin>
 <link rel="preload" as="font" type="font/woff2" href="assets/fonts/InstrumentSans.woff2" crossorigin>
-<link rel="preload" as="image" href="assets/pod-hero.jpg">
+<!-- The hero is a frame sequence now, so the plate this used to warm is
+     no longer fetched by anything. These preload the FIRST frame of
+     whichever ladder js/hero-descent.js will choose - the media split
+     is the same 760px it uses - so the descent has something to draw
+     on its first paint. 6KB and 4KB respectively; the old preload was
+     148KB of an image the page no longer shows. -->
+<!-- Preloaded so it is DISCOVERED during head parsing, but deliberately not
+     fetchpriority="high". At high it outranks the render-blocking CSS on a
+     slow link and delays first paint for everything: measured on Fast 3G,
+     first paint, FCP and LCP were all 2172ms and all three moved together,
+     because the page was simply not painting. The canvas cannot draw this
+     frame until the deferred script runs anyway, so early discovery is worth
+     having and priority is not. -->
+<link rel="preload" as="image" href="assets/hero/1920/001.webp"
+      media="(min-width:760px)">
+<link rel="preload" as="image" href="assets/hero/608/001.webp"
+      media="(max-width:759.98px)">
 
 <!-- property card + gallery viewer, shared with listings.html -->
 <link rel="stylesheet" href="css/property-ui.css?v=2026-08-07i">
@@ -128,6 +146,12 @@ main{position:relative; z-index:2}
 img,video{display:block; max-width:100%}
 a{color:inherit; text-decoration:none}
 button{font:inherit; color:inherit; border:0; background:none; cursor:pointer}
+.skip{position:absolute; left:8px; top:-60px; z-index:120;
+  padding:10px 16px; border-radius:0 0 10px 10px;
+  background:var(--navy-2); color:var(--cream); font:600 .92rem/1 var(--sans);
+  text-decoration:none; border:1px solid var(--gold-dp);
+  transition:top .18s var(--ease)}
+.skip:focus{top:0}
 :focus-visible{outline:2px solid var(--gold-lt); outline-offset:3px; border-radius:2px;
   box-shadow:0 0 0 6px rgba(255,178,90,.12)}
 ::selection{background:var(--gold); color:var(--ink)}
@@ -169,7 +193,12 @@ h3.display{font-size:clamp(1.32rem,1.7vw,1.72rem); line-height:1.1}
     radial-gradient(circle at center,rgba(255,200,120,.18),rgba(255,178,90,.07) 32%,transparent 58%),
     radial-gradient(circle at 58% 48%,rgba(127,217,232,.08),transparent 52%);
   mix-blend-mode:screen; transition:opacity .7s var(--ease);
-  filter:blur(.5px);
+  /* filter:blur(.5px) removed 2026-08-25. It forced this 650k-px fixed,
+     screen-blended layer onto its own render surface, and it repaints for
+     every frame the pointer moves. Rendered with and against it on a frozen
+     page at 1x and 2x: ZERO pixels differ and the banding count down the
+     gradient is identical (89 and 198). It was doing nothing a reader could
+     see. .grain dithers the whole page over the top of this anyway. */
 }
 .glow.on{opacity:1}
 
@@ -280,11 +309,23 @@ h3.display{font-size:clamp(1.32rem,1.7vw,1.72rem); line-height:1.1}
   transition:padding .5s var(--ease),background .5s var(--ease),box-shadow .5s var(--ease);
 }
 .bar::after{
-  content:""; position:absolute; inset:0; z-index:-1; opacity:0;
-  background:linear-gradient(180deg,rgba(4,6,11,.92),rgba(4,6,11,.58));
-  -webkit-backdrop-filter:blur(20px) saturate(140%); backdrop-filter:blur(20px) saturate(140%);
-  border-bottom:1px solid rgba(255,178,90,.1);
-  box-shadow:0 12px 40px -20px rgba(0,0,0,.65);
+  /* A SCRIM, not a panel. It reaches 44px past the bar and fades out over
+     that distance, and the same fade is applied as a mask so the blur goes
+     with it — masking an element that carries a backdrop-filter cross-fades
+     the blurred backdrop back into the sharp one, which is the only way to
+     end a blur without drawing a line. The border-bottom and the drop
+     shadow are gone for the same reason: they were the edge. */
+  content:""; position:absolute; inset:0 0 -44px; z-index:-1; opacity:0;
+  pointer-events:none;
+  background:linear-gradient(180deg,
+    rgba(4,6,11,.88) 0%,rgba(4,6,11,.80) 34%,rgba(4,6,11,.44) 62%,
+    rgba(4,6,11,.15) 84%,rgba(4,6,11,0) 100%);
+  -webkit-backdrop-filter:blur(16px) saturate(128%);
+  backdrop-filter:blur(16px) saturate(128%);
+  -webkit-mask-image:linear-gradient(180deg,#000 0%,#000 46%,
+    rgba(0,0,0,.74) 66%,rgba(0,0,0,.3) 85%,transparent 100%);
+  mask-image:linear-gradient(180deg,#000 0%,#000 46%,
+    rgba(0,0,0,.74) 66%,rgba(0,0,0,.3) 85%,transparent 100%);
   transition:opacity .5s var(--ease);
 }
 .bar.stuck{padding-top:12px; padding-bottom:12px}
@@ -592,45 +633,99 @@ h3.display{font-size:clamp(1.32rem,1.7vw,1.72rem); line-height:1.1}
    centre while the headline and CTA stay pinned to the foot.
    Side padding is intentionally tight so the lede can sit hard-left and the
    glass stats hard-right, leaving the pod silhouette clear in the middle. */
-.hero{position:relative; min-height:100vh; min-height:100svh; display:flex; align-items:stretch;
-      padding:clamp(104px,13vh,132px) clamp(16px,2.2vw,40px) clamp(34px,5vh,62px); overflow:clip}
-/* Ken Burns lives on the WRAPPER, cursor parallax on the IMG — same two-element
-   split as .depth/.lev, so neither transform overwrites the other. */
+/* ── Act I, the descent ──────────────────────────────────────
+   .hero is now the RUNWAY and carries no layout of its own; .hero-pin is
+   what stays on screen and holds everything .hero used to. 320vh gives
+   about 10px of scroll per frame at a 1000px viewport: small inputs still
+   move the picture, and the whole fall stays a deliberate gesture.
+
+   The runway must NOT carry `overflow`. An overflow on an ancestor of a
+   sticky child is the classic silent way to kill the stick — the pin clips
+   its own contents instead, which is what was wanted anyway.
+
+   The runway is `vh` and the pin is `dvh` on purpose. A runway in `dvh`
+   changes LENGTH as a phone's URL bar collapses, which moves the scroll
+   position under the reader; the pin in `dvh` merely re-covers, and the
+   canvas is absolutely positioned so nothing reflows when it does. */
+/* The section is no longer the runway. It is pin + fall + arrival, and the
+   pin stays stuck to the BOTTOM OF THIS SECTION — which is what keeps the
+   villa on screen under the arrival instead of sliding away beneath it.
+   .hero-fall is the scroll distance the descent is mapped onto. */
+.hero{position:relative; height:auto; padding:0; display:block}
+/* 152 frames want about 150vh: ~9px of scroll per frame at a 900px
+   viewport, the density the 217-frame hero measured smooth at 48fps.
+   It was 220vh when the sequence was 226 long. Change one, check the
+   other. */
+.hero-fall{height:150vh; pointer-events:none}
+/* --dp, --dc and the dp-* classes are written HERE, on the pin, and not on
+   the section — and that is a performance decision with a number behind it,
+   not tidiness. Every rule that reads them targets something inside this
+   element; the SECTION additionally contains the arrival, so a custom
+   property written there invalidates style for four backdrop-filtered glass
+   cards on every frame of the fall. Measured at 4x CPU: 27.8ms per frame
+   with the write on the section, 20.9ms with it on the pin — the same figure
+   as deleting the arrival outright, because that recalc simply was the cost.
+   If a new rule ever needs --dp from outside the pin, move the write back up
+   and accept the frame budget, or give that rule its own variable.
+
+   --hin   the wording arriving as the fall starts
+   --hout  the wording releasing as the valley opens
+   --cta   the invitation arriving with the villa
+   Each is a pure function of --dp, so scrubbing back up un-does all of it. */
+.hero-pin{
+  /* Re-timed for THIS footage. The previous master was cloud for its first
+     third and the villa entered at .44; this one is above a sunlit deck to
+     .18, through the cloud to .27, opens the valley at .27, has the pod as
+     its subject from .44, and pushes into the interior from .62. So the
+     wording releases as the valley opens rather than over it, and the
+     invitation arrives with the approach and holds through the room. */
+  /* The fall is silent. Nothing is on screen from the moment the cue
+     dissolves until the descent lands, and then the page assembles
+     around the held frame: the context in from the left, the cards
+     from the right, the invitation last. --hout is gone — the wording
+     arrives to stay. */
+  --hin:clamp(0,calc((var(--dp,0) - .74) * 5.6),1);
+  --cta:clamp(0,calc((var(--dp,0) - .88) * 8.4),1);
+  position:sticky; top:0; height:100vh; height:100dvh; overflow:clip;
+  display:flex; align-items:stretch;
+  padding:clamp(104px,13vh,132px) clamp(16px,2.2vw,40px) clamp(34px,5vh,62px);
+}
+/* heroBreathe and drift are gone with the static plate. The footage carries
+   its own camera move and its own grade; a CSS Ken Burns on top of it would
+   be a second, slower camera fighting the first, and an animated `filter`
+   over a canvas re-rasters the whole surface every frame it runs. */
 .hero-media{position:absolute; inset:0; z-index:0; background:
-  radial-gradient(120% 90% at 22% 34%,#2a3648,#0B1018 62%,var(--ink));
-  animation:heroBreathe 30s ease-in-out infinite alternate;}
-@keyframes heroBreathe{from{transform:scale(1)}to{transform:scale(1.04)}}
-/* ── hero plate ────────────────────────────────────────────
-   The pod render ships with generous margins around the structure (unlike the
-   previous plate, which was cropped tight by baked-in UI), so `cover` is safe
-   again in landscape — it only eats sky and water. Portrait still switches to
-   `contain` so the pod is never sliced; the blurred copy fills behind it. */
-.hero-bg{
-  position:absolute; inset:0; width:100%; height:100%;
-  object-fit:cover; transform:scale(1.1);
-  filter:saturate(1.18) contrast(1.06) brightness(.58) blur(18px); z-index:0;
-}
-.hero-fg{
+  radial-gradient(120% 90% at 22% 34%,#2a3648,#0B1018 62%,var(--ink));}
+/* ── the descent surface ───────────────────────────────────
+   The canvas backing store is the ladder's own size (1440x810 or 960x540)
+   and CSS does the covering — <canvas> is a replaced element, so object-fit
+   applies to it exactly as it does to an <img>. That means a resize costs
+   nothing: there is no re-measure, no re-draw and no backing-store
+   reallocation, which is the usual reason a canvas scrubber jumps on a
+   phone's URL-bar collapse.
+
+   .hero-rest is the no-JS and reduced-motion plate underneath. Its <img> is
+   a 122-byte inlined blur of frame 1, so the hero is never an empty
+   rectangle and the motion path pays nothing for it; the two <source>s
+   swap in the real final frame when the reader has asked for less motion.
+   No JS decides this — a media query does. */
+.hero-canvas{
   position:absolute; inset:0; width:100%; height:100%; z-index:1;
-  object-fit:cover; object-position:50% 47%;
-  transform:scale(1.04) translate3d(calc(var(--px)*-11px),calc(var(--py)*-7px),0);
-  transition:transform 1.4s var(--ease);
-  animation:drift 34s ease-in-out infinite alternate;
-  /* slight clarity lift without crushing blacks */
-  filter:saturate(1.2) contrast(1.12) brightness(1.08);
+  object-fit:cover; background:var(--navy);
+  /* Its own compositor layer. Measured at 4x CPU on a 390px viewport:
+     34.8ms per frame without, 27.8ms with — the scrim and the type above it
+     stop being repainted every time the frame index moves. Neutral on
+     desktop, so this is a mobile win taken for free. It is one layer, held
+     only while the descent is on screen, and .dp-covered hides it the moment
+     the arrival is over it. */
+  transform:translateZ(0);
 }
-@media (max-aspect-ratio:1/1){
-  .hero-fg{object-fit:contain; transform:scale(.96) translate3d(calc(var(--px)*-11px),calc(var(--py)*-7px),0)}
-}
+.hero-rest{position:absolute; inset:0; z-index:0}
+.hero-rest img{width:100%; height:100%; object-fit:cover}
 .hero-media video{
   width:100%; height:100%; object-fit:cover;
   transform:scale(1.03) translate3d(calc(var(--px)*-9px),calc(var(--py)*-9px),0);
   transition:transform 1.4s var(--ease);
-}
-/* cinematic grade pulse — warm dusk, higher micro-contrast */
-@keyframes drift{
-  from{filter:saturate(1.18) contrast(1.11) brightness(1.06)}
-  to  {filter:saturate(1.3) contrast(1.16) brightness(1.14)}
 }
 /* scrim: dark at top for the bar, bottom for the headline + CTA, plus corner
    falloff — the pod's lit centre stays clear; sides darken so type/stats read */
@@ -643,27 +738,14 @@ h3.display{font-size:clamp(1.32rem,1.7vw,1.72rem); line-height:1.1}
     radial-gradient(70% 55% at 50% 48%,transparent 28%,rgba(3,5,9,.22) 100%);
   box-shadow:inset 0 0 140px 32px rgba(2,3,6,.58);
 }
-/* warm interior bloom + cyan plinth glow, lifted straight from the concept.
-   Opacity-only animation, so it stays off the layout/paint path. */
-.hero-aura{
-  position:absolute; inset:0; z-index:3; pointer-events:none; mix-blend-mode:screen;
-  background:
-    radial-gradient(48% 58% at 50% 40%,rgba(255,190,115,.38),rgba(255,170,90,.1) 42%,transparent 72%),
-    radial-gradient(56% 44% at 50% 40%,rgba(255,220,170,.18),rgba(255,190,120,.06) 40%,transparent 68%),
-    radial-gradient(40% 36% at 72% 36%,rgba(127,217,232,.1),transparent 62%);
-  animation:aura 9s ease-in-out infinite 1s;
-}
-@keyframes aura{0%,100%{opacity:.55}50%{opacity:1}}
-.hero-plinth{
-  position:absolute; z-index:3; left:8%; right:4%; top:70%; height:10%;
-  pointer-events:none; mix-blend-mode:screen;
-  background:
-    radial-gradient(55% 100% at 50% 55%,rgba(127,217,232,.42),rgba(127,217,232,.08) 50%,transparent 72%),
-    radial-gradient(40% 80% at 50% 60%,rgba(255,190,120,.12),transparent 70%);
-  filter:blur(28px);
-  animation:plinth 6.5s ease-in-out infinite;
-}
-@keyframes plinth{0%,100%{opacity:.6; transform:scaleX(.92)}50%{opacity:1; transform:scaleX(1.02)}}
+/* .hero-aura and .hero-plinth are DELIBERATELY GONE. They existed to put a
+   warm interior bloom and a cyan plinth glow onto a still plate that had
+   neither. The descent has both, in the render, in the right place, moving
+   with the camera that shot them — and for the first half of the fall there
+   is no building on screen at all, so a fixed glow would have been a lit
+   villa hanging in empty cloud. A CSS glow that does not track the thing it
+   is glowing is exactly the mismatch the brand note warns about. Their two
+   infinite keyframes come off the hero's budget with them. */
 
 /* Three columns: lede | open centre for the pod | stats.
    The middle 1fr is intentionally empty so type and glass never sit on the
@@ -676,6 +758,79 @@ h3.display{font-size:clamp(1.32rem,1.7vw,1.72rem); line-height:1.1}
   grid-template-rows:minmax(0,1fr) auto auto;
   gap:clamp(12px,1.6vw,28px); align-items:end;
 }
+
+/* ── the type carries its own ground ──────────────────────
+   The previous hero opened on dark cloud and a single global scrim on
+   .hero-media::after was enough. This one opens on a SUNLIT deck with the sun
+   in frame, and measured against the rendered composite the worst pixel under
+   the headline reaches the headline's own luminance — 1.0:1 where large type
+   needs 3.0. A global scrim cannot fix that, because what sits behind the type
+   is a different picture on every frame of the fall.
+
+   So each type block carries a feathered pool of its own. Feathered hard, and
+   offset past the block's edges, so it reads as depth in the cloud rather than
+   as a panel with a boundary. z-index:-1 keeps it behind the text and inside
+   .hero-grid's stacking context, so it never rises over the canvas' siblings. */
+.hero-lede{position:relative}
+.hero-lede::before{
+  content:""; position:absolute; z-index:-1; pointer-events:none;
+  /* Reaches well past the block on every side, and biased UP: the kicker sits
+     at the top of the lede and a pool centred on the headline left it at
+     2.9:1 against a 4.5 floor while the headline below it was already clear.
+     Gold on cloud needs the backdrop under about luma 81 to hold 4.5:1. */
+  inset:-38% -22% -26% -38%;
+  background:radial-gradient(68% 74% at 32% 48%,
+    rgba(3,5,9,.92), rgba(3,5,9,.72) 40%, rgba(3,5,9,.34) 64%, transparent 84%);
+}
+/* The kicker's own shadow is a GLOW (amber, 22px) — which is the right look on
+   a dark plate and actively unhelpful on a bright one, since it lightens the
+   very edge that needs to hold. It keeps the glow and gains a tight dark edge
+   underneath, the same pairing .hero-sub and the cue label already use. */
+.hero-lede .kicker{
+  text-shadow:0 0 22px rgba(255,178,90,.35),
+              0 1px 9px rgba(0,0,0,.9),
+              0 0 3px rgba(0,0,0,.75);
+}
+.hero-cue::before{
+  content:""; position:absolute; z-index:-1; pointer-events:none;
+  /* 330, not 290, and biased DOWN. The label sits under the mark, so the
+     old pool was centred on the ring and the words were already in its
+     falloff — "Scroll down" measured 4.35:1 against a 4.5 floor over the
+     new master's sunlit deck, where the note above recorded 4.7:1 against
+     the old one's cloud. Bigger and offset is cheaper than making the type
+     lighter, which would fight the amber it shares with the chip. */
+  left:50%; top:calc(50% + 14px); width:330px; height:330px;
+  margin:-165px 0 0 -165px;
+  border-radius:50%;
+  background:radial-gradient(closest-side,
+    rgba(3,5,9,.80), rgba(3,5,9,.52) 44%, rgba(3,5,9,.18) 70%, transparent 100%);
+}
+
+/* ── the four panels, arriving on the right ────────────────
+   Column 3 of the hero grid, vertically centred — the landing page's
+   own arrangement. They are tighter than they were: inside the pin
+   100dvh is a hard ceiling, and the previous attempt at this overflowed
+   it at seven of nine viewports. Padding and gap carry that.
+
+   Each arrives on its own beat, offset by --i, drifting in from the
+   right. The wrapper owns that transform because .depth and .lev own
+   theirs. */
+/* grid-row 1/-1, not row 1. Row 1 is minmax(0,1fr) and the lede's row is
+   456px tall at 1440x900, which squeezed row 1 to 166px — the 490px stack
+   then centred itself in that and poked 40px out through the top of the pin,
+   which clips. Spanning the whole column gives it the pin's full height and
+   costs nothing, because the lede and the CTA are in column 1. */
+.hero-stats{grid-column:3; grid-row:1/-1; align-self:center; justify-self:end;
+  display:flex; flex-direction:column; gap:12px; width:min(258px,27vw);
+  max-width:258px}
+.hero-stats>.arv{
+  --t:clamp(0,calc((var(--dp,0) - (.76 + var(--i,0) * .035)) * 9),1);
+  opacity:var(--t);
+  transform:translate3d(calc((1 - var(--t)) * 54px),0,0);
+  will-change:transform,opacity;
+}
+.hero-stats .stat-card{padding:14px 18px}
+.hero-stats .stat-card b{margin-bottom:5px}
 
 /* headline block — hard left, kept narrow so it never walks into the pod */
 .hero-lede{grid-column:1; grid-row:2; max-width:100%; justify-self:start; width:100%}
@@ -705,13 +860,170 @@ h3.display{font-size:clamp(1.32rem,1.7vw,1.72rem); line-height:1.1}
 .hero-sub{margin:0; color:var(--c-70); font-size:1.02rem; max-width:32ch;
   text-shadow:0 1px 24px rgba(0,0,0,.85),0 0 40px rgba(0,0,0,.35)}
 
-/* stat cards — hard right, past the pod's right edge */
-.hero-stats{grid-column:3; grid-row:1; align-self:center; justify-self:end;
-  display:flex; flex-direction:column; gap:18px; width:min(270px,28vw); max-width:270px}
+/* ── descent choreography ──────────────────────────────────
+   Every value here is a pure function of --dp, which js/hero-descent.js
+   writes on .hero. Nothing latches, so scrolling back up un-does all of it
+   exactly — the scroll position IS the state (motion law 3).
+
+   The score, in --dp:
+     .00-.30   cloud. Type and panels hold, full strength. The emptiness has
+               to read as negative space around confident type, not as a
+               page that failed to load.
+     .30-.42   the panels drift apart and go.
+     .30-.52   the headline releases and rises.
+     .58-.72   the villa is on screen; the CTA arrives with it.
+   Nothing overlaps the arrival: past .72 the frame is the render alone. */
+/* GATED ON .dp-live, and that gate is load-bearing rather than tidy. Written
+   unconditionally, `var(--dp,0)` falls back to 0 wherever nothing sets it —
+   which is precisely the JS-blocked case — and --hin at 0 computes the
+   headline to opacity:0. The page would ship with no copy visible on it. Only
+   the motion path adds the class, so no JS and reduced motion both keep the
+   lede exactly as it is written in the markup.
+
+   The wording is absent when the page lands and arrives on the first inch of
+   the fall. It rises 26px into place as it comes, then keeps rising with the
+   rest of the descent, so the entrance and the exit are one movement. */
+/* In from the LEFT as the descent settles, and it stays. There is no
+   release any more: this is the composition the page rests in. */
+.dp-live .hero-lede{
+  opacity:var(--hin);
+  transform:translate3d(calc((1 - var(--hin)) * -44px),0,0);
+}
+/* ── the scroll cue ────────────────────────────────────────
+   The only thing on screen when the page lands, and the whole reason the
+   empty opening reads as deliberate rather than broken. Dead centre, because
+   at frame 0 the centre is the emptiest part of the frame and there is no
+   wording yet to sit beside.
+
+   It borrows the WhatsApp chip's treatment EXACTLY rather than approximating
+   it — same amber rim, same fill, same 26px cast, and it reuses that button's
+   own `chipGlow` keyframe for the halo, so the two marks cannot drift apart.
+   Change the chip and this follows.
+
+   Gated on .dp-live: with JS blocked there is no scrub to cue and nothing
+   would ever dissolve it, so it simply never appears. Scrubbed, not latched
+   — come back to the top and it is waiting again, which is the honest
+   behaviour for an affordance. */
+.hero-cue{
+  position:absolute; left:50%; top:50%; z-index:4;
+  transform:translate3d(-50%,-50%,0); pointer-events:none; display:none;
+  opacity:clamp(0,calc((.045 - var(--dp,0)) * 34),1);
+}
+.dp-live .hero-cue{display:block}
+/* The four cards are inside the pin now, and they carry backdrop-filter.
+   At opacity 0 they are invisible but still composited on every frame of
+   the fall — the same waste the cue had. visibility, not display: display
+   would collapse the grid column and shift the CTA. Measured: 41.7ms per
+   frame with them painting against 27.8ms without, at 4x CPU on a phone.
+   It also keeps them out of the tab order until they are on screen. */
+.dp-live .hero-stats{visibility:hidden}
+.dp-live.dp-arriving .hero-stats{visibility:visible}
+/* Gone from the box tree once it has dissolved, not merely transparent. The
+   cue runs THREE infinite animations and a backdrop-filter, and at opacity 0
+   every one of them keeps ticking for the remaining 95% of the descent.
+   Measured: 41.7ms -> 34.8ms per frame at 4x CPU on desktop, 34.8 -> 27.8 on
+   mobile, for a thing nobody can see. */
+.dp-moved .hero-cue{display:none}
+/* THREE elements, not two: the wrapper owns the centring transform, the inner
+   group owns the hover so the mark and its label float as one thing, and the
+   mark owns the ring. One transform per element — the float-stack rule this
+   file states everywhere else. */
+.hero-cue-in{
+  display:flex; flex-direction:column; align-items:center; gap:12px;
+  animation:cueHover 3.6s var(--ease) infinite;
+}
+/* The site's own small-label idiom, one step below .kicker (.68rem) at the
+   smallest size already on the page. padding-left offsets the trailing gap
+   letter-spacing leaves after the final letter, which otherwise pushes a
+   centred string half a letterspace to the left. */
+.hero-cue-label{
+  font-size:.58rem; font-weight:500; letter-spacing:.24em; line-height:1;
+  text-transform:uppercase; color:var(--gold); padding-left:.24em;
+  text-shadow:0 0 22px rgba(255,178,90,.35), 0 1px 10px rgba(0,0,0,.75);
+}
+.hero-cue-mark{
+  display:grid; place-items:center; position:relative; isolation:isolate;
+  width:54px; height:54px; border-radius:999px;
+  color:var(--gold-lt);
+  border:1px solid rgba(255,178,90,.55);
+  background:rgba(255,178,90,.1);
+  box-shadow:0 0 26px -2px rgba(255,178,90,.6), inset 0 1px 0 rgba(255,255,255,.1);
+  -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);
+}
+/* the chip's own halo, same keyframe, same geometry */
+.hero-cue-mark::before{
+  content:""; position:absolute; inset:-10px; z-index:-1; border-radius:50%;
+  background:radial-gradient(circle, rgba(255,178,90,.5), transparent 72%);
+  animation:chipGlow 2.8s ease-in-out infinite;
+}
+.hero-cue svg{width:22px; height:22px; animation:cueDrop 2.4s ease-in-out infinite}
+@keyframes cueHover{0%,100%{transform:translateY(-3px)}50%{transform:translateY(3px)}}
+/* The chevron must never fully leave, or the ring is an empty circle for a
+   slice of every cycle and the mark loses its meaning — the first cut faded
+   to 0 at both ends and a screenshot caught it blank. It travels down, then
+   returns dimmed rather than absent, so the reset reads as a recovery instead
+   of a jump and the floor stays at .28. */
+@keyframes cueDrop{
+  0%  {transform:translateY(-4px); opacity:.6}
+  42% {transform:translateY(5px);  opacity:1}
+  58% {transform:translateY(5px);  opacity:.28}
+  76% {transform:translateY(-4px); opacity:.28}
+  100%{transform:translateY(-4px); opacity:.6}
+}
+
+/* ── ways in — the four panels, after the fall ──────────────
+   A row of four on the ground the descent lands on. The float stack inside
+   is untouched, so each card still levitates on its own period and still
+   leans to the cursor; only the container changed. height:100% passes down
+   the four wrappers so a card fills its grid cell and the row is level —
+   the same pass-through the collection cards use. */
+/* Act II. This sits INSIDE the hero section and scrolls over a pin that is
+   still stuck, so the render stays behind it — there is one villa because
+   there is one canvas.
+
+   The scrim is doing two jobs and both matter. It carries the band from the
+   villa's own darkness down to solid ink, so the four glass panels always
+   have ground to read against wherever the frame happens to be behind them;
+   and by the band's foot the page IS ink, so #ethos below continues with no
+   seam and needs no treatment of its own. */
+.ways-RETIRED{position:relative; z-index:2;
+  /* A full screen, because Act II is a beat and not a strip. At 1440 the four
+     cards are only ~150px tall, so the band came to 311px — the villa was
+     behind it for barely a third of a screen, and the band never covered the
+     pin, which left the CTA underneath it lit and still in the tab order. A
+     screen tall, the arrival reads as somewhere the descent has landed. */
+  min-height:100dvh; display:grid; align-content:center;
+  padding:clamp(64px,11vh,132px) var(--gutter) clamp(56px,9vh,104px);
+  background:linear-gradient(180deg,
+    transparent 0%, rgba(5,7,11,.42) 18%, rgba(5,7,11,.86) 52%,
+    var(--ink) 88%, var(--ink) 100%)}
+.ways-grid{
+  width:100%; max-width:var(--max); margin-inline:auto;
+  display:grid; grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:clamp(13px,1.5vw,20px); align-items:stretch;
+}
+.ways-grid>.depth,.ways-grid .rv,.ways-grid .lev{height:100%}
+.ways-grid .stat-card{height:100%}
 .stat-card{
   padding:18px 22px; border-radius:16px; position:relative; overflow:hidden;
+  /* Was rgba(255,255,255,.16) -> .05 -> rgba(12,16,24,.35): white at the
+     top, which is where the titles are, over the brightest part of the
+     landing frame. "150+" measured 1.87:1 against a 3.0 floor. Glass over
+     a lit scene darkens it — the top highlight below is what reads as the
+     edge of the pane, not a white body.
+
+     LIGHTENED BACK on 2026-08-25, and the reason is worth keeping. Part of
+     that 1.87 was not the ground at all: `.cm-go` was losing to
+     `.stat-card span{position:relative}` on specificity, so the disc sat in
+     FLOW at the foot of the card instead of pinned in its corner — which
+     made every card 26px taller and pushed the reading up into the brightest
+     band of the frame. With the disc actually absolute, the same type over
+     the same ground measured 8.66:1. So the ground came back up two steps to
+     .40/.58: still 5.20 / 7.36 / 10.20 / 7.22 across the four, and it is
+     glass again rather than a slab. Darkening to fix a legibility number is
+     the right move only once you know the number is about the colour. */
   background:
-    linear-gradient(148deg,rgba(255,255,255,.16) 0%,rgba(255,255,255,.05) 38%,rgba(12,16,24,.35) 100%);
+    linear-gradient(148deg,rgba(255,255,255,.08) 0%,rgba(13,18,28,.40) 32%,rgba(8,12,20,.58) 100%);
   border:1px solid rgba(255,255,255,.16);
   -webkit-backdrop-filter:blur(18px) saturate(160%);
   backdrop-filter:blur(18px) saturate(160%);
@@ -724,7 +1036,8 @@ h3.display{font-size:clamp(1.32rem,1.7vw,1.72rem); line-height:1.1}
 }
 .stat-card::before{
   content:""; position:absolute; inset:0; pointer-events:none; border-radius:inherit;
-  background:radial-gradient(120% 80% at 12% 0%,rgba(255,230,190,.18),transparent 48%);
+  /* the second lightening wash, over the same corner as the first */
+  background:radial-gradient(120% 80% at 12% 0%,rgba(255,235,205,.10),transparent 52%);
 }
 .stat-card:hover{
   transform:translateY(-6px);
@@ -737,7 +1050,10 @@ h3.display{font-size:clamp(1.32rem,1.7vw,1.72rem); line-height:1.1}
 }
 .stat-card b{display:block; font-family:var(--sans); font-weight:600; line-height:1;
   font-size:2.1rem; letter-spacing:-.02em; color:#fffaf2; margin-bottom:7px;
-  text-shadow:0 0 24px rgba(255,210,150,.25); position:relative}
+  /* was a warm 24px halo, which spreads light INTO the gap between the
+     glyphs over an already-lit backdrop. A tight dark shadow does the
+     opposite and is what the type needs here. */
+  text-shadow:0 1px 10px rgba(4,7,12,.55); position:relative}
 .stat-card b i{font-style:normal; color:var(--gold);
   text-shadow:0 0 16px rgba(255,178,90,.65)}
 .stat-card span{font-size:.82rem; font-weight:300; letter-spacing:.01em;
@@ -764,14 +1080,21 @@ h3.display{font-size:clamp(1.32rem,1.7vw,1.72rem); line-height:1.1}
 /* the affordance itself: rotates rather than slides, because this one
    unfolds in place instead of going somewhere — the .ib-go/.fab-go
    translate is reserved for the buttons that navigate */
-.cm-go{
+/* SCOPED, and it has to be. As a bare `.cm-go` (0,1,0) the position
+   below lost to `.stat-card span{position:relative}` (0,1,1) forty
+   lines up — so the disc was never absolute on any width. It sat in
+   flow at the foot of the card and then `top`/`right` pushed it down
+   and LEFT of there, which is the arrow in the bottom-left corner of
+   all four panels, and 26px of height each card did not need.
+   css/quiz.css scopes its own copy `.qz-cta .cm-go` already. */
+.stat-card .cm-go{
   position:absolute; top:16px; right:16px; z-index:2;
   width:26px; height:26px; border-radius:50%; display:grid; place-items:center;
   border:1px solid rgba(255,224,176,.34); color:var(--gold-lt);
   transition:transform .45s var(--ease),border-color .45s var(--ease),
              background-color .45s var(--ease);
 }
-.cm-go svg{width:12px; height:12px}
+.stat-card .cm-go svg{width:12px; height:12px}
 .stat-card--act:hover .cm-go{
   transform:rotate(90deg); border-color:var(--gold); background:rgba(255,178,90,.16)}
 /* the one panel that goes somewhere instead of unfolding: same disc, the
@@ -832,33 +1155,78 @@ a.stat-card--act{text-decoration:none; color:inherit}
 .wx.wx-dead .wx-read{opacity:.5; transform:none}
 
 /* ═══ commission sheet ═════════════════════════════════════ */
-.cmx{position:fixed; inset:0; z-index:120; display:grid; place-items:center;
-  padding:clamp(12px,3.5vw,44px)}
+/* height:100dvh, not the 100vh implied by inset:0 — on iOS a fixed
+   inset:0 box is the LARGE viewport, so the sheet ran on under the
+   address bar and its foot was unreachable. dvh is the one that
+   shrinks with the toolbar. */
+.cmx{position:fixed; inset:0; height:100dvh; z-index:120;
+  display:grid; place-items:center; padding:clamp(16px,3.5vw,44px)}
 .cmx[hidden]{display:none}          /* display:grid outranks the UA rule */
-.cmx-veil{position:absolute; inset:0; background:rgba(3,5,9,.72); opacity:0;
+/* The veil SOFTENS the page rather than hiding it. At .72 opaque it blacked
+   out the descent completely and the sheet read as a separate screen that
+   had replaced the page. Blurring it instead keeps the frame present and
+   pushes it back, so the panel reads as glass laid ON the landing rather
+   than a modal in front of it.
+
+   This is the one backdrop-filter on the site that is NOT gated at 1024px,
+   and the exception is earned: a sheet is open on demand with the scroll
+   locked, so it rasterises once and never re-rasterises while it is up —
+   unlike the hero glass, which composites on every frame of a scroll. */
+/* THE VEIL CARRIES THE LANDING FRAME. The scroll lock unpins the hero, so
+   the sheet cannot simply show it through — and it does not need to: these
+   four cards only exist at the landing, so the frame behind them is always
+   152, and it is already decoded and cached by the descent. Zero extra
+   bytes, and the sheet opens onto exactly the picture the reader was
+   looking at a moment earlier.
+
+   The panel above it frosts THIS, which is what makes the sheet read as
+   glass laid on the landing rather than a modal that replaced it. */
+/* The wash is a step, not a curtain. It was .52 -> .66 and the landing
+   read as a dimmed-out backdrop; at .30 -> .42 the frame is simply
+   still there, a shade quieter, with the card sitting on it. Nothing
+   here is blurred — the only blur on screen is INSIDE the card. */
+.cmx-veil{position:absolute; inset:0; opacity:0;
+  background:
+    linear-gradient(rgba(4,6,11,.30),rgba(4,6,11,.42)),
+    url('assets/hero/1920/152.webp') center/cover no-repeat;
   transition:opacity .5s var(--ease)}
+@media (max-width:759.98px){
+  .cmx-veil{background:
+    linear-gradient(rgba(4,6,11,.36),rgba(4,6,11,.50)),
+    url('assets/hero/608/152.webp') center/cover no-repeat}
+}
 .cmx.open .cmx-veil{opacity:1}
 
 .cmx-panel{
-  position:relative; width:min(760px,100%); max-height:88vh; overflow-y:auto;
+  position:relative; width:min(760px,100%); overflow-y:auto;
+  max-height:88vh; max-height:86dvh;
   padding:clamp(26px,3.4vw,44px); border-radius:22px;
+  /* More translucent than it was (.72 -> .56 at the foot): the veil beneath
+     has already softened and darkened what is behind, so the panel can let
+     the frame show through and still hold its type. */
   background:
-    linear-gradient(148deg,rgba(255,255,255,.14) 0%,rgba(255,255,255,.045) 34%,rgba(12,16,24,.72) 100%);
-  border:1px solid rgba(255,255,255,.17);
-  box-shadow:
-    0 40px 90px rgba(0,0,0,.62),
-    0 0 70px -18px rgba(255,178,90,.26),
-    inset 0 1px 0 rgba(255,255,255,.3);
+    linear-gradient(160deg,rgba(255,255,255,.12) 0%,rgba(255,255,255,.04) 30%,rgba(10,14,22,.52) 100%);
+  border:1px solid rgba(255,255,255,.22);
+  /* NO outer shadow. The 90px black and the 70px gold bloom were a
+     halo of blur around the card and they are what made it read as
+     a modal dropped over the page. A hairline plus the top highlight
+     carry the edge on their own — the same way vibrancy panels do,
+     and the frosted-vs-sharp boundary does the rest. */
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.32);
   /* the panel arrives from where the card sits — down and small, then
      settles into the middle. transform and opacity only. */
   opacity:0; transform:translateY(26px) scale(.94);
   transition:opacity .5s var(--ease),transform .62s var(--ease);
 }
 .cmx.open .cmx-panel{opacity:1; transform:none}
-@media (min-width:1024px){
-  .cmx-panel{-webkit-backdrop-filter:blur(22px) saturate(150%);
-    backdrop-filter:blur(22px) saturate(150%)}
-}
+/* The panel frosts at every size now. The old 1024 gate left phones with an
+   almost-opaque slab, which is exactly the "separate" feeling being removed
+   here. Same justification as the veil: static while open, scroll locked. */
+/* saturate was 155%, and over a warm interior that tipped the whole
+   panel brown — glass does not add colour, it removes detail. 124% is
+   enough to stop the blur going flat and grey. */
+.cmx-panel{-webkit-backdrop-filter:blur(30px) saturate(124%);
+  backdrop-filter:blur(30px) saturate(124%)}
 /* Below 1024 the backdrop-filter is gated off for performance — so the
    glass has nothing to blur and the hero headline reads straight
    through the panel. Give it a real background there. It still reads as
@@ -866,16 +1234,26 @@ a.stat-card--act{text-decoration:none; color:inherit}
    were doing that work; the blur was only ever making it legible.
    Both sheets take this: the commission one had the same problem and
    nobody had opened it on a phone. */
+/* Phones keep a little more ground under the type — the panel is narrower
+   there and the frame behind it is busier — but nothing like the opaque
+   slab this used to be. The veil keeps its image; only the panel changes. */
 @media (max-width:1023px){
   .cmx-panel{
-    background:linear-gradient(148deg,
-      rgba(48,60,77,.97) 0%,rgba(23,31,42,.985) 34%,rgba(10,14,21,.99) 100%);
+    background:linear-gradient(160deg,
+      rgba(255,255,255,.11) 0%,rgba(16,22,32,.50) 30%,rgba(8,12,20,.64) 100%);
   }
-  .cmx-veil{background:rgba(3,5,9,.86)}
+}
+/* Where the blur genuinely does not exist there is nothing behind the
+   type but a photograph, so that case — and only that case — gets a
+   near-solid ground. Guessing at it by width is what left phones with
+   an opaque slab when they were perfectly capable of the glass. */
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  .cmx-panel{background:linear-gradient(160deg,
+    rgba(34,42,55,.95) 0%,rgba(10,14,22,.97) 100%)}
 }
 .cmx-panel::before{
   content:""; position:absolute; inset:0; pointer-events:none; border-radius:inherit;
-  background:radial-gradient(110% 70% at 14% 0%,rgba(255,230,190,.14),transparent 50%);
+  background:radial-gradient(110% 70% at 14% 0%,rgba(255,235,205,.09),transparent 52%);
 }
 
 .cmx-x{position:absolute; top:16px; right:16px; z-index:2;
@@ -919,7 +1297,12 @@ a.stat-card--act{text-decoration:none; color:inherit}
   text-transform:uppercase; color:var(--gold); margin:0 0 12px}
 .cmx-note p{color:var(--c-70); font-size:.94rem; line-height:1.85; margin:0; max-width:64ch}
 
-.cmx-locked{overflow:hidden}
+/* Either hidden or clip unpins the hero — measured, the pin lands 1350px
+   above the viewport the moment the lock goes on, because BOTH establish
+   a clip context and position:sticky then has no scrollport to stick to.
+   That is why the veil carries its own copy of the landing frame rather
+   than relying on seeing the hero through it. */
+.cmx-locked{overflow:clip}
 
 /* ═══ the district quiz ════════════════════════════════════
    Shares the commission sheet's whole shell — .cmx veil, panel, close
@@ -937,8 +1320,14 @@ a.stat-card--act{text-decoration:none; color:inherit}
   box-shadow:0 0 10px rgba(255,215,163,.6);
   transition:transform .5s var(--ease);
 }
+/* NOT absolute in the head's top-right corner. The close button
+   reaches 54px in from the panel edge and the head is inset by the
+   panel padding — 26px on a phone, 34.8px at 1024, 44px at 1440 —
+   so the counter's box overlaps the button at every width the
+   sheet has. On a phone you can see it. It sits with the progress
+   bar instead, which is the thing it is counting. */
 .qz-step{
-  position:absolute; top:0; right:0;
+  margin:0; text-align:right;
   font-size:.62rem; letter-spacing:.22em; text-transform:uppercase;
   color:var(--c-38); font-variant-numeric:tabular-nums;
 }
@@ -1243,11 +1632,13 @@ a.stat-card--act{text-decoration:none; color:inherit}
   padding:clamp(24px,3.2vw,38px); border-radius:24px;
   background:
     linear-gradient(152deg,rgba(255,255,255,.15) 0%,rgba(255,255,255,.05) 32%,rgba(11,15,23,.86) 100%);
-  border:1px solid rgba(255,255,255,.17);
-  box-shadow:
-    0 44px 96px rgba(0,0,0,.66),
-    0 0 80px -20px rgba(255,178,90,.3),
-    inset 0 1px 0 rgba(255,255,255,.3);
+  border:1px solid rgba(255,255,255,.2);
+  /* No halo here either. This sheet opens one button away from the
+     three card sheets on the same landing, and it was the only one
+     left with a 96px shadow and an 80px gold bloom around it. Its
+     GROUND is untouched though — it holds text inputs, and a field
+     over a photograph is a different problem from a paragraph. */
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.32);
   opacity:0;
   transform:translate(var(--cf-dx,0),var(--cf-dy,42px)) scale(.3);
   transition:opacity .42s var(--ease),transform .66s cubic-bezier(.16,1,.3,1);
@@ -1579,7 +1970,42 @@ a.stat-card--act{text-decoration:none; color:inherit}
 
 @media (max-width:720px){
   .cmx-grid{grid-template-columns:1fr}
-  .cmx-rows dd{max-width:none}
+  /* NOT max-width:none. dd is flex:none, so with no ceiling the widest
+     qualifier in the sheet — "2% standard, unless agreed otherwise" —
+     sized the column and squeezed "Property sales" onto two lines with
+     its note broken over four. One column is wide enough for 50%. */
+  .cmx-rows dd{max-width:50%}
+}
+/* ── tracked micro-caps, at the boundary the site uses ──────
+   .3em of tracking on a 9.9px cap is what reads as a wrong font on a
+   phone: the letters stop being a word. css/mobile.css lifts every
+   .mono to .74rem/.16em below 860 and states an 11px floor, but two of
+   these are not .mono at all and the third is matched here by a
+   two-class selector that outranks the one in mobile.css. 860 is that
+   sheet's own breakpoint — this is the same decision, not a second
+   one. */
+@media (max-width:860px){
+  .wxm-key .mono{font-size:.74rem; letter-spacing:.16em}
+  .cmx-block h3,.cmx-note h3{font-size:.7rem; letter-spacing:.14em}
+  .wxm-d-facts dt{font-size:.7rem; letter-spacing:.12em}
+}
+@media (max-width:600px){
+  /* Under ~600 there is no width for two columns of a ledger at all, so
+     the row stops being a row: label above, figure and its qualifier on
+     one baseline below. Nothing wraps that did not choose to. */
+  .cmx-rows>div{flex-direction:column; align-items:flex-start; gap:7px;
+    padding-bottom:14px; margin-bottom:14px}
+  .cmx-rows dd{max-width:none; text-align:left; align-self:stretch;
+    display:flex; align-items:baseline; gap:10px; flex-wrap:wrap}
+  .cmx-rows dd b{font-size:1.34rem}
+  .cmx-rows dd span{margin-top:0; flex:1 1 8ch; min-width:0}
+  .cmx-rows dt em{margin-top:3px}
+  .cmx-block{padding:16px 16px 4px}
+  .cmx-note{margin-top:20px; padding-top:20px}
+  .cmx-lede{font-size:.93rem; line-height:1.72; margin-bottom:22px}
+  .cmx-panel{padding:22px 20px 24px; border-radius:20px}
+  .cmx-x{top:12px; right:12px; width:34px; height:34px}
+  .cmx-kick{margin-bottom:8px}
 }
 @media (prefers-reduced-motion:reduce){
   .cmx-veil,.cmx-panel{transition-duration:.01ms !important}
@@ -1601,8 +2027,26 @@ a.stat-card--act{text-decoration:none; color:inherit}
    safe: with the script blocked neither class is ever set and the
    button is simply there, at rest, doing its job. The primary CTA is
    the last thing on the page that should depend on JavaScript. */
+/* The CTA is not descent furniture — it arrives WITH the villa, which is
+   why js/lumina.js stands its scroll-threshold handler down on any page
+   carrying a descent runway. Left to that handler it fired 110px into a
+   320vh fall, i.e. in the first inch of cloud. */
 .hero-cta{grid-column:1/-1; grid-row:3; justify-self:center}
-.hero-cta.armed{opacity:0; transform:translate3d(0,64px,0) scale(.9)}
+/* --dc is how far the arrival has covered the pin. The CTA lives in the pin,
+   so without this it would sit behind the panels being progressively hidden
+   while still in the tab order — a control a keyboard can reach and an eye
+   cannot find. It fades as the band rises and .dp-covered takes it out of the
+   tab order entirely once it is behind. */
+.hero-cta.armed{opacity:calc(var(--cta) * (1 - var(--dc,0)));
+  transform:translate3d(0,calc((1 - var(--cta)) * 46px),0)}
+.dp-covered .hero-cta{visibility:hidden}
+/* Once the arrival has fully covered the pin the canvas is invisible but
+   still a full-screen layer being composited under a screen of glass. Nothing
+   is drawing to it at that point — the fall is over and the frame index has
+   stopped changing — so it comes out of the compositor entirely until the
+   reader scrolls back up. visibility, not display: display:none would drop
+   the backing store and force a re-upload on the way back. */
+.dp-covered .hero-canvas{visibility:hidden}
 /* The pop is a keyframe rather than a transition because it overshoots
    and settles, and a transition can only ease between two states. Rise
    past the mark, tip back under it, rest. transform and opacity only. */
@@ -1635,7 +2079,20 @@ a.stat-card--act{text-decoration:none; color:inherit}
 }
 @media (prefers-reduced-motion:reduce){
   /* no pop, no halo — it simply appears once they have scrolled */
-  .hero-cta.armed{opacity:0; transform:none}
+  /* Every pin releases, the runway collapses to one screen, the canvas
+     never mounts and <picture> serves the FINAL frame — the resting
+     composition, villa lit on its plinth, not the empty cloud the motion
+     path opens on. Nothing here starts at opacity:0. */
+  .hero{height:auto; min-height:0}
+  .hero-pin{position:static; height:auto; min-height:100dvh}
+  /* No scrub to cue, and the lede is never hidden in the first place
+     because .dp-live is only added on the motion path. */
+  .hero-canvas,.hero-cue,.hero-fall,.dp-live .hero-cue{display:none}
+  /* nothing is covering anything when nothing is pinned */
+  .ways{background:var(--ink)}
+  .hero-cta.armed{visibility:visible}
+  .hero-lede{opacity:1; transform:none}
+  .hero-cta.armed{opacity:1; transform:none}
   .hero-cta.armed.up{animation:none; opacity:1}
   .hero-cta.armed.up::after{animation:none; opacity:0}
 }
@@ -1873,7 +2330,33 @@ a.stat-card--act{text-decoration:none; color:inherit}
    radial-gradient(66% 58% at 50% 50%,rgba(4,6,11,.28),rgba(4,6,11,.88) 88%),
    radial-gradient(50% 40% at 50% 60%,rgba(255,178,90,.08),transparent 70%),
    linear-gradient(180deg,var(--ink),transparent 18%,transparent 82%,var(--ink))}
-.film-inner{position:relative; z-index:3; text-align:center; max-width:820px}
+/* --fi IS THE COPY'S ENVELOPE, and until now nothing read it.
+   js/lumina.js has written it on #film since the aperture was built and
+   its own comment says ".film-inner is what consumes it" — but no rule
+   anywhere did. The result: the copy stayed at full opacity while the
+   shutter closed around it, so `clip-path:inset(var(--ap))` sliced the
+   headline down both sides. Visible on a phone, where --ap-max is 26%
+   of 390px — 101px off each edge of a 350px block.
+   Default 1: with the script blocked the copy has to be readable, and
+   reduced motion drops the clip-path entirely and never writes --fi. */
+.film-inner{position:relative; z-index:3; text-align:center; max-width:820px;
+  opacity:var(--fi,1)}
+/* The headline carries its own text-shadow — 0 4px 40px of near-black —
+   and the two small lines under it carried nothing, over a video whose
+   frames include a bright horizontal streak straight across them.
+   Measured there: "DABOUQ · SHOT ON LOCATION · NO STAGING" at 3.62:1
+   against a 4.5 floor, and the kicker no better.
+
+   A scrim rather than another text-shadow, because a shadow helps a
+   reader but cannot be measured as backdrop contrast — and on a video
+   the backdrop is whatever the frame happens to be. This darkens the
+   ground the copy sits on and fades out well inside the frame. */
+.film-inner::before{
+  content:""; position:absolute; inset:-14% -10%; z-index:-1;
+  pointer-events:none; border-radius:50%;
+  background:radial-gradient(58% 60% at 50% 50%,rgba(4,6,11,.72),
+    rgba(4,6,11,.44) 56%,rgba(4,6,11,0) 78%);
+}
 .film-inner h2{margin:0 0 22px; text-shadow:0 4px 40px rgba(0,0,0,.65),0 0 50px rgba(255,178,90,.1)}
 .film-inner p{margin:0 auto 34px; color:var(--c-70); max-width:52ch;
   text-shadow:0 2px 24px rgba(0,0,0,.55)}
@@ -2040,13 +2523,12 @@ footer.foot{position:relative; z-index:2; padding:clamp(46px,6vh,74px) var(--gut
 }
 @media (max-width:980px){
   /* hero stacks: headline first, then the stat pair, then the CTA */
-  .hero{padding-inline:var(--gutter)}
+  .hero-pin{padding-inline:var(--gutter)}
   .hero-grid{grid-template-columns:1fr; grid-template-rows:auto auto auto; align-items:start}
   .hero-lede{grid-column:1; grid-row:1; max-width:none}
-  .hero-stats{grid-column:1; grid-row:2; justify-self:stretch; align-self:start;
-    flex-direction:row; flex-wrap:wrap; width:auto; max-width:none}
-  /* the flex children are the .depth wrappers, not the cards themselves */
-  .hero-stats>.depth{flex:1 1 200px}
+  .hero-stats{grid-column:1; grid-row:2; justify-self:stretch;
+    align-self:start; width:auto; max-width:none; display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px}
   .hero-cta{grid-column:1; grid-row:3; justify-self:start}
   .split,.contact-shell{grid-template-columns:1fr}
   .split-media{order:2}
@@ -2055,25 +2537,83 @@ footer.foot{position:relative; z-index:2; padding:clamp(46px,6vh,74px) var(--gut
   .nav a:not(.keep){display:none}
   .band-in{grid-template-columns:1fr}
   .band-tag{max-width:none}
-  .hero{align-items:flex-end; padding-top:104px}
+  .hero-pin{align-items:flex-end; padding-top:104px}
   .hero-media::after{background:
     linear-gradient(180deg,rgba(4,6,11,.82) 0%,rgba(4,6,11,.34) 28%,rgba(13,18,25,.86) 74%,var(--ink) 100%)}
   .hero-title{font-size:clamp(2.3rem,10.5vw,3.2rem); max-width:none}
   .hero-sub{font-size:.96rem}
-  .hero-stats>.depth{flex:1 1 100%}
+  /* ── the four hero cards, on a phone ─────────────────────
+     Everything here is scoped `.hero-stats …` on purpose. The plain
+     `.stat-card b{font-size:1.5rem}` this replaces was (0,1,1) and lost to
+     `.stat-card--nav .num` and `.stat-card--act .wx-read` at (0,2,0), so the
+     two readings kept 2.1rem on a 171px card. Measured, not assumed. */
+  /* grid-auto-rows:1fr, not just stretch. Stretch equalises WITHIN a row;
+     the two rows still sized to their own content and came out 70 and 97,
+     which is a 2x2 that looks like a mistake rather than a grid. */
+  .hero-stats{gap:8px; align-items:stretch; grid-auto-rows:1fr}
+  /* Five wrappers between the grid item and the card, every one of them
+     height:auto — so the item stretched to the row and the card did not.
+     Measured spread across the four: 62px. */
+  .hero-stats>.arv,.hero-stats .depth,
+  .hero-stats .rv,.hero-stats .lev{height:100%}
+  .hero-stats .stat-card{
+    height:100%; padding:12px 13px 11px; border-radius:14px;
+    display:flex; flex-direction:column; justify-content:flex-start;
+  }
+  /* the readings lead, the titles are a size down from them, and the notes
+     underneath get out of the way — four cards of two-line prose is what
+     made this read as too much at a glance */
+  .hero-stats .stat-card b,
+  .hero-stats .stat-card--nav .num,
+  .hero-stats .stat-card--act .wx-read{
+    font-size:1.38rem; line-height:1.04; margin-bottom:5px; padding-right:22px}
+  .hero-stats .stat-card--act b{font-size:.92rem; line-height:1.22;
+    letter-spacing:-.005em; margin-bottom:4px}
+  /* .68rem with the tracking off, measured: at 390 every note fits on ONE
+     line and the cards come down from 96px to 80. At .7rem the commission
+     note wrapped and left "sales" alone on a row, which pushed all four up
+     by 16px because grid-auto-rows:1fr equalises to the tallest. At 360 it
+     wraps whatever the size — 108px of text into 128px of card cannot be
+     helped without shrinking the type past where it should go. */
+  .hero-stats .stat-card span{font-size:.68rem; line-height:1.38;
+    letter-spacing:0; color:rgba(244,239,230,.62)}
+  /* NO LEVITATION IN A TIGHT GRID. Each card floats on its own phase
+     with --amp of 7-9px and its own --rot, which is the whole point of
+     the float stack when they are a loose column down the side of a
+     desktop hero. Two-up at 390 with an 8px gutter it is just four
+     boxes that will not line up with each other — up to 18px of
+     relative offset between neighbours, which is exactly what reads as
+     'weirdly placed'. The cards keep their arrival and their reveal;
+     only the idle drift goes. */
+  .hero-stats .lev{animation:none; transform:none}
+  .hero-stats .stat-card .cm-go{top:9px; right:9px; width:20px; height:20px}
+  .hero-stats .stat-card .cm-go svg{width:10px; height:10px}
+  .hero-stats .wx-line{gap:6px}
+  .hero-stats .wx-icon{width:17px; height:17px}
   .stat-card{padding:16px 18px}
-  .stat-card b{font-size:1.5rem; margin-bottom:6px}
   .hero-cta{justify-self:stretch}
   .btn-pill{width:100%; padding-left:22px}
   .two{grid-template-columns:1fr}
   .aperture{height:220vh; --ap-max:26%}
+  /* The two envelopes do not coincide: --ap starts biting at p=.39 and
+     --fi does not reach 0 until p=.28, so between those the copy is
+     still faintly painted while the shutter is closing. On a desktop
+     that is harmless — the block is 589px inside a 1440px frame and the
+     clip never reaches it. On a phone the block is 350 of 390, and a
+     7.3% clip at p=.28 takes 28px off each side of type that is still
+     at 14% opacity. Narrow enough to sit inside the shutter's whole
+     travel instead of re-timing a choreography that is right. */
+  .film-inner{max-width:min(100%,82vw)}
   .foot-in{flex-direction:column; align-items:flex-start}
 }
 /* short-but-wide viewports (laptops with deep browser chrome): the hero
    composition is vertical-space hungry, so trim the type and panels rather
    than let the CTA fall below the fold */
 @media (min-width:981px) and (max-height:820px){
-  .hero{padding-top:96px}
+  /* short laptops: the CTA was measured 8px below the pin's foot at
+     1366x768 and 6px at 1280x800, so the trim takes a little more now
+     that the foot is a hard edge rather than a page that keeps going. */
+  .hero-pin{padding-top:84px; padding-bottom:30px}
   .hero-grid{gap:18px}
   /* wider measure lets the headline settle to 3 lines instead of 4 */
   .hero-title{font-size:clamp(2rem,3.6vw,3rem); max-width:15ch; margin-bottom:13px}
@@ -2109,6 +2649,17 @@ footer.foot{position:relative; z-index:2; padding:clamp(46px,6vh,74px) var(--gut
     text-shadow:none;
   }
 }
+
+/* ── parked: set by the IntersectionObserver in js/lumina.js ──────────
+   Placed at the very end of this sheet, and written at two classes, because
+   `animation:` is a shorthand that resets animation-play-state to running and
+   this has to beat every rule that sets one:
+     .btn-pill{animation:pillBreathe ...}   same specificity, declared later
+     .prop-float .lev{animation:lum-lev ...} (0,2,0), from property-ui.css
+   The pseudo-elements are named explicitly — .btn-pill::before carries
+   pillSweep, and a class on the host does not reach it. */
+.off-view,.off-view::before,.off-view::after,
+.lev.off-view,.btn-pill.off-view{animation-play-state:paused}
 </style>
   <!-- Same icon every other page already declares. Without it the browser
        asks for /favicon.ico on every visit and takes a 404 for it. -->
@@ -2132,6 +2683,11 @@ footer.foot{position:relative; z-index:2; padding:clamp(46px,6vh,74px) var(--gut
   <link rel="stylesheet" href="css/mobile.css?v=2026-08-12a" />
 </head>
 <body>
+
+<!-- First focusable element on the page. It matters more than usual here:
+     the hero is a 320vh runway, so a keyboard reader who cannot jump past it
+     tabs through the descent before reaching anything they can act on. -->
+<a class="skip" href="#main">Skip to content</a>
 
 <div class="boot" id="boot" aria-hidden="true">
   <span class="mark-img" style="padding:0">
@@ -2173,17 +2729,17 @@ footer.foot{position:relative; z-index:2; padding:clamp(46px,6vh,74px) var(--gut
     <a href="listings.html" class="keep">Properties</a>
     <a href="services.html">Services</a>
     <a href="areas.html">Areas</a>
-    <!-- Team is a word in the bar again, 2026-08-13. It used to be left
-         out because the team card in #advisory was the route to
-         team.html, and a card is a richer route than a link. That card
-         has been removed, and without a replacement here the footer
-         would have been the only way to reach the page from the landing
-         page at all.
-         Neighbourhoods is still absent on purpose: #hoods is an in-page
-         section reached by scrolling past it, and the footer links it.
-         js/nav-menu.js builds the phone sheet from these links, so Team
-         returns to the sheet with it. -->
-    <a href="team.html">Team</a>
+    <!-- Team is out of the bar as of 2026-08-25, at the client's request,
+         to be added back later. Out of the BAR only: the footer still
+         links team.html, so the page keeps its route from here and is not
+         orphaned. Removed from all nineteen pages' bars in the same pass —
+         a tab that exists on one page and not the others reads as a
+         mistake — and because js/nav-menu.js builds the phone sheet from
+         these anchors, it leaves the phone sheet with it. That is the same
+         bar, not a second decision.
+         Neighbourhoods is absent for its own older reason: #hoods is an
+         in-page section reached by scrolling past it, and the footer
+         links it. -->
     <a href="#advisory">About</a>
     <a href="#contact">Contact</a>
     <a href="https://wa.me/962771505250" class="chip chip-icon keep" target="_blank" rel="noopener" aria-label="WhatsApp">
@@ -2216,116 +2772,128 @@ footer.foot{position:relative; z-index:2; padding:clamp(46px,6vh,74px) var(--gut
   <button type="button" data-to="contact"><span class="tip">Contact</span></button>
 </nav>
 
-<main>
+<main id="main" tabindex="-1">
 
 <!-- ═══ HERO ════════════════════════════════════════════ -->
-<section class="hero" id="hero">
+<section class="hero" id="hero" data-descent-runway>
+ <div class="hero-pin">
   <div class="hero-media" aria-hidden="true">
-    <img class="hero-bg" src="assets/pod-hero-bg.jpg" alt="" aria-hidden="true">
-    <img class="hero-fg" src="assets/pod-hero.jpg" alt="" fetchpriority="high">
-    <span class="hero-aura"></span>
-    <span class="hero-plinth"></span>
+    <!-- Under reduced motion this resolves to the real final frame and the
+         canvas never mounts; otherwise it is a 122-byte inlined blur of
+         frame 1 that paints before any request and is covered as soon as
+         the first frame lands. A media query decides, not a script, so it
+         is right with JS blocked too. -->
+    <picture class="hero-rest">
+      <source media="(prefers-reduced-motion: reduce) and (min-width:760px)"
+              srcset="assets/hero/1920/152.webp" width="1920" height="1080">
+      <source media="(prefers-reduced-motion: reduce)"
+              srcset="assets/hero/608/152.webp" width="608" height="1080">
+      <img src="data:image/webp;base64,UklGRpgAAABXRUJQVlA4IIwAAABwBQCdASogABIAPqVEm0mmI6KhMAwAwBSJYwCdM098qEmT51WiAJILdC+0k4cKWp0heipAAP74aDbnKz4De8ovZcoYtFmIsHMb7lQ8LUS7fRyExw8NfHibyfflE3TiJKJ+K2N/ygQAQr01Mx1gTrSuS3avDZSnk/aByHw7BFTNvHlPBNVdLp0U3gAAAA==" alt="" width="1440" height="810" decoding="async">
+    </picture>
+    <canvas class="hero-canvas" data-descent width="1440" height="810"></canvas>
   </div>
 
   <div class="hero-grid">
 
-    <!-- Four nested elements per panel, not two. .depth, .rv and .lev
-         each write a transform, and so does .stat-card:hover — they do
-         not compose on one element, the last declaration simply wins.
-         Stacked on one element the hover lift held only while its .55s
-         transition was in flight, then the levitation keyframe reclaimed
-         the channel and the card sank back under the pointer; the .rv
-         rise never played at all. Same rule as note 1 and as the
-         invest.html card stack. --rvd rides the reveal, --dur/--amp/
-         --delay/--rot ride the levitation. -->
+    <!-- The four panels are back inside the pin, on the right, where
+         the landing page had them — but they ARRIVE now, staggered,
+         as the descent lands, rather than sitting there from the start.
+
+         FIVE nested elements each. .arv carries the arrival, .depth the
+         cursor parallax, .rv the reveal, .lev the levitation, and
+         .stat-card:hover writes its own. They do not compose on one
+         element; the last declaration simply wins. --d and --i sit on
+         .arv and inherit down, so one attribute drives both the
+         parallax depth and the stagger order. -->
     <div class="hero-stats">
-      <div class="depth" style="--d:26px">
-        <div class="rv rv-glass">
-          <div class="lev" style="--dur:11s;--amp:9px;--delay:.2s">
-            <!-- It reads as a statistic and it is one, but it is also the
-                 shortest route to the portfolio, so it is a link. The disc
-                 translates rather than rotates: the two sheets beside it
-                 unfold in place, this one goes somewhere, and .cm-go's
-                 rotation is reserved for the former.
+       <div class="arv" style="--d:26px;--i:0"><div class="depth">
+         <div class="rv rv-glass">
+           <div class="lev" style="--dur:11s;--amp:9px;--delay:.2s">
+             <!-- It reads as a statistic and it is one, but it is also the
+                  shortest route to the portfolio, so it is a link. The disc
+                  translates rather than rotates: the two sheets beside it
+                  unfold in place, this one goes somewhere, and .cm-go's
+                  rotation is reserved for the former.
 
-                 150+ is the client's figure and is kept at their request.
-                 The portfolio holds 129, and this panel now lands on a page
-                 that says so — raised, and their call. It was briefly wired
-                 to count from the data; if that is ever wanted back, it is
-                 four lines in js/home-collection.js writing data.length
-                 into a [data-live-count] attribute here. -->
-            <a class="stat-card stat-card--act stat-card--nav" href="listings.html">
-              <b class="num">150<i>+</i></b>
-              <span>Listings in prime locations</span>
-              <span class="cm-go" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span>
-            </a>
-          </div>
-        </div>
-      </div>
-      <!-- live: js/hero-panels.js fills these from Open-Meteo. The dash
-           is what shows if the request fails; it is never replaced with
-           a made-up figure.
+                  150+ is the client's figure and is kept at their request.
+                  The portfolio holds 129, and this panel now lands on a page
+                  that says so — raised, and their call. It was briefly wired
+                  to count from the data; if that is ever wanted back, it is
+                  four lines in js/home-collection.js writing data.length
+                  into a [data-live-count] attribute here. -->
+             <a class="stat-card stat-card--act stat-card--nav" href="listings.html">
+               <b class="num">150<i>+</i></b>
+               <span>Listings in prime locations</span>
+               <span class="cm-go" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span>
+             </a>
+           </div>
+         </div>
+       </div></div>
+       <!-- live: js/hero-panels.js fills these from Open-Meteo. The dash
+            is what shows if the request fails; it is never replaced with
+            a made-up figure.
 
-           It is also the third sheet's opener. One temperature for a city
-           built on hills is the least interesting true thing about
-           Amman's weather; js/weather-map.js opens the district map that
-           says the interesting one. -->
-      <div class="depth" style="--d:15px">
-        <div class="rv rv-glass" style="--rvd:130ms">
-          <div class="lev" style="--dur:13.5s;--amp:7px;--delay:1.2s;--rot:.4deg">
-            <button class="stat-card stat-card--act wx" id="wx" type="button"
-                    aria-haspopup="dialog">
-              <b class="wx-read"><span data-wx-temp>—</span><i class="wx-deg">°C</i></b>
-              <span class="wx-line">
-                <span class="wx-icon" data-wx-icon aria-hidden="true"></span>
-                <span data-wx-desc>Amman</span>
-              </span>
-              <span class="cm-go" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span>
-            </button>
-          </div>
-        </div>
-      </div>
-      <div class="depth" style="--d:20px">
-        <div class="rv rv-glass" style="--rvd:260ms">
-          <div class="lev" style="--dur:12.4s;--amp:8px;--delay:.8s;--rot:.28deg">
-            <!-- The figures are the label. "Click here to know more" was
-                 the only sentence on a page that elsewhere writes "We
-                 book the light, not just the appointment" — and it left
-                 the one clickable panel in the hero reading as a third
-                 statistic. It is a readout now, like its neighbours, and
-                 the disc says it opens. -->
-            <button class="stat-card stat-card--act" id="cmOpen" type="button"
-                    aria-haspopup="dialog">
-              <b>Commission Structure</b>
-              <span>5% long-term · 1–2% on sales</span>
-              <span class="cm-go" aria-hidden="true">
-                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
-              </span>
-            </button>
-          </div>
-        </div>
-      </div>
+            It is also the third sheet's opener. One temperature for a city
+            built on hills is the least interesting true thing about
+            Amman's weather; js/weather-map.js opens the district map that
+            says the interesting one. -->
+       <div class="arv" style="--d:15px;--i:1"><div class="depth">
+         <div class="rv rv-glass" style="--rvd:130ms">
+           <div class="lev" style="--dur:13.5s;--amp:7px;--delay:1.2s;--rot:.4deg">
+             <button class="stat-card stat-card--act wx" id="wx" type="button"
+                     aria-haspopup="dialog">
+               <b class="wx-read"><span data-wx-temp>—</span><i class="wx-deg">°C</i></b>
+               <span class="wx-line">
+                 <span class="wx-icon" data-wx-icon aria-hidden="true"></span>
+                 <span data-wx-desc>Amman</span>
+               </span>
+               <span class="cm-go" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span>
+             </button>
+           </div>
+         </div>
+       </div></div>
+       <div class="arv" style="--d:20px;--i:2"><div class="depth">
+         <div class="rv rv-glass" style="--rvd:260ms">
+           <div class="lev" style="--dur:12.4s;--amp:8px;--delay:.8s;--rot:.28deg">
+             <!-- The figures are the label. "Click here to know more" was
+                  the only sentence on a page that elsewhere writes "We
+                  book the light, not just the appointment" — and it left
+                  the one clickable panel in the hero reading as a third
+                  statistic. It is a readout now, like its neighbours, and
+                  the disc says it opens. -->
+             <button class="stat-card stat-card--act" id="cmOpen" type="button"
+                     aria-haspopup="dialog">
+               <b>Commission Structure</b>
+               <span>5% long-term · 1–2% on sales</span>
+               <span class="cm-go" aria-hidden="true">
+                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+               </span>
+             </button>
+           </div>
+         </div>
+       </div></div>
 
-      <!-- The fourth panel opens the district quiz. It is the same
-           object as the commission card — .stat-card--act, the same
-           sheet shell, the same focus trap — because a second dialog
-           that behaves differently from the first is a second thing to
-           learn. Its own --dur/--amp/--delay so it does not levitate in
-           step with the three above it. -->
-      <div class="depth" style="--d:26px">
-        <div class="rv rv-glass" style="--rvd:340ms">
-          <div class="lev" style="--dur:10.6s;--amp:9px;--delay:1.6s;--rot:.22deg">
-            <button class="stat-card stat-card--act" id="qzOpen" type="button"
-                    aria-haspopup="dialog">
-              <b>Where should you live?</b>
-              <span>Five questions · one answer</span>
-              <span class="cm-go" aria-hidden="true">
-                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
-              </span>
-            </button>
-          </div>
-        </div>
-      </div>
+       <!-- The fourth panel opens the district quiz. It is the same
+            object as the commission card — .stat-card--act, the same
+            sheet shell, the same focus trap — because a second dialog
+            that behaves differently from the first is a second thing to
+            learn. Its own --dur/--amp/--delay so it does not levitate in
+            step with the three above it. -->
+       <div class="arv" style="--d:26px;--i:3"><div class="depth">
+         <div class="rv rv-glass" style="--rvd:340ms">
+           <div class="lev" style="--dur:10.6s;--amp:9px;--delay:1.6s;--rot:.22deg">
+             <button class="stat-card stat-card--act" id="qzOpen" type="button"
+                     aria-haspopup="dialog">
+               <b>Where should you live?</b>
+               <span>Five questions · one answer</span>
+               <span class="cm-go" aria-hidden="true">
+                 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+               </span>
+             </button>
+           </div>
+         </div>
+       </div></div>
+     
     </div>
 
     <div class="hero-lede">
@@ -2359,7 +2927,25 @@ footer.foot{position:relative; z-index:2; padding:clamp(46px,6vh,74px) var(--gut
     </div>
 
   </div>
+
+  <div class="hero-cue" aria-hidden="true">
+    <span class="hero-cue-in">
+      <span class="hero-cue-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+             stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 9.5 12 15l5.5-5.5"/></svg>
+      </span>
+      <span class="hero-cue-label">Scroll down</span>
+    </span>
+  </div>
+ </div>
+
+ <!-- The descent's scroll distance. A spacer rather than the section's own
+      height, because the section now runs past the fall to hold the arrival
+      and the pin has to stay stuck for all of it. -->
+ <div class="hero-fall" data-descent-span aria-hidden="true"></div>
+
 </section>
+
 
 <div class="rule"></div>
 
@@ -2756,8 +3342,8 @@ footer.foot{position:relative; z-index:2; padding:clamp(46px,6vh,74px) var(--gut
     <div class="qz-head">
       <p class="cmx-kick">Lumina</p>
       <h2 class="display" id="qzTitle">Where should you live?</h2>
-      <p class="qz-step mono" id="qzStep">01 / 05</p>
       <p class="cmx-lede">Nine districts in West Amman, and a newcomer cannot tell them apart from a map. Five taps — no typing — and we will tell you which two to start with.</p>
+      <p class="qz-step mono" id="qzStep">01 / 05</p>
       <div class="qz-bar" aria-hidden="true"><i id="qzBar"></i></div>
     </div>
 
@@ -2917,21 +3503,24 @@ footer.foot{position:relative; z-index:2; padding:clamp(46px,6vh,74px) var(--gut
   </div>
 </div>
 
-<script src="js/lumina.js?v=2026-08-07d" defer></script>
+<script src="js/lumina.js?v=2026-08-25a" defer></script>
+<!-- after lumina.js: defer preserves order, and the descent subscribes
+     to that file's scroll loop rather than opening a second one. -->
+<script src="js/hero-descent.js?v=2026-08-25c" defer></script>
 <!-- order matters: the card builder asks the viewer to open, and
      home-collection.js asks the builder to build -->
 <script src="js/property-viewer.js?v=2026-08-12a" defer></script>
-<script src="js/property-card.js?v=2026-08-07b" defer></script>
-<script src="js/home-collection.js?v=2026-08-22b" defer></script>
+<script src="js/property-card.js?v=2026-08-25a" defer></script>
+<script src="js/home-collection.js?v=2026-08-25b" defer></script>
 <script src="js/hero-panels.js?v=2026-08-22a" defer></script>
 <!-- after hero-panels.js: that file exposes the sheet machinery the
      quiz reuses, and defer preserves document order -->
-<script src="js/quiz.js?v=2026-08-22a" defer></script>
+<script src="js/quiz.js?v=2026-08-25b" defer></script>
 <!-- same reason as quiz.js: it renders into a sheet whose open/close,
      scroll lock and focus trap hero-panels.js owns. -->
 <script src="js/weather-map.js?v=2026-08-22a" defer></script>
 <script src="js/nav-menu.js?v=2026-08-07b" defer></script>
-<script src="js/consult-form.js?v=2026-08-22a" defer></script>
+<script src="js/consult-form.js?v=2026-08-25b" defer></script>
 
 <!-- Organisation identity, 2026-08-12. Two different Google surfaces, two different
      sources, and it is worth knowing which is which:

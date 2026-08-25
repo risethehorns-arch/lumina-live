@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>See a room come together — Lumina, Amman</title>
-<meta name="description" content="Scroll an empty West Amman apartment into a furnished room, over one afternoon, as the light crosses the floor and hands over to a lamp. A drawing — the properties are real.">
+<meta name="description" content="Scroll an empty West Amman bedroom into a furnished one, over an evening, as the sun leaves the window — then turn the lights on. A render — the properties are real.">
 <meta name="theme-color" content="#05070B">
 
 <meta property="og:title" content="See a room come together — Lumina">
@@ -28,8 +28,8 @@
 <link rel="preload" as="font" type="font/woff2" href="assets/fonts/InstrumentSerif.woff2" crossorigin>
 <link rel="preload" as="font" type="font/woff2" href="assets/fonts/InstrumentSans.woff2" crossorigin>
 
-<link rel="stylesheet" href="css/elevated.css?v=2026-08-12a">
-<link rel="stylesheet" href="css/room.css?v=2026-08-07e">
+<link rel="stylesheet" href="css/elevated.css?v=2026-08-25a">
+<link rel="stylesheet" href="css/room.css?v=2026-08-25a">
 <link rel="stylesheet" href="css/zyrn-credit.css?v=2026-08-18a">
 <link rel="stylesheet" href="css/mobile.css?v=2026-08-12a">
 </head>
@@ -38,10 +38,16 @@
   LUMINA — the room
 
   THE ONE LINE THIS PAGE EXISTS TO EARN, and it must survive every
-  rewrite: the room is a drawing, the properties are real, and we do
-  not sell the sofa — we find the room. If a revision ever softens
+  rewrite: the room is a render, the properties are real, and we do
+  not sell the bed — we find the room. If a revision ever softens
   that into "Lumina furnishes homes", it is a regression, because it
   is not true and it is not the business.
+
+  It said "a drawing" until 2026-08-25, when the SVG scheme was
+  replaced by a photoreal render scrubbed frame by frame. The noun
+  had to change with it and the undertaking did not: a render passed
+  off as a photograph of a property is precisely what the note under
+  #offer exists to prevent, so it now says render, out loud, twice.
 
   Everything geometric on this page comes out of TWO formulas, and
   nothing is placed by eye. See the construction block at the top of
@@ -67,7 +73,6 @@
     <a href="listings.html">Properties</a>
     <a href="services.html">Services</a>
     <a href="areas.html">Areas</a>
-    <a href="team.html">Team</a>
     <a href="index.html#contact">Contact</a>
     <a href="https://wa.me/962771505250" class="chip chip-icon" target="_blank" rel="noopener" aria-label="WhatsApp">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
@@ -91,14 +96,18 @@
 <main>
 
 <!-- ═══ THE ROOM ════════════════════════════════════════════
-     460vh of pinned stage. js/room.js turns scroll position through
-     the pin into one 0…1 progress and every moving thing on this
-     screen is a pure function of it — which is why scrolling BACK UP
-     un-furnishes the room exactly as carefully as scrolling down
-     furnished it. That is the reward for holding no timers. -->
+     560vh of pinned stage — 420vh on a phone. js/room-scrub.js turns
+     scroll position through the pin into one 0…1 progress, and the
+     furnishing half of it is a pure function of that, which is why
+     scrolling BACK UP un-furnishes the room exactly as carefully as
+     scrolling down furnished it. That is the reward for holding no
+     timers.
+
+     The LAST fifth of the runway is not a function of anything: the
+     room stands finished and unlit, and what happens next is a
+     button. -->
 <section class="room" id="room" aria-label="An empty room furnishing itself as you scroll">
   <div class="room-pin">
-    <div class="bp-grid" aria-hidden="true"></div>
 
     <!-- FIRST in the pin on purpose: the very first Tab from the bar
          lands on the way out. A five-viewport pin you cannot escape
@@ -118,399 +127,72 @@
     </nav>
 
     <div class="room-stage" id="stage">
-      <!-- aria-hidden: this is a drawing. The accessible copy is the
+      <!-- aria-hidden: this is a render. The accessible copy is the
            real <ol> at the end of the pin, which also survives JS
            being blocked and is visible to a crawler. -->
-      <svg id="roomSvg" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
-        <defs>
-          <linearGradient id="gWallL" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stop-color="#0A0F17"/><stop offset="1" stop-color="#131B26"/>
-          </linearGradient>
-          <linearGradient id="gWallR" x1="1" y1="0" x2="0" y2="0">
-            <stop offset="0" stop-color="#080D14"/><stop offset="1" stop-color="#111926"/>
-          </linearGradient>
-          <linearGradient id="gFloor" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#0E141D"/><stop offset="1" stop-color="#070B11"/>
-          </linearGradient>
-          <linearGradient id="gCeil" x1="0" y1="1" x2="0" y2="0">
-            <stop offset="0" stop-color="#0B1119"/><stop offset="1" stop-color="#05080D"/>
-          </linearGradient>
-          <linearGradient id="gBack" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#131C28"/><stop offset="1" stop-color="#0B1119"/>
-          </linearGradient>
+      <!-- ═══ THE STAGE ═══════════════════════════════════════
+           A WebP ladder painted into a canvas, scrubbed by scroll. The
+           same machinery as the hero descent — see the long note at the
+           top of js/hero-descent.js for why this is not a <video>: a
+           long-GOP h264 cannot be seeked frame-accurately sixty times a
+           second, and 124 stills can.
 
-          <!-- four skies, crossfaded on opacity alone. Changing gradient
-               STOPS per frame is a paint; changing the opacity of four
-               stacked fills is not. -->
-          <linearGradient id="skyDawn" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#3C5A77"/><stop offset="1" stop-color="#8FB4CC"/>
-          </linearGradient>
-          <linearGradient id="skyDay" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#CFE0EC"/><stop offset="1" stop-color="#EFE3CB"/>
-          </linearGradient>
-          <linearGradient id="skyGold" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#FFC77E"/><stop offset="1" stop-color="#FF8A3C"/>
-          </linearGradient>
-          <linearGradient id="skyDusk" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#1B2434"/><stop offset="1" stop-color="#2B3648"/>
-          </linearGradient>
+           The ladder is ONE sequence with two halves. 1..109 is the
+           furnishing, scrubbed. 109..124 is the cove lighting coming
+           up, and that half is PLAYED, on a button, because it is the
+           one thing on this page the reader does rather than watches.
 
-          <radialGradient id="gBloom"><stop offset="0" stop-color="#FFD9A0" stop-opacity=".55"/><stop offset="1" stop-color="#FFB25A" stop-opacity="0"/></radialGradient>
-          <radialGradient id="gPool"><stop offset="0" stop-color="#FFD9A0" stop-opacity=".3"/><stop offset="1" stop-color="#FFB25A" stop-opacity="0"/></radialGradient>
-          <radialGradient id="gShadow"><stop offset="0" stop-color="#02040A" stop-opacity=".85"/><stop offset="1" stop-color="#02040A" stop-opacity="0"/></radialGradient>
-          <linearGradient id="gCone" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#FFD9A0" stop-opacity=".34"/><stop offset="1" stop-color="#FFB25A" stop-opacity="0"/>
-          </linearGradient>
-          <radialGradient id="gVig" cx=".5" cy=".45" r=".78">
-            <stop offset=".55" stop-color="#02040A" stop-opacity="0"/>
-            <stop offset="1" stop-color="#02040A" stop-opacity=".62"/>
-          </radialGradient>
-          <!-- the window aperture, as a clip: the sun and the skyline
-               live OUTSIDE the room and must never paint over the wall -->
-          <clipPath id="winClip"><polygon points="150,196 450,309 450,583 150,661"/></clipPath>
-          <linearGradient id="gCool" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stop-color="#7FD9E8" stop-opacity=".1"/><stop offset="1" stop-color="#7FD9E8" stop-opacity="0"/>
-          </linearGradient>
-        </defs>
+           object-fit works on a canvas — it is a replaced element — so
+           the frame covers the pin at any shape without a wrapper. -->
+      <div class="rm-frame">
+        <picture class="rm-still">
+          <!-- What a blocked script, reduced motion and a slow first
+               paint all land on: the room finished, lights off. The
+               poster is swapped for poster-lit.jpg when the switch is
+               thrown on those paths, so the interaction survives even
+               where the scrub does not. -->
+          <source media="(max-width:760px)" srcset="assets/room/406/109.webp" type="image/webp">
+          <img id="rmStill" src="assets/room/1280/109.webp" alt=""
+               width="1280" height="720" decoding="async" fetchpriority="low">
+        </picture>
+        <canvas id="rmCanvas" class="rm-canvas" width="1280" height="720" aria-hidden="true"></canvas>
 
-        <!-- ── the camera ──────────────────────────────────────────
-             In one-point perspective, walking forward IS scaling the
-             scene about the vanishing point. So the whole dolly is one
-             scale() on one group and the perspective stays honest for
-             free. The explicit triple-translate is deliberate: SVG
-             transform-origin needs transform-box and its handling has
-             been inconsistent across Safari versions. -->
-        <g id="cam">
+        <!-- ── the sun going down ──────────────────────────────────
+             The source already drops two stops between frames 180 and
+             199 as the camera settles; these carry it the rest of the
+             way to dusk. Overlays rather than a filter on the canvas:
+             a filter is a second full-frame pass on every painted
+             frame, four alpha-composited layers are not, and these can
+             each move on their own curve.
 
-          <!-- ── the shell ────────────────────────────────────────── -->
-          <g id="shell">
-            <g id="solids" opacity="0">
-              <polygon points="0,0 500,267 1191,267 1600,0" fill="url(#gCeil)"/>
-              <polygon points="0,0 500,267 500,699 0,1000" fill="url(#gWallL)"/>
-              <polygon points="1600,0 1191,267 1191,699 1600,1000" fill="url(#gWallR)"/>
-              <polygon points="0,1000 500,699 1191,699 1600,1000" fill="url(#gFloor)"/>
-              <rect x="500" y="267" width="691" height="432" fill="url(#gBack)"/>
-            </g>
+             --rp is the scrub's progress, --dk the dark hold's, --lit
+             the switch. Every layer below is a pure function of those
+             three, which is what makes scrolling back up undo it. -->
+        <div class="rm-grade" aria-hidden="true">
+          <i class="rm-open"></i>
+          <i class="rm-gold"></i>
+          <i class="rm-dusk"></i>
+          <i class="rm-night"></i>
+          <i class="rm-vig"></i>
+          <i class="rm-bloom"></i>
+        </div>
+      </div>
 
-            <!-- the window, on the left wall. Its corners sit on the
-                 wall's own ceiling and floor lines, so it recedes with
-                 the wall instead of being a rectangle stuck on it. -->
-            <g id="win" opacity="0">
-              <polygon points="150,196 450,309 450,583 150,661" fill="url(#skyDawn)" class="sky" data-sky="0"/>
-              <polygon points="150,196 450,309 450,583 150,661" fill="url(#skyDay)"  class="sky" data-sky="1"/>
-              <polygon points="150,196 450,309 450,583 150,661" fill="url(#skyGold)" class="sky" data-sky="2"/>
-              <polygon points="150,196 450,309 450,583 150,661" fill="url(#skyDusk)" class="sky" data-sky="3"/>
-              <!-- outside, behind the glass. Clipped to the aperture so
-                   the sun can travel and the skyline can sit low without
-                   either ever painting over the wall. -->
-              <g clip-path="url(#winClip)">
-                <ellipse id="sunGlow" cx="205" cy="300" rx="70" ry="55" fill="url(#gBloom)"/>
-                <circle id="sunDisc" cx="205" cy="300" r="14" fill="#FFE0B0"/>
-                <path id="skyl" d="M140 690V566l50-8v38l45-6v-64l50-6v56l45-5v-67l48-6v60l42-5v28l40-4v113Z"/>
-              </g>
-              <polygon points="150,196 450,309 450,583 150,661" fill="none" stroke="rgba(180,214,232,.5)" stroke-width="1.4" vector-effect="non-scaling-stroke"/>
-              <path d="M300 252V622M150 428h300" stroke="rgba(180,214,232,.32)" stroke-width="1.1" vector-effect="non-scaling-stroke"/>
-              <!-- rail and two gathered panels. The one soft thing on
-                   the walls — and hung fabric is plumb, so vertical in
-                   screen space is the correct drawing, not a shortcut. -->
-              <g id="curt">
-                <path class="rln thin" d="M118 176L486 300"/>
-                <path class="fill-b" d="M120 184Q138 420 116 668L168 656Q176 420 164 199Z"/>
-                <path class="rln thin" d="M120 184Q138 420 116 668L168 656Q176 420 164 199ZM140 190Q152 420 142 662"/>
-                <path class="fill-b" d="M448 296Q458 450 446 594L494 582Q502 450 490 310Z"/>
-                <path class="rln thin" d="M448 296Q458 450 446 594L494 582Q502 450 490 310ZM468 303Q476 450 468 588"/>
-              </g>
-            </g>
-
-            <!-- skirting at h=.04 and cornice at h=.96, both derived
-                 from the height rule like everything else. Two hairlines,
-                 and they are what stop the walls reading as paper. -->
-            <g id="trims" class="rln hair">
-              <path d="M0 960L500 682H1191L1600 960M0 40L500 284H1191L1600 40"/>
-            </g>
-
-            <!-- setting-out grid. Every orthogonal is a ray from the VP
-                 and the two outermost land exactly on the frame's
-                 bottom corners — the construction checking itself. It
-                 never fades to zero: a faint plan under a finished room
-                 is the language this whole site speaks. -->
-            <g id="plan" opacity="0" stroke="var(--draft-dim)" stroke-width="1" fill="none" vector-effect="non-scaling-stroke">
-              <path d="M500 699L0 1000M615 699L267 1000M730 699L533 1000M845 699L799 1000M960 699L1065 1000M1075 699L1331 1000M1191 699L1600 1000"/>
-              <path d="M500 699h691M437 737h806M347 791h969M215 871h1210"/>
-            </g>
-
-            <!-- nine dashed footprints, on the floor from the first
-                 frame. Each one cross-fades into its own solid as that
-                 piece lands — one write, two consumers. It says "a
-                 broker sees the room before you can" without a word. -->
-            <g id="ghosts" stroke="var(--draft-dim)" stroke-width="1.1" fill="none" stroke-dasharray="6 7" vector-effect="non-scaling-stroke">
-              <polygon class="gh" data-g="1" points="475,760 1184,760 1331,900 279,900"/>
-              <polygon class="gh" data-g="2" points="535,706 844,706 830,800 397,800"/>
-              <polygon class="gh" data-g="3" points="492,812 761,812 737,880 414,880"/>
-              <ellipse  class="gh" data-g="4" cx="1113" cy="880" rx="104" ry="33"/>
-              <polygon class="gh" data-g="5" points="900,699 1150,699 1169,706 901,706"/>
-              <polygon class="gh" data-g="6" points="580,690 800,690 800,699 580,699"/>
-              <ellipse  class="gh" data-g="7" cx="1434" cy="940" rx="82" ry="22"/>
-              <ellipse  class="gh" data-g="8" cx="324" cy="905" rx="44" ry="13"/>
-              <ellipse  class="gh" data-g="9" cx="911" cy="828" rx="58" ry="19"/>
-            </g>
-
-            <!-- the survey note that stops an empty room being an empty
-                 screen. Gone by the time the first piece lands. -->
-            <g id="survey" opacity="0" fill="none">
-              <path d="M500 640h691" stroke="var(--draft)" stroke-width="1" stroke-dasharray="4 5" vector-effect="non-scaling-stroke"/>
-              <path d="M500 632v16M1191 632v16" stroke="var(--draft)" stroke-width="1" vector-effect="non-scaling-stroke"/>
-              <text x="845" y="626" class="svg-note" text-anchor="middle">4800</text>
-              <path d="M462 267v432" stroke="var(--draft)" stroke-width="1" stroke-dasharray="4 5" vector-effect="non-scaling-stroke"/>
-              <path d="M454 267h16M454 699h16" stroke="var(--draft)" stroke-width="1" vector-effect="non-scaling-stroke"/>
-              <text x="446" y="490" class="svg-note" text-anchor="end">2900</text>
-            </g>
-          </g>
-
-          <!-- ── light behind the furniture ───────────────────────── -->
-          <g id="lightBack">
-            <polygon id="pool" points="90,677 390,598 1600,1000 0,1000" fill="url(#gPool)" opacity="0"/>
-            <rect id="cool" x="0" y="0" width="1600" height="1000" fill="url(#gCool)" opacity="0"/>
-          </g>
-
-          <!-- ═══ FAR — occluded by everything in front. Paint order IS
-               the depth engine, and it costs nothing. ═══ -->
-          <g id="far">
-
-            <!-- 5 CREDENZA — extrudes along the wall; the drawer fronts
-                 do NOT scale with it, they appear as the leading edge
-                 reaches each one. Parts arriving as a sweep passes is a
-                 grammar nothing else in the room uses. -->
-            <g class="obj" data-i="5" style="--p:0">
-              <g class="obj-alt">
-                <polygon class="fill-a" points="900,578 1150,578 1150,699 900,699"/>
-                <polygon class="fill-b" points="900,578 1150,578 1169,585 901,585"/>
-                <path class="rln" d="M900 578h250v121H900zM900 578l1 7h268l-19-7"/>
-                <path class="rln thin" d="M912 699v20M960 699v20M1090 699v20M1138 699v20"/>
-                <g class="dr" data-d="0"><path class="rln thin" d="M905 583h52v111h-52zM915 638h32"/></g>
-                <g class="dr" data-d="1"><path class="rln thin" d="M967 583h52v111h-52zM977 638h32"/></g>
-                <g class="dr" data-d="2"><path class="rln thin" d="M1030 583h52v111h-52zM1040 638h32"/></g>
-                <g class="dr" data-d="3"><path class="rln thin" d="M1092 583h52v111h-52zM1102 638h32"/></g>
-                <path class="rln hair" d="M908 612Q1025 608 1142 614M906 656Q1025 652 1144 658"/>
-                <g class="top-things">
-                  <path class="rln thin" d="M930 570h60v8h-60zM934 562h56v8h-56z"/>
-                  <path class="rln thin" d="M1026 570a34 12 0 0 0 68 0"/>
-                  <path class="rln thin" d="M1104 530h12v48h-12z"/>
-                </g>
-                <path class="rim" d="M900 578h250"/>
-              </g>
-            </g>
-
-            <!-- 6 PICTURE — drops the last 60 units onto the hook, then
-                 swings level on a damped pendulum. It is still moving
-                 after it has arrived, which is why the eye tracks it
-                 longest, and why it sits under the lamp's slow rise
-                 instead of competing with a landing. -->
-            <g class="obj" data-i="6" style="--p:0">
-              <g class="obj-alt" style="--pend:0deg">
-                <polygon class="fill-a" points="580,320 800,320 800,450 580,450"/>
-                <path class="rln" d="M580 320h220v130H580z"/>
-                <path class="rln thin" d="M598 338h184v94H598z"/>
-                <path class="rln thin" d="M612 372h156M612 392h156M612 412h120"/>
-                <circle class="rln thin" cx="742" cy="360" r="14" fill="none"/>
-                <path class="rim" d="M580 320h220"/>
-              </g>
-            </g>
-
-            <g id="city" opacity="0">
-              <circle cx="150" cy="520" r="2"/><circle cx="196" cy="556" r="2"/>
-              <circle cx="262" cy="512" r="2"/><circle cx="318" cy="574" r="2"/>
-              <circle cx="352" cy="534" r="2"/>
-            </g>
-          </g>
-
-          <rect id="haze" x="0" y="0" width="1600" height="1000" fill="#0B1119" opacity="0"/>
-
-          <!-- shadows: one gradient ellipse each, no filters anywhere on
-               this page — a static filter inside a scaling camera
-               re-rasters its whole region every frame the camera moves. -->
-          <g id="shadows">
-            <ellipse class="sh" data-s="2" cx="620" cy="800" rx="250" ry="46" fill="url(#gShadow)" opacity="0"/>
-            <ellipse class="sh" data-s="3" cx="588" cy="880" rx="180" ry="34" fill="url(#gShadow)" opacity="0"/>
-            <ellipse class="sh" data-s="4" cx="1113" cy="884" rx="120" ry="30" fill="url(#gShadow)" opacity="0"/>
-            <ellipse class="sh" data-s="8" cx="324" cy="908" rx="70" ry="18" fill="url(#gShadow)" opacity="0"/>
-            <ellipse class="sh" data-s="9" cx="911" cy="832" rx="66" ry="17" fill="url(#gShadow)" opacity="0"/>
-          </g>
-
-          <!-- ═══ MID ═══ -->
-          <g id="mid">
-
-            <!-- 1 RUG — unrolls toward you from the far edge, with the
-                 roll riding the near edge and dying as it lands. The
-                 shortest span in the piece: the floor is the gesture
-                 that says "one room", not an event in itself. -->
-            <g class="obj" data-i="1" style="--p:0">
-              <g class="obj-alt" style="--yaw:0deg">
-                <polygon class="rug-f" points="475,760 1184,760 1331,900 279,900"/>
-                <path class="rln thin" d="M475 760h709l147 140H279zM507 766h645l124 128H347"/>
-                <path class="rln hair" d="M560 800h480M520 840h560"/>
-                <path class="rln hair" d="M805 788L1080 830L805 868L530 830ZM805 806L985 830L805 852L625 830Z"/>
-                <g class="rug-fringe">
-                  <path class="rln hair" d="M279 900l-8 14M332 900l-7 14M385 900l-6 14M438 900l-5 14M491 900l-4 14M544 900l-3 14M597 900l-2 14M650 900l-1 14M703 900v14M756 900l1 14M809 900l2 14M862 900l3 14M915 900l4 14M968 900l5 14M1021 900l6 14M1074 900l7 14M1127 900l8 14M1180 900l9 14M1233 900l10 14M1286 900l11 14"/>
-                </g>
-                <ellipse class="rug-roll" cx="805" cy="900" rx="526" ry="15"/>
-              </g>
-            </g>
-
-            <!-- 2 SOFA — slides out of the left wall and overshoots.
-                 Its shadow arrives LATE, on its own driver: the cheapest
-                 possible trick for weight, and the one detail that makes
-                 the room read as furniture rather than a diagram. -->
-            <g class="obj" data-i="2" style="--p:0">
-              <g class="obj-alt">
-                <polygon class="fill-a" points="535,577 844,577 844,641 535,641"/>
-                <polygon class="fill-b" points="535,641 844,641 830,710 397,710"/>
-                <polygon class="fill-a" points="397,800 397,663 535,608 535,706"/>
-                <polygon class="fill-a" points="830,800 830,663 844,608 844,706"/>
-                <path class="rln" d="M535 577h309v64H535zM535 641h309l-14 69H397zM397 800V663l138-55v98M830 800V663l14-55v98"/>
-                <path class="rln thin" d="M639 583v54M741 583v54"/>
-                <path class="rln hair" d="M586 606h1M690 606h1M792 606h1"/>
-                <path class="rln thin" d="M537 710v18M560 715v18M826 710v18M800 715v18"/>
-                <path class="rim" d="M535 577h309M535 641h309"/>
-              </g>
-            </g>
-
-            <!-- 3 COFFEE TABLE — the legs swing down and lock BEFORE
-                 touchdown, then the top falls under easeInQuad, which is
-                 gravity and not an ease-out, then one rebound. This is
-                 the piece with the comic timing and it lands in the
-                 busiest stretch of the scroll. -->
-            <g class="obj" data-i="3" style="--p:0">
-              <g class="obj-alt">
-                <g class="leg" data-l="0" style="--o:492px 718px"><path class="rln thin" d="M494 718l-76 50"/></g>
-                <g class="leg" data-l="1" style="--o:761px 718px"><path class="rln thin" d="M759 718l-20 50"/></g>
-                <g class="leg" data-l="2" style="--o:560px 768px"><path class="rln thin" d="M560 758v22"/></g>
-                <g class="leg" data-l="3" style="--o:700px 768px"><path class="rln thin" d="M700 758v22"/></g>
-                <polygon class="fill-b" points="492,718 761,718 737,768 414,768"/>
-                <path class="rln" d="M492 718h269l-24 50H414zM496 724h258l-21 38H430"/>
-                <path class="rln hair" d="M470 740h230M486 728q110-4 224 0M452 756q120-4 250 0"/>
-                <path class="rln thin" d="M560 706h100l-4 8h-100zM556 700h100l-4 6h-100"/>
-                <path class="rim" d="M492 718h269"/>
-              </g>
-            </g>
-
-            <!-- 8 PLANT — the pot pops, then seven leaves open from
-                 their own stem bases, lowest first. The busiest, most
-                 organic arrival in the room, placed last on purpose as
-                 the counterweight to eight rectilinear ones. Two of them
-                 keep swaying after everything has landed, because a
-                 finished room should look lived in and a finished
-                 building should not. -->
-            <g class="obj" data-i="8" style="--p:0">
-              <g class="obj-alt">
-                <g class="leaves">
-                  <g class="lf" data-f="0" style="--o:324px 830px"><path class="rln thin" d="M324 830q-46-34-58-84 44 14 58 84"/></g>
-                  <g class="lf" data-f="1" style="--o:324px 826px"><path class="rln thin" d="M324 826q52-30 62-84-46 18-62 84"/></g>
-                  <g class="lf" data-f="2" style="--o:324px 800px"><path class="rln thin" d="M324 800q-58-40-70-104 54 20 70 104"/></g>
-                  <g class="lf" data-f="3" data-sway="a" style="--o:324px 790px"><path class="rln thin" d="M324 790q60-42 68-108-52 24-68 108"/></g>
-                  <g class="lf" data-f="4" style="--o:324px 750px"><path class="rln thin" d="M324 750q-48-52-52-116 46 34 52 116"/></g>
-                  <g class="lf" data-f="5" data-sway="b" style="--o:324px 730px"><path class="rln thin" d="M324 730q50-54 50-118-44 36-50 118"/></g>
-                  <g class="lf" data-f="6" style="--o:324px 690px"><path class="rln thin" d="M324 690q-10-64 4-124 20 60-4 124"/></g>
-                </g>
-                <path class="rln thin" d="M324 690v190"/>
-                <polygon class="fill-b" points="282,850 366,850 358,905 290,905"/>
-                <path class="rln" d="M282 850h84l-8 55h-68zM280 845a44 13 0 0 0 88 0"/>
-                <path class="rim" d="M282 850h84"/>
-              </g>
-            </g>
-          </g>
-
-          <!-- ═══ NEAR — paints over everything ═══ -->
-          <g id="near">
-
-            <!-- 4 ARMCHAIR — swings in on a real arc: the outer group
-                 rotates about a pivot 300 units to its left on the floor
-                 line, the inner counter-rotates so the chair stays
-                 upright while its POSITION travels the arc. easeInOutCubic
-                 because a swing starts slow. -->
-            <g class="obj" data-i="4" style="--p:0">
-              <g class="obj-alt">
-                <g class="obj-sub">
-                  <path class="rln thin" d="M1030 780l-16 66M1196 780l16 66M1060 792l-8 60M1166 792l8 60"/>
-                  <path class="fill-a" d="M1013 768a100 30 0 0 0 200 0v-8a100 30 0 0 1-200 0z"/>
-                  <path class="fill-b" d="M1013 768q0-136 100-136t100 136a100 30 0 0 1-200 0z"/>
-                  <path class="rln" d="M1013 768a100 30 0 0 0 200 0M1013 768q0-136 100-136t100 136"/>
-                  <path class="rln thin" d="M1039 726q4-88 74-90M1187 726q-4-88-74-90M1069 700q6-58 44-62M1157 700q-6-58-44-62"/>
-                  <polygon class="fill-b" points="1015,745 1075,735 1090,800 1010,812"/>
-                  <path class="rln thin" d="M1015 745l60-10 15 65-80 12zM1022 762l58-9M1028 782l58-9"/>
-                  <path class="rim" d="M1013 768q0-136 100-136t100 136"/>
-                </g>
-              </g>
-            </g>
-
-            <!-- 9 SIDE TABLE — rises out of the floor. Small, quick and
-                 unremarkable on purpose: the room needs one arrival that
-                 does not ask for attention. -->
-            <g class="obj" data-i="9" style="--p:0">
-              <g class="obj-alt">
-                <path class="rln thin" d="M868 742l-8 78M954 742l8 78M911 748v76"/>
-                <ellipse class="fill-b" cx="911" cy="730" rx="56" ry="18"/>
-                <ellipse class="rln" cx="911" cy="730" rx="56" ry="18" fill="none"/>
-                <path class="rln thin" d="M911 730v-58"/>
-                <polygon class="fill-a" points="876,672 946,672 936,622 886,622"/>
-                <path class="rln" d="M876 672h70l-10-50h-50z"/>
-                <ellipse id="lamp2Glow" cx="911" cy="660" rx="90" ry="52" fill="url(#gBloom)" opacity="0"/>
-                <path class="rim" d="M876 672h70"/>
-              </g>
-            </g>
-
-            <!-- 7 ARC LAMP — telescopes out of its own base and the arc
-                 unfurls as it grows. Then it ARRIVES DARK AND DOES
-                 NOTHING for fifteen percent of the scroll. That unfired
-                 gun is the strongest retention device in the piece and
-                 it costs one line of the timeline. -->
-            <g class="obj" data-i="7" style="--p:0">
-              <g class="obj-alt">
-                <ellipse class="fill-a" cx="1434" cy="940" rx="82" ry="22"/>
-                <ellipse class="rln" cx="1434" cy="940" rx="82" ry="22" fill="none"/>
-                <path class="rln" d="M1434 940Q1450 420 1180 400" fill="none"/>
-                <g class="obj-sub">
-                  <path id="cone" d="M1180 432L1046 1000h268z" fill="url(#gCone)" opacity="0"/>
-                  <path class="fill-a" d="M1114 408a66 34 0 0 1 132 0z"/>
-                  <path class="rln" d="M1114 408a66 34 0 0 1 132 0zM1114 408h132" fill="none"/>
-                  <path class="rln hair" d="M1122 408v10M1141 408v13M1160 408v15M1180 408v16M1200 408v15M1219 408v13M1238 408v10"/>
-                  <circle id="bulb" cx="1180" cy="432" r="4"/>
-                  <path class="rim" d="M1114 408h132"/>
-                </g>
-              </g>
-            </g>
-          </g>
-
-          <!-- dust hanging in the lamp cone. Five points on slow,
-               uncorrelated drifts; they only exist while the lamp is on,
-               which is what sells the light as a VOLUME. -->
-          <g id="dust">
-            <circle class="dm" style="--i:0" cx="1128" cy="700" r="1.8"/>
-            <circle class="dm" style="--i:1" cx="1188" cy="560" r="1.4"/>
-            <circle class="dm" style="--i:2" cx="1236" cy="780" r="1.9"/>
-            <circle class="dm" style="--i:3" cx="1160" cy="860" r="1.3"/>
-            <circle class="dm" style="--i:4" cx="1214" cy="646" r="1.6"/>
-          </g>
-          <g id="blooms">
-            <ellipse id="bloomLamp" cx="1180" cy="430" rx="330" ry="250" fill="url(#gBloom)" opacity="0"/>
-            <ellipse id="bloomFloor" cx="1240" cy="940" rx="360" ry="110" fill="url(#gBloom)" opacity="0"/>
-          </g>
-          <!-- the whole room warms a shade when the lamp is on — every
-               surface, not just the ones near it -->
-          <rect id="warmWash" x="0" y="0" width="1600" height="1000" fill="#FFB25A"/>
-        </g>
-        <!-- screen-space, deliberately OUTSIDE the camera: a vignette
-             that scaled with the dolly would read as the room darkening
-             at its own edges rather than the frame having depth -->
-        <rect id="vig" x="0" y="0" width="1600" height="1000" fill="url(#gVig)"/>
-      </svg>
-
-      <!-- Nine transparent buttons over the pieces, carrying the SAME
-           camera transform. Real buttons, not role="button" on an SVG group:
-           the SVG stays presentational and assistive tech gets a proper
-           control tree. Their boxes are measured once with every piece
-           at --p:1 — see the getBBox trap in js/room.js. -->
-      <div class="obj-layer" id="objLayer" hidden></div>
+      <!-- ── the switch ──────────────────────────────────────────
+           A real button, in the document from the start rather than
+           injected, so it is in the tab order and in the accessibility
+           tree before it is visible. aria-pressed carries the state;
+           the label changes with it. Hidden from the tab order until
+           the room is dark, because a control you cannot see is a trap
+           for anyone tabbing. -->
+      <div class="rm-switch" id="rmSwitch" aria-hidden="true">
+        <p class="rm-switch-cue mono">The room is finished. It is not lit.</p>
+        <button type="button" class="rm-btn" id="rmLights" aria-pressed="false" tabindex="-1">
+          <span class="rm-btn-ring" aria-hidden="true"></span>
+          <span class="rm-btn-dot" aria-hidden="true"></span>
+          <span class="rm-btn-label">Turn the lights on</span>
+        </button>
+      </div>
 
       <div class="room-intro" id="intro">
         <p class="kicker">The room</p>
@@ -518,7 +200,7 @@
         <!-- No "scroll" in the lede: below 861px and under reduced motion
              there is nothing to scroll — the room arrives finished. The
              cue below says it instead, and that one IS hidden there. -->
-        <p class="lede">So here is one being furnished, over an afternoon, while the light crosses the floor and hands over to a lamp. Nine pieces, and nine different ways of arriving.</p>
+        <p class="lede">So here is one being furnished, over an evening, while the light goes off the floor and the sun leaves the window. Nine stages, and then a switch.</p>
         <p class="build-cue"><i aria-hidden="true"></i>Scroll to furnish it</p>
       </div>
 
@@ -526,33 +208,33 @@
         <span class="mono" id="readTag">00 / SETTING OUT</span>
         <div class="swap">
           <h2 id="readName">An empty shell</h2>
-          <p class="mono" id="readSpec">SCHEMATIC · NOT TO SCALE</p>
-          <p id="readLight">06:10 — the sun is not over the ridge yet.</p>
+          <p class="mono" id="readSpec">RENDER · NOT A LISTING</p>
+          <p id="readLight">16:40 — full afternoon, and nothing in here yet.</p>
         </div>
       </aside>
 
       <dl class="title-block mono" aria-hidden="true">
-        <div><dt>Drawing</dt><dd>Interior scheme</dd></div>
-        <div><dt>Scale</dt><dd>NTS</dd></div>
+        <div><dt>Render</dt><dd>Bedroom scheme</dd></div>
+        <div><dt>Scale</dt><dd>Indicative</dd></div>
         <div class="tb-status"><dt>Status</dt><dd id="tbStatus">Setting out</dd></div>
-        <div><dt>Time</dt><dd id="tbClock">06:10</dd></div>
+        <div><dt>Time</dt><dd id="tbClock">16:40</dd></div>
       </dl>
 
-      <!-- THE COPY LIVES HERE, once. room.js reads the reading panel's
+      <!-- THE COPY LIVES HERE, once. room-scrub.js reads the panel's
            text out of this list rather than holding its own array, so
            there is one copy of the copy, it survives JS being blocked,
            and a crawler sees it. clip-path, not display:none, so it
            stays in the accessibility tree. -->
       <ol class="schedule" id="schedule">
-        <li data-tag="01 / RUG · FLOOR" data-name="Where the room starts">A rug is the first decision and the one that quietly sets every other. It is also the only thing here you can change on a Saturday.</li>
-        <li data-tag="02 / SOFA · BACK WALL" data-name="The wall that takes a three-seater">Length decides the room. Most apartments in West Amman have one wall that takes a three-seater and one that does not — worth knowing which before you sign, not after.</li>
-        <li data-tag="03 / TABLE · CENTRE" data-name="Close enough to reach sitting down">Put it where you can reach it without standing up and the room works. Put it where the plan says and you will move it in a fortnight.</li>
-        <li data-tag="04 / CHAIR · NEAR" data-name="Where you put the book down">Every room that gets used has a second seat that faces the first at an angle. It is the difference between a living room and a showroom.</li>
-        <li data-tag="05 / CREDENZA · BACK WALL" data-name="The storage nobody plans for">The one thing every buyer forgets to measure for and every owner ends up buying twice.</li>
-        <li data-tag="06 / PICTURE · HUNG" data-name="Lower than you think">Hung at eye height, which in a room with 2.9m ceilings is lower than almost everybody puts it.</li>
-        <li data-tag="07 / ARC LAMP · NEAR" data-name="The light you will actually use">The ceiling light gets switched on twice a year. This is the one that decides what the room feels like after seven.</li>
-        <li data-tag="08 / PLANT · BY THE WINDOW" data-name="The only thing here that needs the window">Which is why it is worth asking which way the glass faces before anything else about a flat.</li>
-        <li data-tag="09 / SIDE TABLE · RIGHT" data-name="And then it is a room">Nine pieces. The shell was the same shell nine pieces ago.</li>
+        <li data-tag="01 / FLOOR · CHEVRON" data-name="The floor goes down first">Chevron in a bedroom is a decision about noise as much as looks — it is the layer everything else in this room is measured from, and the only one you cannot change on a Saturday.</li>
+        <li data-tag="02 / JOINERY · TALL WALL" data-name="The wall that earns its keep">Full-height walnut with the lighting already in it. In a flat this size the difference between storage and a wardrobe standing in the corner is about four inches of planning.</li>
+        <li data-tag="03 / PENDANTS · BOTH SIDES" data-name="The lamps that replace bedside tables">Hung, not stood. It gives back the whole surface of the nightstand, which is the surface that decides whether a bedroom stays tidy.</li>
+        <li data-tag="04 / NICHES · LIT" data-name="Light inside the shelf, not on it">Every niche here is lit from within. It is the detail buyers notice last in a viewing and first in a photograph.</li>
+        <li data-tag="05 / MIRROR · OVAL" data-name="Where the room borrows a window">Hung opposite the glass on purpose. A mirror on that wall is worth more daylight than a second window on the other one.</li>
+        <li data-tag="06 / BED · CENTRED" data-name="Centred on the joinery, not the room">Centre a bed on the wall behind it and the room reads straight even when it is not. Almost no bedroom in Amman is square.</li>
+        <li data-tag="07 / BENCH · FOOT OF BED" data-name="The one piece nobody plans for">And the one every bedroom that gets used ends up with, because a bed is not where you put things down.</li>
+        <li data-tag="08 / RUG · UNDER" data-name="Wide enough to step onto">Two thirds under the bed, far enough out that both sides of it land on wool. Anything smaller is a mat that has been talked about.</li>
+        <li data-tag="09 / DUSK · WINDOW" data-name="And the light hands over">The sun leaves this elevation at about seven. Everything from here is the light you chose, which is the part of a room a viewing at noon never shows you.</li>
       </ol>
     </div>
   </div>
@@ -564,8 +246,8 @@
 <section class="sec" id="offer">
   <div class="sec-head rv">
     <p class="kicker">What is real</p>
-    <h2 class="display">The room is a drawing. The properties are not.</h2>
-    <p class="lede">We do not sell the sofa. We find the room it goes in — and there are <span class="num" id="stockCount">129</span> of them on the book at the moment, in the districts we actually transact in.</p>
+    <h2 class="display">The room is a render. The properties are not.</h2>
+    <p class="lede">We do not sell the bed. We find the room it goes in — and there are <span class="num" id="stockCount">129</span> of them on the book at the moment, in the districts we actually transact in.</p>
   </div>
 
   <div class="more-grid rv" style="--rvd:90ms">
@@ -597,7 +279,7 @@
 
   <p class="note rv" style="--rvd:140ms">
     <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><circle cx="8" cy="8" r="6.4"/><path d="M8 7.2v4M8 4.9v.9"/></svg>
-    <span>The room above is <strong>schematic</strong> — a drawing of how a living room of this size goes together, not a photograph of a property and not a furniture range. Lumina is a real-estate advisory: we do not supply, sell or specify furniture, and nothing in that drawing is for sale.</span>
+    <span>The room above is a <strong>render</strong> — a visualisation of how a bedroom of this size goes together, <strong>not a photograph of a property</strong> and not a furniture range. Lumina is a real-estate advisory: we do not supply, sell or specify furniture, and nothing in that room is for sale.</span>
   </p>
 </section>
 
@@ -692,15 +374,15 @@
     </nav>
     <p class="fine">
       <span>© <span id="yr">2026</span> Lumina Real Estate Advisory</span>
-      <span>The room is a drawing · the properties are real</span>
+      <span>The room is a render · the properties are real</span>
       <span>We do not sell furniture</span>
     </p>
   </div>
 </footer>
 
-<script src="js/lumina.js?v=2026-08-07d" defer></script>
+<script src="js/lumina.js?v=2026-08-25a" defer></script>
 <script src="js/nav-menu.js?v=2026-08-07b" defer></script>
-<script src="js/room.js?v=2026-08-22a" defer></script>
+<script src="js/room-scrub.js?v=2026-08-25c" defer></script>
 <script src="js/zyrn-credit.js?v=2026-08-18a" defer></script>
 </body>
 </html>

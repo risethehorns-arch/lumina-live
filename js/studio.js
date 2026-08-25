@@ -1,7 +1,7 @@
 // LUMINA — studio.js
 // The scroll-built brand-and-site on lumina-studio.html.
 //
-// Same engine as js/room.js and js/invest.js: one pinned section, one
+// Same engine as js/room-scrub.js and js/invest.js: one pinned section, one
 // 0…1 progress, and every moving thing a pure function of it. Nothing
 // holds a timer and nothing integrates a spring, so scrolling back up
 // un-builds the site exactly as carefully as scrolling down built it —
@@ -35,7 +35,7 @@
      the piece is this with different n and d. NOTE it is 1 at t=0, not
      0 — it only ever belongs AFTER a landing, or the piece sits at its
      amplitude from the first frame. That bug cost an afternoon on
-     room.js; do not repeat it here. */
+     js/room-scrub.js; do not repeat it here. */
   const osc = (t, n, d) => Math.cos(t * Math.PI * n) * Math.exp(-t * d) * (1 - t);
 
   const ARM = 0.94;

@@ -30,15 +30,30 @@
       if (!moved) { moved = true; glow.classList.add('on'); }
     }, { passive: true });
 
-    let glowX = 0, glowY = 0;
-    (function loop() {
+    /* This loop used to run for the life of the page. --px and --py are
+       written on documentElement, and a custom property on the root
+       invalidates style for every element that reads it — on this page
+       every .depth, five of which are 221k px each in the middle of the
+       document. With the pointer resting on the desk that was 60 root
+       invalidations a second for nothing.
+
+       It parks when both interpolations have converged and pointermove
+       starts it again. The thresholds are below what either output can
+       express: --px is written to 4dp, and the glow's transform to 0.1px. */
+    let glowX = 0, glowY = 0, raf = 0;
+    const loop = () => {
       cx += (tx - cx) * .06;  cy += (ty - cy) * .06;
       glowX += (gx - glowX) * .1; glowY += (gy - glowY) * .1;
       document.documentElement.style.setProperty('--px', cx.toFixed(4));
       document.documentElement.style.setProperty('--py', cy.toFixed(4));
       glow.style.transform = `translate3d(${glowX.toFixed(1)}px,${glowY.toFixed(1)}px,0)`;
-      requestAnimationFrame(loop);
-    })();
+      const still = Math.abs(tx - cx) < 5e-5 && Math.abs(ty - cy) < 5e-5
+                 && Math.abs(gx - glowX) < .05 && Math.abs(gy - glowY) < .05;
+      raf = still ? 0 : requestAnimationFrame(loop);
+    };
+    const wake = () => { if (!raf) raf = requestAnimationFrame(loop); };
+    addEventListener('pointermove', wake, { passive: true });
+    wake();
   }
 
   /* ── reveal on scroll ─────────────────────────────────── */
@@ -137,6 +152,22 @@
   const onScrollBar = () => bar.classList.toggle('stuck', scrollY > 40);
   onScrollBar();
 
+  /* ── near-viewport gate ───────────────────────────────────
+     Several handlers below early-returned when their subject was off
+     screen — but only after reading the bounding rect that told them so,
+     which is the expensive half. An IntersectionObserver knows the same
+     thing without touching layout.
+
+     Defaults to near:true and stays there where IntersectionObserver does
+     not exist, so the handlers behave exactly as they did before. */
+  const nearGate = (el, margin) => {
+    const g = { near: true };
+    if (!el || typeof IntersectionObserver !== 'function') return g;
+    new IntersectionObserver(es => { g.near = es[es.length - 1].isIntersecting; },
+                             { rootMargin: margin }).observe(el);
+    return g;
+  };
+
   /* ── spine: progress + active section ─────────────────── */
   const fill  = $('#fill');
   const dots  = $$('#spine button');
@@ -147,8 +178,30 @@
       ?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
   }));
 
+  /* offsetTop for each of seven sections plus the document's scrollHeight,
+     every scroll frame, to compare against numbers that only change when
+     the document reflows. Measured once instead. The ResizeObserver on the
+     body is what covers the collection cards, which are injected after
+     load and change the document's height when they arrive. */
+  let spineMax = 0;
+  let spineTops = [];
+  const measureSpine = () => {
+    spineMax = document.documentElement.scrollHeight - innerHeight;
+    spineTops = secs.map(sc => sc.offsetTop);
+  };
+  measureSpine();
+  addEventListener('resize', measureSpine, { passive: true });
+  if (typeof ResizeObserver === 'function' && secs.length) {
+    let rq = false;
+    new ResizeObserver(() => {
+      if (rq) return;
+      rq = true;
+      requestAnimationFrame(() => { measureSpine(); rq = false; });
+    }).observe(document.body);
+  }
+
   const onScrollSpine = () => {
-    const max = document.documentElement.scrollHeight - innerHeight;
+    const max = spineMax;
     const n = max > 0 ? clamp(scrollY / max, 0, 1) : 0;
     /* Two properties for one number, deliberately. css/elevated.css scales
        the rail with --prog-n rather than resizing it — a height re-resolved
@@ -160,7 +213,7 @@
     fill.style.setProperty('--prog-n', n.toFixed(4));
     const mid = scrollY + innerHeight * .42;
     let active = 0;
-    secs.forEach((s, i) => { if (s.offsetTop <= mid) active = i; });
+    for (let i = 0; i < spineTops.length; i++) if (spineTops[i] <= mid) active = i;
     dots.forEach((d, i) => d.setAttribute('aria-current', i === active ? 'true' : 'false'));
   };
 
@@ -168,14 +221,16 @@
   /* The image is CSS-scaled to 1.18, leaving 9% overflow top and bottom, so a
      ±7% translate can never expose an edge. It drifts down as the page scrolls
      up, which reads as the background moving slower than the foreground. */
-  const plx = $$('[data-plx]');
+  const plx = $$('[data-plx]')
+    .map(img => ({ img: img, host: img.closest('section') }))
+    .filter(o => o.host);
+  plx.forEach(o => { o.gate = nearGate(o.host, '140px 0px'); });
   const onScrollPlx = () => {
     if (reduce) return;
-    plx.forEach(img => {
-      const host = img.closest('section');
-      if (!host) return;
+    plx.forEach(o => {
+      if (!o.gate.near) return;          /* no rect read when it cannot show */
+      const img = o.img, host = o.host;
       const r = host.getBoundingClientRect();
-      if (r.bottom < -120 || r.top > innerHeight + 120) return;
       const p = clamp((innerHeight / 2 - (r.top + r.height / 2)) / ((innerHeight + r.height) / 2), -1, 1);
       img.style.transform = `translate3d(0,${(p * 7).toFixed(2)}%,0) scale(1.18)`;
     });
@@ -198,8 +253,9 @@
      rather than two. index.html's .film-inner is what consumes it. */
   const aperture = $('#film');
   const apMax = aperture ? parseFloat(getComputedStyle(aperture).getPropertyValue('--ap-max')) || 42 : 42;
+  const apGate = nearGate(aperture, '120px 0px');
   const onScrollAperture = () => {
-    if (!aperture || reduce) return;
+    if (!aperture || reduce || !apGate.near) return;
     const r = aperture.getBoundingClientRect();
     const total = r.height - innerHeight;
     const p = total > 0 ? clamp(-r.top / total, 0, 1) : 0;
@@ -225,8 +281,14 @@
   const cta = $('#heroCta');
   if (cta) cta.classList.add('armed');
   let ctaUp = false;
+  /* On a page with a scroll-driven hero the CTA is a function of the
+     descent's own progress, not of a scroll threshold — index.html drives
+     it from --dp so it arrives with the villa. The threshold below would
+     otherwise fire it 110px into a 320vh descent, which is the first
+     inch of cloud. */
+  const descentOwnsCta = !!document.querySelector('[data-descent-runway]');
   const onScrollCta = () => {
-    if (ctaUp || !cta) return;
+    if (ctaUp || !cta || descentOwnsCta) return;
     /* TWO conditions, and it needs both.
 
        They scrolled — about one wheel notch on a laptop and comfortably
@@ -254,7 +316,12 @@
      .tuck is added HERE and not in the markup: with the script blocked
      the pill has to be visible, not permanently hidden off screen. */
   const fabEl = $('.fab');
-  const heroEl = $('#hero');
+  /* On a page with a descent the four panels sit in .ways directly BELOW the
+     pinned hero, so the pill has to stay tucked past them, not just past the
+     hero — otherwise it untucks the moment the descent ends and lands on the
+     quiz card exactly as it used to. .ways only exists on index.html; every
+     other page falls back to the hero and is unchanged. */
+  const heroEl = $('.ways') || $('#hero');
   const phone = matchMedia('(max-width: 860px)');
   const onScrollFab = () => {
     if (!fabEl || !heroEl) return;
@@ -265,6 +332,42 @@
   /* crossing the breakpoint mid-session has to re-decide it */
   if (fabEl && heroEl && phone.addEventListener) phone.addEventListener('change', onScrollFab);
 
+  /* ── park the infinite animations that are off screen ─────
+     Measured on the landing: 29 infinite animations running, 19 of them
+     nowhere near the viewport — 14 .lev, 3 lum-lev and the CTA pill's
+     breathe and sweep. Each one keeps the compositor updating a transform
+     it will never present. css/property-ui.css already does this for
+     .prop-float.rest .lev; this is the same idea with the viewport as the
+     condition rather than a rest state.
+
+     A generous margin, because the point is to be running well before the
+     element is looked at, not to save the last frame. */
+  if (!reduce && typeof IntersectionObserver === 'function') {
+    const park = new IntersectionObserver(
+      es => es.forEach(en => en.target.classList.toggle('off-view', !en.isIntersecting)),
+      { rootMargin: '220px 0px' });
+    /* Re-runnable, and exposed for the same reason observeReveals is: the
+       collection cards are injected after load, so a one-shot query at
+       script time sees 11 of the page's 22 .lev and misses every card in
+       .grid-props. js/property-card.js calls this beside refreshReveals.
+       dataset.park keeps a re-scan from observing the same node twice. */
+    const parkScan = () => $$('.lev, #cfOpen').forEach(el => {
+      if (el.dataset.park) return;
+      el.dataset.park = '1';
+      park.observe(el);
+    });
+    parkScan();
+    Lumina.refreshPark = parkScan;
+  }
+
+  /* Anything else that needs the scroll position subscribes here rather
+     than adding a second listener — see the one-scroll-handler rule in
+     CLAUDE.md. js/hero-descent.js is the first subscriber; it falls back
+     to its own rAF-gated listener when this file is absent, so it still
+     works on a bare page. */
+  const subs = [];
+  Lumina.onScroll = fn => { if (typeof fn === 'function') subs.push(fn); };
+
   let ticking = false;
   addEventListener('scroll', () => {
     if (ticking) return;
@@ -272,6 +375,7 @@
     requestAnimationFrame(() => {
       onScrollBar(); onScrollSpine(); onScrollPlx(); onScrollAperture();
       onScrollCta(); onScrollFab();
+      for (let i = 0; i < subs.length; i++) subs[i]();
       ticking = false;
     });
   }, { passive: true });

@@ -37,7 +37,7 @@
   'use strict';
 
   const WHATSAPP = '962771505250';
-  const DATA_URL = 'data/lumina-demo-leads.json?v=2026-08-22';
+  const DATA_URL = 'data/lumina-demo-leads.json?v=2026-08-25b';
   const MAX_REFS = 3;
 
   /* ── where the request actually goes ──────────────────────────

@@ -355,6 +355,9 @@
   /** Call after injecting cards. Idempotent. */
   Lumina.activateCards = scope => {
     if (typeof Lumina.refreshReveals === 'function') Lumina.refreshReveals();
+    /* the injected cards carry .lev, and the off-screen park in
+       js/lumina.js queried the document before they existed */
+    if (typeof Lumina.refreshPark === 'function') Lumina.refreshPark();
     else localReveal(scope);
 
     if (typeof Lumina.bindTilt === 'function') Lumina.bindTilt(scope);

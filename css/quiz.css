@@ -127,7 +127,13 @@
   font-size:clamp(1.7rem,3.4vw,2.5rem); line-height:1.1}
 .cmx-lede{position:relative; margin:0; color:var(--c-70); font-size:.98rem; line-height:1.8;
   max-width:60ch}
-.cmx-locked{overflow:hidden}
+/* clip, NOT hidden. overflow:hidden on the scrolling ancestor destroys
+   position:sticky — so opening a sheet used to unpin the hero and the
+   held frame scrolled out of view, leaving the glass with nothing behind
+   it but black. overflow:clip stops the scroll without establishing a
+   scroll container, so the pin survives and the sheet sits on the
+   landing, which is the whole point of it being glass. */
+.cmx-locked{overflow:clip}
 
 /* ── the quiz interior ───────────────────────────────────────────────── */
 .qz-head{position:relative; margin-bottom:clamp(20px,2.6vw,30px)}
@@ -141,8 +147,11 @@
   box-shadow:0 0 10px rgba(255,215,163,.6);
   transition:transform .5s var(--ease);
 }
+/* Out of the corner — the close button's box overlaps it at every
+   width. It sits with the bar it counts. Same change in index.html,
+   which carries its own copy of this sheet. */
 .qz-step{
-  position:absolute; top:0; right:0; margin:0;
+  margin:0; text-align:right;
   font-size:.62rem; letter-spacing:.22em; text-transform:uppercase;
   color:var(--c-38); font-variant-numeric:tabular-nums;
 }

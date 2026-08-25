@@ -243,6 +243,8 @@ All media is the client's own. There is no stock photography and none should be 
 |---|---|---|
 | `lumina-film.mp4` | re-cut 2026-07-27 (see below), video-only h264, faststart, 7.92s @ 1280×600, ~3.3MB | do not re-encode again; quality is already spent. Only used in `#film` now — the hero no longer autoplays it, see below |
 | `film-poster.jpg` | frame 0 of that video | must match the video's first frame; used as the `#bandFilm` poster only |
+| `assets/hero/1440/*.webp`, `assets/hero/960/*.webp` | **226** frames each — every SECOND frame of the 452-frame master — by `scripts/build-hero-frames.py` | **generated, not hand-edited** — regenerate rather than touching a frame. 7.57MB + 4.25MB. The master is NOT in this repo; it is at `../hero-source/Lumina_Hero_Master_1080p.mp4`, alongside the previous pod master, a golden-hour cloud loop and the supplied poster |
+| `assets/og/home.jpg` | frame 217, cropped to 1200x630 by the same script | the landing page's share card. 1200x630 is not a preference — see the share-card rules below |
 | `hero-lumina.jpg` | added 2026-07-28 from a client-supplied concept render, cropped free of baked-in UI then upscaled 2× to 2088×1280 | **the current hero background**; already upscaled, do not upscale further. See "hero render" below |
 | `hero-still.jpg` | added 2026-07-27, frame 0 of the re-cut film, Lanczos-upscaled 2× to 2560×1200 | **no longer used** — superseded by `hero-lumina.jpg` on 2026-07-28. Kept only as a revert path; safe to delete once the new hero is signed off |
 | `villa-dabouq.jpg` | crop from the client's mockup, 935×876 | this is the **maximum** clean width — beyond x=935 the mockup's own UI intrudes |
@@ -509,6 +511,78 @@ with nothing behind them yet — 30 empty placeholder rows.
 
 Full record at `data/import-report-2026-08-22.json`.
 
+
+### Ten rents landed on 2026-08-25 — and what that touched
+
+The client supplied eleven figures. **Ten were applied.** Refs 154, 155, 156,
+158, 163, 165, 166, 168, 169, 170 now carry a real `price_jod_raw`, its mirror
+in `price_jod_test_margin`, and **no `needs_price_review` key at all** — not
+`false`. No priced record in the file carries that key, and one that says
+`false` where 118 others say nothing is a record that looks hand-edited.
+
+**157 was not applied, and that is not an oversight.** It is not in the book:
+the 2026-08-22 import held it back because it is the same apartment as 155 —
+identical sheet row (Abdoun, 1st, 162 m², 3 bed, 3 bath) and the photographs
+show the same rooms from different angles. The client's own list corroborates
+it, giving 155 and 157 the **same rent, 26,000**, for the same type in the
+same district.
+
+Still without a price after this: **103, 148, 151.** Still flagged for review:
+**108, 114, 116, 127, 132** (the possible monthly rents) **and 151.**
+
+The description does **not** embed the price — it is composed from location,
+size, beds, baths, furnishing and floor — so nothing needed regenerating.
+Checked, not assumed.
+
+**The writer proves itself before it writes.** `prices.py` (job tmp) dumps the
+UNMODIFIED data and requires it back byte-for-byte before touching anything;
+otherwise the format is wrong and all 129 records show up in the diff instead
+of ten. The diff came out at exactly 70 lines — 7 per record, none elsewhere.
+
+#### scripts/build-share-cards.py deleted the landing page's share card
+
+Its stale sweep globbed `assets/og/*.jpg` and unlinked anything whose stem was
+not a listing id. `home.jpg` is not a listing id. **It is the landing page's
+own share card**, written by `scripts/build-hero-frames.py` and named in
+`index.html`'s `og:image` and `twitter:image` — so regenerating the cards
+after a data change silently broke the landing page's rich preview, with the
+deploy still green and nothing to see until somebody shared a link.
+
+The sweep is scoped to `lumina-*` now, which is the only shape this script
+writes. Anything else in `p/` or `assets/og/` belongs to something else. If a
+second non-listing file is ever added to either directory, this is the rule
+that protects it.
+
+`assets/og/home.jpg` was regenerated with the exact transform in
+build-hero-frames.py — ladder frame 152, cover-scaled to 1200x630, cropped at
+0.56 of the vertical — rather than by re-running that script, which would have
+re-encoded all 152 frames to reproduce one JPEG.
+
+#### The area pages quote figures that nothing recomputes
+
+Confirmed again here: the district pages carry their counts, medians and
+ranges as **static literals**, and no script rewrites them. Only
+`areas.html`'s `[data-count]` is corrected at runtime.
+
+Ten new rents moved exactly one printed figure, and it was corrected in the
+same pass: the Circles' **typical annual rent, 17,000 → 14,000 JOD**, in the
+prose and in the stat list. Abdoun's median stayed at 15,000 and every printed
+range still holds, because all ten fall inside the existing bands.
+
+**What did NOT change here, and is still wrong from the 2026-08-22 import:**
+
+| page says | data says |
+|---|---|
+| Abdoun: 68 residences | **75** |
+| Abdoun: 57 apartments | **64** |
+| Abdoun: to rent / to buy 66 / 2 | **73 / 2** |
+| Circles: 14 residences | **17** |
+| Circles: 11 to rent / 4 to buy | **13 / 4** |
+| Circles: mix 13 apartments | **16** |
+
+Swefieh is correct on every figure. These are the drift the import note
+predicted and did not fix; they are prose as well as list items, so they were
+left for a ruling rather than rewritten alongside a price change.
 
 ### Photos
 
@@ -871,11 +945,1090 @@ there and the glass had nothing to blur — the hero headline read straight thro
 sheets on a phone. The top highlight and border are what make it read as glass; the blur was
 only ever making it legible.
 
+## The hero descent (2026-08-24) — Act I of the scroll brief
+
+The landing page opens on a 217-frame fall through cloud into a valley, ending
+on the pod villa lit on its plinth. It replaces the static `pod-hero.jpg`
+plate. Files: `js/hero-descent.js`, `scripts/build-hero-frames.py`,
+`assets/hero/`, plus the hero block in `index.html`.
+
+Built to a supplied brief (`../hero-source/lumina-scroll-brief.md`). **The
+brief describes a repo that is not this one** — it assumes Vite, an existing
+Three.js hero, GSAP and Lenis, and an EN/AR bilingual layer. None of those
+exist here. Where it conflicts with what is actually on disk, what is actually
+on disk won. The deviations are listed at the end of this section, each with
+the measurement behind it.
+
+### The sheets are glass ON the landing, not a modal in front of it
+
+Opening a card used to black the page out: the veil was `rgba(3,5,9,.72)`
+(.86 on phones) and below 1024px the panel was effectively opaque, because
+`backdrop-filter` was gated off there for the hero's compositor budget. The
+sheet read as a separate screen that had replaced the page.
+
+**The veil carries its own copy of the landing frame.** This is the part that
+looks like a workaround and is not. The scroll lock is `overflow` on `<html>`,
+and **either `hidden` or `clip` unpins the hero** — both establish a clip
+context, `position:sticky` loses its scrollport, and the held frame lands
+1350px above the viewport the moment a sheet opens. Measured, both. So the
+sheet cannot show the hero through itself.
+
+It does not need to. These four cards **only exist at the landing**, so the
+frame behind them is always 152 — already decoded and cached by the descent,
+so the backdrop costs nothing. `.cmx-veil` paints it with a darkening
+gradient over it, and the panel's `backdrop-filter` frosts *that*. If the
+landing frame ever moves, this URL moves with it — it is a third place that
+names the last frame explicitly.
+
+**The panel frosts at every width now.** The old 1024px gate is lifted for
+this one case and the exception is earned: a sheet is open on demand with the
+scroll locked, so it rasterises once and never re-rasterises while it is up —
+unlike the hero glass, which composites on every frame of a scroll. That
+reasoning does **not** generalise; the gate stays everywhere else.
+
+Measured with the type hidden and the composite sampled where the glyphs sit,
+all three sheets at both widths: **5.2:1 to 10.1:1**, against floors of 3.0
+and 4.5. `sheetglass.py` (job tmp) re-runs it.
+
+`css/quiz.css` keeps its own plain veil, so the quiz sheet on `areas.html`
+is unaffected — there is no pod frame on that page to show.
+
+#### Nothing is blurred *around* the card
+
+The card is frosted glass; everything outside its edge is the landing frame,
+sharp. That is a deliberate line and it has consequences in both directions:
+
+* **No outer shadow, on any sheet.** The panels carried `0 40px 90px
+  rgba(0,0,0,.62)` plus a `0 0 70px -18px` gold bloom. Those were a halo of
+  blur around the card and they are what made it read as a modal dropped over
+  the page rather than glass laid on it. A 1px hairline and the inset top
+  highlight carry the edge instead — the way vibrancy panels do it — and the
+  frosted-against-sharp boundary does the rest. The consultation sheet
+  (`.cf-panel`) lost the same halo: it opens one button away on the same
+  landing and would otherwise have been the only one left with one.
+* **The veil is a step, not a curtain.** .52 → .66 dimmed the landing to a
+  backdrop; at **.30 → .42** the frame is simply still there, a shade
+  quieter. Re-measured after: 4.5:1 to 10.6:1, floors 3.0 and 4.5.
+* `saturate()` came down 155% → **124%**. Over a warm interior 155% tipped
+  the whole panel brown. Glass does not add colour, it removes detail.
+
+The `.cf` sheet keeps its own darker veil and near-solid ground. It holds text
+inputs, and a field over a photograph is a different problem from a paragraph.
+
+#### The phone layout: three measured defects
+
+Not taste — each one reproduces and each one has a number.
+
+1. **`.cmx-rows dd{max-width:none}` below 720.** `dd` is `flex:none`, so with
+   no ceiling the widest qualifier in the sheet — *"2% standard, unless agreed
+   otherwise"* — sized the column and squeezed *"Property sales"* onto two
+   lines with its note broken over four. Now 50% at ≤720, and under 600 the
+   row stops being a row: label above, figure and qualifier on one baseline
+   below.
+2. **The quiz's step counter overlapped the close button at every width**,
+   not just on a phone. `.qz-step` was `position:absolute; right:0` inside a
+   head inset by the panel padding — 26px on a phone, 34.8px at 1024, 44px at
+   1440 — while `.cmx-x` reaches 54px in. At 1440 the boxes overlap by ~10px
+   and it only *looks* fine because the button is round. It is out of the
+   corner now and sits above the progress bar it counts. Same fix in
+   `areas.html` and `css/quiz.css`, which carry the same head.
+3. **`max-height:88vh` is the LARGE viewport on iOS**, so the sheet ran on
+   under the address bar. `86dvh`, and `height:100dvh` on the `.cmx` shell.
+
+And the type. `.3em` of tracking on a 9.9px cap is what reads as a wrong font
+at 390px — the letters stop being a word. Three tracked labels were not
+`.mono`, so `css/mobile.css` was not raising them, and one (`.wxm-key .mono`)
+*was* a `.mono` but matched here by a two-class selector that outranks the
+one-class rule in that sheet. All three are handled in a single
+`@media (max-width:860px)` block — **860 because that is where mobile.css's
+own mobile treatment starts**, not a second opinion about the boundary.
+
+Two of my first attempts at this made labels *smaller*, because mobile.css
+loads after this page's inline `<style>`: an equal-specificity override here
+is dead on arrival, and a more-specific one wins and then has to get the size
+right by itself. Check which of the two you are writing.
+
+**`sheetphone.py`** (job tmp) is the regression: five handset widths plus a
+tablet, asserting no overlap, nothing wider than the panel, the panel inside
+the viewport, no text under 10.8px, and a real tap target. Two notes on it —
+SVG path geometry routinely exceeds its own viewport, so the map bed's
+contour lines read 21px wider than the panel and are clipped to it; measuring
+those as overflow is measuring the wrong box. And the floor is 10.8, not 11,
+because mobile.css deliberately standardises tracked micro-caps at .68rem
+(10.88px) across six pages.
+
+#### The weather sheet still scrolls on a phone, and that is correct
+
+124px of overflow at 390 (155 at 360, 37 at 430): lede, map, key, reading
+card, provenance stamp. Shrinking the map to fit would put ten 40px dots in a
+190px box, and they would collide. The stamp is the least important thing on
+the sheet and it is the thing below the fold. Measured by `wxfold.py`.
+
+## Image quality in the two scroll experiences  (2026-08-25)
+
+The client asked for the pictures to look high quality and vibrant and for
+noise to come down. Four things were measured before anything changed, and
+only one of them was what it looked like.
+
+### The dominant loss was RESOLUTION, and the phone was far worse than desktop
+
+`rendered_sharp.py` (job tmp) asks the browser how many SOURCE pixels actually
+land across the screen — the ladder width, the cover crop and the device pixel
+ratio together:
+
+| | source px used | upscale |
+|---|---|---|
+| landing, desktop @2x | 1282 of 1440 | 2.25x |
+| **landing, phone @3x** | **250 of 960** | **4.7x** |
+| room, desktop @2x | 1140 of 1280 | 2.53x |
+| **room, phone @3x** | **188 of 720** | **6.2x** |
+
+**A 16:9 frame cover-cropped into a portrait pin shows only the middle 26% of
+its width.** So on a phone three quarters of every frame was downloaded and
+thrown away, and the quarter that survived was stretched five or six times.
+That is the softness, and no encoder setting can touch it.
+
+Both phone rungs are **native portrait centre crops** now — 608x1080 for the
+hero, 406x720 for the room — cut at exactly the slice the phone displays. Same
+pixel count as the rungs they replace, no resampling at any stage, and roughly
+**twice the effective resolution**. The hero's phone rung actually got
+*smaller*: 2.50MB against 2.9MB.
+
+**The hero's wide rung was a downscale of its own master.** 1920x1080 in,
+1440 shipped, then upscaled again by CSS and the DPR. Presented at 3200x1800
+and compared against the master through the same crop, **1920 at q52 measured
+the same bytes as 1440 at q78 with 12% more edge energy** — resolution beat
+quality outright. It ships at q64.
+
+    hero   1440 q78 + 960 q76   7.30 MB  ->  1920 q64 + 608 q68   7.80 MB
+    room   1280 q76 + 720 q74   7.34 MB  ->  1280 q84 + 406 q78  10.07 MB
+
+The room's wide rung is already native, so quality was the only lever there:
+q76 measured rms 2.42 against the master, q86 rms 1.70. q84 is where that
+curve flattens, and it is why the room grew.
+
+### The page was taking the colour out, so the ladder puts it back
+
+Measured in Lab on the rendered page against the master through the same crop:
+the landing composition showed **16% less chroma** than the footage, the
+furnished room **11% less**. Attribution on the room, by knocking out one
+overlay at a time: the grade owns 14 of the 24 missing contrast points (gold
+6.5, dusk 4.7, vignette 1.5) and the remaining 10 are the encode and the
+cover-upscale, which no overlay can give back.
+
+So a modest grade is **baked into both ladders** — `eq=contrast=1.06:
+saturation=1.20` on the hero, `1.08:1.16` on the room. It costs nothing at
+runtime; a CSS filter on the canvas would be a second full-frame pass on every
+painted frame. **The target is the master, not maximum saturation:**
+
+| | before | after |
+|---|---|---|
+| landing composition | −16% chroma | **−4%** |
+| furnished room | −11% chroma | **+1%** |
+| mid-descent, behind the scrim | −37% | −34% |
+| the unlit room at dusk | −74% | −74% |
+
+The last two are meant to be that way. The descent's scrim is what makes the
+headline legible over a sunlit cloud deck, and the dusk is the whole point of
+the room's dark beat.
+
+### .grain was not the noise, and the measurement says so
+
+CLAUDE.md's standing warning is not to remove it without re-measuring the
+banding it was added to dither. Both ladders changed encode and resolution, so
+the measurement was due. With grain ON and OFF, on the rendered page, at five
+moments across both experiences: banding **1.041 vs 1.042, 1.049 vs 1.065,
+0.987 vs 0.993, 0.975 vs 0.972, 0.871 vs 0.875.** No blocking either way, and
+grain contributes about **0.5 levels of sigma** — it is not what a reader is
+seeing. It stays, unchanged, because it is the film texture the design wants
+and it is not costing anything.
+
+### The reading panel had to close as the room opens
+
+A brighter, more saturated lit state broke the one thing sitting on top of it.
+On a phone, every line of the room's reading panel measured **1.19 to 3.39:1**
+against a 4.5 floor once the lights were on — its ground is glass, and its top
+stop is `rgba(255,255,255,.07)` over what is now a bright ceiling.
+
+Fading the diagonal's stops with `--lit` moved the worst line from 1.19 to
+1.29. **A 150deg gradient is weakest at its top-left corner, which is exactly
+where `#readTag` sits.** What works is a *uniform* sheet under the existing
+glass, rising with `--lit`, which does not care where the type is. Same for
+the switch's label. Panel and button now measure **8.5 to 15.8:1 lit** and
+keep their unlit look.
+
+> And one probe correction: `.rm-switch-cue` is faded to zero by
+> `.rm-switch.on` the moment the lights go up. Measuring it there reported
+> 1.20:1 on type nobody can see. Skip anything whose effective opacity —
+> walked up the ancestors — is near zero.
+
+### verify_descent.py went stale on a literal, for the third time
+
+It asserted `ladder == 1440`. It has previously asserted a 220vh fall and a
+last frame of 217, and in both cases the thing it named still existed, so it
+failed quietly rather than loudly. It reads the rung off `assets/hero` now.
+
+## The bar is a scrim, not a box  (2026-08-25)
+
+Scrolled down, `.bar::after` faded in a full-width panel with a hard bottom
+edge and the page looked like it had a black bar stuck on top of it. The
+darkness was never the problem — the EDGE was, and three things drew it:
+
+1. `border-bottom:1px solid rgba(255,178,90,.1)`
+2. `box-shadow:0 12px 40px -20px`
+3. and the big one, **backdrop-filter's hard cutoff at the element's own
+   box**, which puts sharp page against blurred page along a straight line.
+
+Measured at 1440 on the landing: a **13-level luminance step in a single row**
+at y=71, in a region whose ambient level is 15. That is a doubling, and it is
+what the eye reads as an edge.
+
+So the panel became a scrim: `inset:0 0 -44px`, a ground that fades to nothing
+over that distance, and **the same fade applied as a `mask-image`** — which
+takes the blur with it, because masking an element that carries a
+backdrop-filter cross-fades the blurred backdrop back into the sharp one.
+There is no other way to end a blur without drawing a line. The border and the
+shadow are gone. `pointer-events:none`, because the scrim now overhangs the
+bar's own box by 44px and would otherwise eat clicks in that strip.
+
+Same step, after: **4.0 levels**. `barlook.py` (job tmp) re-measures it.
+
+Three copies of this rule exist — `index.html` inline, `css/nav.css`,
+`css/elevated.css` — because the landing carries its own shell. All three
+changed together; if you change one, change three.
+
+## Desktop motion: stop paying for frames nobody asked for
+
+Absolute frame times from this harness are software-rendered and have moved
+±50% between identical builds, so **none of this was tuned against them**.
+Every item below removes work that is provably happening and provably unused,
+and those facts hold on any machine. Measured by `whoreads.py` and
+`scrollcost.py` (job tmp).
+
+| | before | after |
+|---|---|---|
+| style writes, idle at the top | 122 over 61 frames | **0** |
+| forced relayouts per scroll frame | ~1.25 | **0.19** |
+| infinite animations running | 29 | 13 |
+| of those, off screen | 19 | 3 |
+
+**The cursor loop never stopped.** `--px`/`--py` were written to
+documentElement every frame for the life of the page, whether or not the
+pointer had moved. A custom property on the root invalidates style for every
+element that reads it, and on this page that is every `.depth` — five of which
+are 221k px each in the middle of the document. With the mouse resting on the
+desk that was 60 root-style invalidations a second, forever. It parks when
+both interpolations converge and `pointermove` restarts it; the thresholds sit
+below what either output can express (`--px` is written to 4dp, the glow's
+transform to 0.1px).
+
+**The spine read layout eight times a frame** — `scrollHeight` plus an
+`offsetTop` for each of seven sections — to compare against numbers that only
+change when the document reflows. Cached, refreshed on resize and by a
+`ResizeObserver` on the body, which is what covers the collection cards
+arriving after load and changing the document's height.
+
+**Three handlers read a rect per frame wherever you were.** `onScrollPlx`,
+`onScrollAperture` and `hero-descent`'s `measure()` all early-returned when
+their subject was off screen — but only *after* reading the rect that told
+them so. They are gated on an IntersectionObserver now. All three default to
+"near" where there is no IntersectionObserver, so nothing changes on a browser
+without one, and the descent's gate calls `kick()` once on the way out so the
+scrub settles on its clamped end value instead of freezing mid-scrub.
+
+**Nineteen infinite animations ran off screen** — 14 `.lev`, 3 `lum-lev`, and
+the CTA pill's breathe and sweep. One observer parks them, the same way
+`css/property-ui.css` already parked `.prop-float.rest .lev`. Two traps: the
+`.off-view` rule has to sit at the END of the sheet and carry two classes,
+because `animation:` is a shorthand that resets `animation-play-state` to
+running and the rule must beat `.btn-pill` (same specificity, declared later)
+and `.prop-float .lev` (0,2,0); and the pill's sweep is on `::before`, which a
+class on the host does not reach. And `Lumina.refreshPark` exists for the same
+reason `refreshReveals` does — a one-shot query at script time sees 11 of the
+page's 22 `.lev` and misses every injected card.
+
+**`#glow`'s `filter:blur(.5px)` did nothing.** A 650k-px fixed, screen-blended
+layer that follows the pointer, forced onto its own render surface by a
+half-pixel blur. Rendered with and against it on a frozen page at 1x and 2x:
+**zero pixels differ**, banding count identical (89 and 198). Removed from
+`index.html` and `css/elevated.css`.
+
+> The first A/B of this reported a 174/255 difference over 20% of the screen,
+> which is impossible for a half-pixel blur — the page was simply still moving
+> between the two captures. Freeze every animation and prove the freeze with a
+> control pair before trusting any visual diff on this page.
+
+## Colour: three real findings, and how many were not
+
+`desksweep.py` (job tmp) samples every visible text run against what is
+actually rendered behind it, at six desktop widths. Its first run reported
+eleven failures. **Eight were the probe.** The corrections are in the script
+and worth knowing:
+
+* **Sample per LINE, not the union box.** The union of a three-line quote
+  includes the gaps between lines and, for anything near the top, the strip
+  under the fixed bar — where the bar's cream wordmark reads as the backdrop
+  for cream type. All eleven of the first run's worst readings were that.
+* **Skip anything a fixed overlay sits on.** Text under the bar is being read
+  through the bar; that is a fact about the bar.
+* **Sample the element's OWN text nodes.** `selectNodeContents` covers child
+  elements too — on `#cfOpen` that is the cream-filled arrow disc, which reads
+  as a cream backdrop under cream type and scores a flat 1.00:1 on a button
+  that is in fact perfectly legible.
+* **An envelope means the number is about the fade.** The film caption read
+  3.62:1 mid-ramp and **9.22:1** at full strength. Not a defect.
+
+The three that survived, all fixed:
+
+1. **The landing cards.** `150+` at **1.87:1** against a 3.0 floor,
+   "Commission Structure" at 3.06:1 against 4.5. The cause was additive: the
+   card's ground started at `rgba(255,255,255,.16)` — white at the top, where
+   the titles are — and `.stat-card::before` laid another warm radial over the
+   same corner, both over the pod's lit interior, under white type. Glass over
+   a lit scene darkens it; the top highlight is what reads as the edge of the
+   pane, not a white body. Now **3.05 / 5.80 / 7.58 / 10.57**, all clear.
+2. **The film band's small copy.** The headline carries `0 4px 40px` of
+   near-black; the kicker and the meta line carried nothing, over a video with
+   a bright streak straight across them. A scrim on `.film-inner::before`
+   rather than another text-shadow, because a shadow helps a reader but cannot
+   be measured as backdrop contrast — and on a video the backdrop is whatever
+   the frame happens to be.
+3. **`--fi` was written by JS and consumed by nothing.** `js/lumina.js` has
+   set it on `#film` since the aperture was built, and its own comment says
+   "`.film-inner` is what consumes it" — no rule anywhere did. So the copy
+   stayed at full opacity while the shutter closed around it and
+   `clip-path:inset(var(--ap))` **sliced the headline down both sides**. Plain
+   on a phone, where `--ap-max` is 26% of 390px. Wired to
+   `.film-inner{opacity:var(--fi,1)}`, default 1 so the copy is readable with
+   the script blocked and under reduced motion, which drops the clip entirely.
+
+   The two envelopes still do not coincide — `--ap` bites at p=.39, `--fi`
+   does not reach 0 until p=.28 — so on a phone the copy is narrowed to
+   `min(100%,82vw)` to sit inside the shutter's whole travel, rather than
+   re-timing a choreography that is right.
+
+## The four hero cards on a phone — and the disc that was never absolute
+
+The client's screenshot: four cards at four different heights, titles on three
+lines, and a small arrow in the **bottom-left** corner of every one. Measured
+at 390 before touching anything:
+
+| card | size | title | note | disc |
+|---|---|---|---|---|
+| 150+ | 171x139 | 33.6px | 13.1px, 2 lines | bottom left |
+| 30°C | 172x116 | 33.6px | 13.1px | bottom left |
+| Commission Structure | 172x154 | 24px, 2 lines | 13.1px, 2 lines | bottom left |
+| Where should you live? | 172x178 | 24px, 3 lines | 13.1px, 2 lines | bottom left |
+
+Three separate faults, and only one of them was about size.
+
+**1. `.cm-go` was never `position:absolute`, at any width.** The rule is
+`.cm-go{position:absolute; top:16px; right:16px}` at (0,1,0), and
+`.stat-card span{position:relative}` forty lines above it is (0,1,1). The
+span rule wins, the disc stays in flow at the END of the card, and `top`/
+`right` then shift it down and LEFT from there. That is the arrow in the
+bottom-left corner — **and 26px of height every card did not need.** Scoped to
+`.stat-card .cm-go` (0,2,0) now. `css/quiz.css` already scopes its own copy
+`.qz-cta .cm-go`, which is why that one was always right.
+
+This is the third time this exact shape of bug has been found in this file's
+history — `.nav a{padding:6px 0}` beating `.chip`, `.hood p` beating
+`.hood .stat`. **A bare single-class rule loses to any two-part selector that
+reaches the same element, and source order cannot save you.**
+
+**2. Nothing passed the row height down.** The grid item stretches, but there
+are five wrappers between it and the card — `.arv > .depth > .rv > .lev >
+.stat-card` — every one `height:auto`, so the card sat at its own content
+height inside a stretched item. Measured spread across the four: **62px**. All
+five now carry `height:100%`, and the grid carries `grid-auto-rows:1fr`,
+because `align-items:stretch` equalises *within* a row and the two rows still
+sized to their own content (70 and 97).
+
+**3. The phone type rule never reached the two readings.** It was
+`.stat-card b{font-size:1.5rem}` at (0,1,1), and `.stat-card--nav .num` and
+`.stat-card--act .wx-read` are (0,2,0) — so **2.1rem survived on a 171px
+card**. Everything in the phone block is scoped `.hero-stats …` now.
+
+**And the levitation comes off in the grid.** Each card floats on its own
+phase with `--amp` of 7-9px and its own `--rot`, which is the whole point of
+the float stack when they are a loose column beside a desktop hero. Two-up at
+390 with an 8px gutter it is four boxes that will not line up — up to 18px of
+relative offset between neighbours, which is precisely what reads as
+*weirdly placed*. The arrival and the reveal stay; only the idle drift goes.
+
+Result: the block is **200px instead of 324**, all four cards within 1px of
+each other, every note on one line at 390, and the headline, the sub, the
+cards and the CTA all fit one screen.
+
+### The card ground was darkened to fix a number that was not about colour
+
+Worth keeping as a caution. `150+` measured **1.87:1** against a 3.0 floor and
+the ground was darkened in three steps to get it over — from
+`rgba(255,255,255,.16)` at the top to `rgba(11,16,25,.54)`, which is most of
+the way to a slab.
+
+Part of that 1.87 was the disc bug. With `.cm-go` actually absolute the card
+is 26px shorter and the reading no longer sits in the brightest band of the
+landing frame: **the same type over the same ground measured 8.66:1.** So the
+ground came back up two steps to `.40/.58` — still **5.20 / 7.36 / 10.20 /
+7.22** across the four, and it is glass again rather than a slab.
+
+**Darkening to fix a legibility number is the right move only once you know
+the number is about the colour.** Check the geometry first.
+
+### And the scroll cue's label had drifted under its floor
+
+`"Scroll down"` measured **4.35:1** against 4.5, where this file records 4.7:1
+when the cue was built. The footage was swapped since, and the cue's pool was
+centred on the ring while the label sits underneath it — so the words were
+already in the falloff. 330px instead of 290, biased 14px down, and a touch
+deeper: clear now. Cheaper than lightening type that shares its amber with the
+WhatsApp chip.
+
+## Team is out of the bar
+
+Removed from the `<nav class="nav">` block of all nineteen pages that had it,
+at the client's request, to be added back later. **Out of the BAR only** — the
+footer still links `team.html` on every one of them, so the page keeps its
+internal links and is not orphaned. `js/nav-menu.js` builds the phone sheet
+from these same anchors, so the tab leaves the phone sheet with it; that is
+the same bar, not a second decision. `team.html`'s own entry went too,
+`aria-current` and all — a page whose bar advertises a tab no other page has
+looks like it lost its way there.
+
+## Two probe bugs worth not repeating
+
+**"Idle" windows that scroll.** `whoreads.py` decided whether to send wheel
+events with `if ticks > 1` and then passed 24 for its idle windows, so every
+window scrolled and the "six layout reads a frame while nothing is moving"
+finding was the probe scrolling the page it claimed was still.
+
+**`scrollBy` then reading `scrollY`.** This site runs Lenis, which animates
+window scroll — `scrollY` is unchanged in the same turn whether the page is
+locked or not. Two probes concluded the scroll lock was never released.
+`deskscroll.py` had the same bug in reverse and covered 21% of the document in
+5.5s while believing it had scrolled the lot; it drives real wheel events now.
+Ask the lock class, not the scroll position.
+
+#### a11y.py's `.ways` focus check was measuring something unreachable
+
+It reported the pin failing to trap focus, on this build *and* on the one
+before it. Both wrong. The cards live inside the sticky pin now, and the
+check waited 300ms for a scrubber whose time constant is 85ms and which the
+steps above it had left landed, then called `focus()` on a control that at
+rest is `visibility:hidden`. A hidden control cannot take focus — measured:
+focus not taken, scrollY stays 0, **0 of 4 cards in the tab order**. What it
+actually measured was a landed page being asked to scroll to a sticky
+element's *unstuck* document position, which no keyboard user can reach.
+
+Replaced with the two assertions worth making: at rest the cards are out of
+the tab order, and once the descent has landed, focusing one leaves it on
+screen. Both pass.
+
+This is the same failure mode as the earlier settle-time bugs in this build:
+**a probe that does not wait for the scrubber measures the previous step.**
+
+### The descent lands on frame 152, and the page assembles around it
+
+The master runs to 452 source frames, pushing the camera into the living room
+until the pod fills the screen. **The site does not go that far.** The client
+chose to land on the whole structure on its plinth, lake and mountain still
+behind it — ladder frame 152 of 226, source frame 302 — and the ladder is
+built only that far. The 74 dropped frames were the most expensive in the
+sequence, because a close interior is all detail: trimming took the ladder
+from 11.82MB to **6.88MB**.
+
+**Moving the landing frame is one constant**, `TOTAL` in
+`scripts/build-hero-frames.py`. Change it, rebuild, then update `TOTAL` in
+`js/hero-descent.js` and the two `<picture>` sources in `index.html`, which
+name the last frame explicitly. That last one has failed silently once: it
+pointed at 217 while the ladder held 226, and 217 still existed.
+
+**The fall is silent, and the arrival does all the talking.** Nothing is on
+screen from the moment the cue dissolves until the descent lands. Then the
+page assembles around the held frame in the landing page's own arrangement:
+
+| `--dp` | what happens |
+|---|---|
+| .00 | the cue alone, dead centre |
+| .00–.045 | the cue dissolves |
+| .045–.74 | **nothing.** The fall is the whole of it |
+| .74–.92 | the context arrives from the LEFT, 44px, and stays |
+| .76–.99 | the four cards arrive from the RIGHT, staggered by `--i` |
+| .88–1.0 | the invitation, last |
+
+There is no release any more — `--hout` is gone. This is the composition the
+page rests in, and scrubbing back up un-does all of it exactly.
+
+**The cards are back inside the pin, and this time they fit.** They were moved
+out because a pinned 100dvh clipped them at seven of nine viewports. What
+actually fixed it was not the tightened padding: it was `grid-row:1/-1`. They
+were in row 1, which is `minmax(0,1fr)`, and the lede's row is 456px tall at
+1440x900 — so row 1 was squeezed to 166px and a 490px stack centred itself in
+that and poked 40px out through the top of the pin. Spanning the whole column
+costs nothing, because the lede and the CTA live in column 1. Measured after:
+nothing clipped at any of nine viewports.
+
+`.arv` is the arrival wrapper — a fifth nesting level, because `.depth` owns
+the cursor parallax, `.rv` the reveal, `.lev` the levitation and
+`.stat-card:hover` its own transform. `--d` and `--i` sit on `.arv` and
+inherit down, so one attribute drives both the parallax depth and the stagger
+order.
+
+**--dp is written only where something reads it.** The cue reads it below
+.08 and the arrival above .70; between those the lede, the cards and the CTA
+are invisible and static, and the canvas never reads it at all — it is driven
+by the frame index. `READS_DP` in `js/hero-descent.js` skips the write
+through that band. This matters because the cards are back inside the pin and
+carry `backdrop-filter`: a custom property written on the pin invalidates
+their subtree every frame. The note above `.hero-pin` warned about exactly
+this, and moving the cards back in re-created it.
+
+**A caution about the numbers here.** Chasing that cost further was abandoned
+deliberately: the same build measured 27.8, 34.7, 34.8, 41.6 and 41.7ms per
+frame across runs — a spread of ±50%, in a headless browser with no GPU at 4x
+CPU. Patch-out attribution still works there (removing a whole element moves
+the number well outside the noise) but nothing finer does. What holds across
+every run: **zero long tasks, zero stalls, and the picture always advancing.**
+If this needs settling, measure on hardware.
+
+### The footage was replaced on 2026-08-25 — read this before touching the hero
+
+The pod-descent master was swapped for a longer, brighter, better one. The
+mechanism did not change; almost everything tuned *around* it did, and the
+reasons are worth keeping because a third swap will hit the same things.
+
+| | old master | new master |
+|---|---|---|
+| file | `lumina-descent-master.mp4` | `Lumina_Hero_Master_1080p.mp4` |
+| codec | HEVC 10-bit | H.264 8-bit |
+| source frames | 217 | **452** |
+| shipped frames | 217 | **152** (every second one, stopping at the chosen landing frame) |
+| ladder | 5.53 MB | **6.88 MB** |
+| opens on | dark flat cloud, luma 59–70 | **a sunlit deck, luma 106, sun in frame** |
+| ends on | the villa on a lake | **the whole pod on its plinth** — the master goes further, the site does not |
+
+Both masters, the golden-hour cloud loop and the supplied poster live in
+`../hero-source/`, outside the deployable folder.
+
+**The arc, which the score is timed to:** above the cloud deck to `--dp` .18,
+descending through it to .27, the valley opens at .27, the pod is the subject
+from .44, and from .62 the camera pushes into the interior. The old master's
+villa entered at .44 and simply grew; this one arrives somewhere.
+
+**Every second source frame ships, and that is not a quality compromise.** The
+runway is 220vh — 1980px of scroll on a 900px viewport. All 452 frames is 4.4px
+of scroll per frame, twice what the eye can use, for twice the bytes; 226 gives
+8.8px, against the 9.1px of the previous hero that measured smooth at 48fps.
+The brief says this outright: reduce the frame count before the resolution.
+`STEP` in the build script is the control.
+
+**The reduced-motion `<picture>` points at frame 226.** It was 217, and 217
+still *exists* in the new ladder — so this failed silently, serving a
+near-final frame as the resting composition. If the frame count changes again,
+grep for the last frame number.
+
+### The type has to carry its own ground now
+
+The old master was dark for its whole first half and one global scrim on
+`.hero-media::after` was enough. This one opens on a sunlit deck. Measured on
+the rendered composite, over the text runs only, with the scrims disabled:
+
+| | SCROLL DOWN | headline | kicker | sub |
+|---|---|---|---|---|
+| desktop, no scrim | 2.4:1 ✗ | 2.2:1 ✗ | 1.4:1 ✗ | 12.6:1 |
+| **desktop, shipped** | **5.1:1** | **3.5:1** | **5.5:1** | **14.2:1** |
+| mobile, shipped | 7.9:1 | 12.0:1 | 9.2:1 | 16.7:1 |
+
+Three of four fail without them. A global scrim cannot fix this, because what
+sits behind the type is a different picture on every frame of the fall — so
+`.hero-lede::before` and `.hero-cue::before` are feathered pools that travel
+with their own text. They are offset well past the block and biased *up*,
+because the kicker sits at the top and a pool centred on the headline left it
+short while the headline below was already clear. The kicker also gained a
+tight dark edge under its amber glow: a glow is the right look on a dark plate
+and actively unhelpful on a bright one, since it lightens the very edge that
+has to hold.
+
+**Do not remove these to "clean up" the scrim stack.** They are the reason the
+headline is legible over cloud, and the numbers above are what happens without
+them.
+
+### Four contaminated contrast readings, and what each looked like
+
+This measurement was wrong four separate times, each time confidently, and each
+failure mode is easy to repeat:
+
+1. **Element opacity, when the fade lives on an ancestor.** `.hero-lede` holds
+   the fade; grading `.hero-title`'s own opacity graded type that was not on
+   screen yet. Walk the ancestor chain and multiply.
+2. **`background-clip:text`.** The headline's last line is painted by a
+   gradient with `-webkit-text-fill-color:transparent`, so `color:transparent`
+   hid nothing and the gold was sampled *as backdrop* — producing impossible
+   1.0:1 readings. `background:none` is what actually kills it.
+3. **A decorative pseudo-element sharing the box.** `.kicker::after` is a
+   bright amber flex rule taking half the element's width. Sampled as ground
+   under the type it reported 3.9:1; the actual text run measured **7.8:1**.
+4. **Bounding boxes.** They include the gaps between glyphs and, for the
+   kicker, half a line of pure decoration. A `Range` over the text nodes is
+   the honest box.
+
+`contrast_final.py` (job tmp) does all four correctly and compares scrim
+on/off. If the footage is ever swapped again, run it before and after.
+
+### First paint: the frames must yield to it
+
+Blocking the hero frames entirely moved first paint from **2980ms to 2020ms**
+on 4x CPU + Fast 3G. 808KB of them were in flight during the first second,
+competing with render-blocking CSS, for content nobody can see until they
+scroll — and the inlined LQIP is already on screen by then.
+
+Frame loading now waits for `requestIdleCallback` with a 2000ms timeout. On a
+fast connection idle arrives immediately, so it costs nothing where there is
+nothing to save; on a slow one the page paints first. Measured after: 2184ms
+as shipped against 2072ms with frames blocked — the hero's contribution fell
+from 960ms to about 110ms.
+
+Related, and also mine: the frame-1 `<link rel=preload>` no longer carries
+`fetchpriority="high"`. At high it outranks the render-blocking CSS, and the
+canvas cannot draw that frame until the deferred script runs anyway. Early
+discovery is worth having; priority is not.
+
+**What is left is the page itself, not the hero.** `LCP == FCP == first-paint`
+on this profile, at 2104–2124ms against a 2000ms budget, and with every frame
+blocked it is still 2072ms. The floor is 170KB of inline-everything HTML
+(~1700ms to arrive on Fast 3G) plus three render-blocking stylesheets. Fixing
+that means changing how this page delivers CSS, which is a different job and
+touches the whole cluster — do not attack it from the hero.
+
+### Frames, not a video — and the numbers that decided it
+
+The brief specified a dual path: seek a `<video>` on desktop, fall back to a
+canvas frame sequence on iOS. Both were built and measured against this
+footage:
+
+| | size |
+|---|---|
+| frames 1440w, 217 x 16.1KB | **3.58 MB** (shipped) |
+| frames 960w, 217 x 8.8KB | **1.95 MB** (shipped) |
+| video 1280w, all-keyframe | 4.2 MB |
+| video 1920w, all-keyframe | 8.6 MB |
+
+The descent is dark, soft and low-detail, so it compresses far better than the
+brief's 45KB/frame estimate — and the consequence is that the *higher
+resolution* frame ladder costs less than the *lower resolution* seekable
+video. Once that was true the video path had nothing left to offer, so there is
+one path. It is deterministic, it needs no CSP change (`img-src` already allows
+`'self'`), and dropping it also dropped the calibration scrub and the
+`sessionStorage` decision the brief wanted — which this repo forbids anyway.
+
+**The master is HEVC 10-bit** and is not in the repo; nothing serves it. It
+lives with the brief at `../hero-source/lumina-descent-master.mp4`, one level
+above the deployable folder so it can never be swept into a sync. Regenerate
+with `python scripts/build-hero-frames.py`. That script also emits
+`assets/og/home.jpg` (1200x630) and the inlined LQIP.
+
+### The pin, and the one thing that silently kills it
+
+`.hero` holds three children in flow — the sticky pin, a 220vh spacer that is
+the descent's scroll distance, and the arrival. `.hero-pin` is a
+`position:sticky` child at `100dvh` that holds everything the hero used to.
+Progress is one `getBoundingClientRect` against the spacer. See the Act II
+section below for why the arrival is inside this section and not after it.
+
+- **The section must never carry `overflow`.** An overflow on an ancestor of a
+  sticky child is the classic silent way to kill the stick — no error, it just
+  scrolls away. The pin clips its own contents instead.
+- **Runway in `vh`, pin in `dvh`, deliberately.** A runway in `dvh` changes
+  *length* as a phone's URL bar collapses, which moves the scroll position
+  under the reader. The pin in `dvh` merely re-covers, and the canvas is
+  absolutely positioned so nothing reflows when it does.
+- **The canvas backing store is the ladder's own size and CSS does the
+  covering.** `<canvas>` is a replaced element, so `object-fit:cover` applies
+  to it exactly as to an `<img>`. A resize therefore costs no re-measure, no
+  redraw and no reallocation — which is the usual reason a canvas scrubber
+  jumps on a URL-bar collapse. Measured CLS is 0.0000.
+
+### Pinning made 100dvh a hard ceiling, and the panels did not fit
+
+This is the change most likely to be "corrected" by someone who did not measure
+it. **The four hero panels moved out of the hero into `.ways`, directly below
+it.** The hero was previously free to grow past the fold — this file records
+the CTA sitting 1178px down a 900px viewport — and a reader simply scrolled to
+it. A pin removes that freedom. Measured at nine common viewports, the hero's
+own content overflowed the pin at **seven of them**; at 360x740 two whole
+panels and the CTA were cut, the fourth panel by 189px. Shrinking does not
+reach — the shortfall on a phone is over 300px.
+
+Nothing about the panels changed: same four controls, same four-element float
+stack, same ids, so `hero-panels.js`, `quiz.js` and `weather-map.js` all still
+find them. `.ways` is a `<div>`, not an id'd `<section>`, because every id'd
+section on this page owes the spine a dot — and it is a cluster of controls,
+not a passage of the document. `js/lumina.js`'s phone-pill tuck now measures
+against `.ways` rather than `#hero`, or the pill lands on the quiz card exactly
+as it used to.
+
+### The score — everything is a pure function of `--dp`
+
+`js/hero-descent.js` writes `--dp` (0 to 1) on `.hero`, plus `.dp-past` and
+`.dp-arrived`. Nothing latches, so scrolling back up un-does all of it exactly.
+
+| `--dp` | what happens |
+|---|---|
+| .00 | **the page lands on cloud and the scroll cue alone.** No kicker, no headline, no sub |
+| .00–.045 | the cue dissolves the moment the reader engages |
+| .05–.15 | the wording arrives, rising 26px into place |
+| .15–.30 | it holds at full strength |
+| .30–.50 | it releases and keeps rising, as the valley opens |
+| .55–.72 | the pod is the subject; the CTA arrives with the approach |
+| past .62 | the camera pushes into the interior and the frame is the render alone |
+
+**The client asked for the empty landing deliberately** — see the cue section
+below. The brief's 5.4 argued the opposite and that reasoning is preserved in
+the deviations table; the cue is what answers it.
+
+**The CTA is driven from `--dp`, not from a scroll threshold.** `onScrollCta`
+in `lumina.js` stands down on any page carrying `[data-descent-runway]` —
+left to it, the CTA fired 110px into a 320vh fall, i.e. in the first inch of
+cloud.
+
+### The scroll cue, and the `.dp-live` gate that must not be lost
+
+The page lands on cloud with one mark in the middle of the screen: a 54px
+circle carrying a downward chevron, **SCROLL DOWN** set beneath it, the pair
+hovering together on a 3.6s float and dissolving by `--dp` .045. It is the only
+thing on screen at rest, and it is what makes an empty opening read as
+deliberate instead of broken.
+
+**The chevron never fully leaves the ring, and that is not a taste call.** The
+first cut faded it to opacity 0 at both ends of its loop, which left the mark
+rendering as an empty circle for a slice of every cycle — a single screenshot
+has about a one-in-five chance of catching it, and one did. It now travels down
+and returns *dimmed* rather than absent, floor .28, so the reset reads as a
+recovery instead of a jump. `chevron.py` samples the whole cycle rather than
+looking once; if the keyframe is ever retuned, re-run it.
+
+**The label is three elements deep for the usual reason.** The wrapper owns the
+centring transform, `.hero-cue-in` owns the hover so the mark and its label
+float as one thing, and the mark owns the ring. One transform per element. The
+label is the site's small-label idiom one step below `.kicker` — `.58rem`, the
+smallest size already on the page, `.24em` tracking, uppercase, `--gold` — with
+`padding-left:.24em` to offset the trailing gap letter-spacing leaves after the
+final letter, which otherwise pushes a centred string half a letterspace left.
+Measured 4.7:1 against the cloud behind it. The whole cue is `aria-hidden`, so
+"scroll down" is never announced — it is reinforcement for the eye, and a
+screen reader does not need telling.
+
+**It borrows the WhatsApp chip's treatment exactly rather than approximating
+it** — same 1px `rgba(255,178,90,.55)` rim, same `.1` fill, same
+`0 0 26px -2px` cast, same 999px radius, and it **reuses that button's own
+`chipGlow` keyframe** for the halo at the same `inset:-10px`. Change the chip
+and the cue follows. All of that is asserted against the chip's *computed*
+style in `verify_cue.py`, not against the source, because two sets of numbers
+typed twice drift.
+
+**`.dp-live` is load-bearing and is not tidiness.** The lede's choreography is
+written as `min(var(--hin),var(--hout))`, and `--hin` reads `var(--dp,0)`.
+Wherever nothing sets `--dp` that falls back to 0, `--hin` computes to 0, and
+**the headline resolves to `opacity:0`** — so with JavaScript blocked the page
+would ship with no copy visible on it at all. `js/hero-descent.js` adds
+`.dp-live` to `#hero` only on the motion path, *after* the reduced-motion
+early return. No JS and reduced motion therefore both keep the lede exactly as
+the markup writes it, and the cue never appears in either — there is no scrub
+to cue and nothing would ever dissolve it. This is checked with script
+execution genuinely disabled, not by reading the CSS.
+
+The cue is `aria-hidden`, `pointer-events:none`, and two nested elements: the
+wrapper owns the centring transform, the mark owns the hover. One transform per
+element, the same rule as the float stack.
+
+**A frame is "ready" only once it has DECODED, not once it has arrived.**
+Marking it ready on load let the scrub reach a frame whose decode had not run,
+and `drawImage` then decoded it synchronously — one 59ms long task on a
+4x-throttled CPU against a budget of zero over 50ms. Holding it back makes
+`nearest()` draw the closest decoded frame for a beat, which is invisible.
+
+**`<img>`, never `createImageBitmap`.** The brief asks for the latter so decode
+leaves the main thread. It does — but a decoded 1440x810 bitmap is 4.7MB and
+217 of them is 1.01GB of *non-evictable* memory. `HTMLImageElement` keeps the
+compressed bytes and lets the browser evict under pressure.
+
+### One scroll listener, still
+
+`js/lumina.js` now exposes `Lumina.onScroll(fn)`; the descent subscribes rather
+than opening a second listener. It falls back to its own rAF-gated listener
+when `lumina.js` is absent, so it still runs on a bare page — which is how it
+was profiled before being put in this one.
+
+### Reduced motion is a different path, not a degraded one
+
+Nothing in `hero-descent.js` runs. The runway collapses to one screen, the pin
+unsticks, the canvas never mounts, and `<picture>` serves the **final** frame —
+the resting composition, villa lit, not the empty cloud the motion path opens
+on. **A media query decides this, not a script**, so it is right with JS
+blocked too:
+
+```html
+<source media="(prefers-reduced-motion: reduce) and (min-width:760px)" ...>
+```
+
+That is one 29KB request instead of 217. The `<img>` fallback is a 122-byte
+inlined blur of frame 1, so the motion path pays nothing for it and the hero is
+never an empty rectangle.
+
+### Removed, and why
+
+- **`.hero-aura` and `.hero-plinth`.** They put a warm bloom and a cyan plinth
+  glow onto a still plate that had neither. The descent has both, in the
+  render, in the right place, moving with the camera that shot them — and for
+  the first half of the fall there is no building on screen at all, so a fixed
+  glow was a lit villa hanging in empty cloud. Two infinite keyframes came off
+  the hero's budget with them.
+- **`heroBreathe` and `drift`.** A CSS Ken Burns over footage that has its own
+  camera move is a second, slower camera fighting the first, and an animated
+  `filter` over a canvas re-rasters the whole surface every frame it runs.
+- **`<link rel=preload as=image href=pod-hero.jpg>`** — 148KB warmed for an
+  image the page no longer shows. Replaced by a media-split preload of frame
+  001 of whichever ladder will be chosen (6KB / 4KB).
+- `pod-hero.jpg` / `pod-hero-bg.jpg` are kept on disk as a revert path, exactly
+  like `hero-still.jpg` before them, and are no longer referenced anywhere.
+
+### Act II — the arrival, and why .ways lives INSIDE the hero section
+
+The descent used to end and then the pin released, so the render slid away at
+the exact moment the reader arrived. The final frame now persists behind the
+band that follows, which is what the brief asks for and what makes the fall pay
+off.
+
+**The structure is the whole trick, and it is easy to undo by tidying:**
+
+```
+<section class="hero" id="hero" data-descent-runway>
+  <div class="hero-pin">      sticky, 100dvh — canvas, headline, CTA, cue
+  <div class="hero-fall">     220vh spacer — the descent's scroll distance
+  <div class="ways">          100dvh — scrolls OVER a pin that is still stuck
+</section>
+```
+
+**`position:sticky` persists to the bottom of its PARENT.** That is the only
+reason this works: `.ways` is a sibling inside the same section, so the pin is
+still stuck while the arrival scrolls over it. There is one villa because there
+is one canvas. Move `.ways` back outside the section and the render slides away
+again.
+
+The obvious alternative — give `.ways` its own sticky copy of frame 217 — does
+not work, and the geometry says so before any code is written. Between the end
+of the fall and the end of the section the hero's pin would be scrolling *up*
+while `.ways` scrolls *in*, and a sticky bed inside `.ways` sits at `.ways`'
+own top until it reaches 0. Through that whole transition you would see **two
+copies of the villa, offset from one another.**
+
+**The section is no longer the runway.** It is pin + fall + arrival, so the
+descent's scroll distance comes from `.hero-fall` (`[data-descent-span]`), not
+from the section's own height. Without a span element `hero-descent.js` falls
+back to `sec.offsetHeight - innerHeight`, which is the shape the bare isolation
+page still uses.
+
+**The arrival is a full screen, and that is not a style choice.** At 1440 the
+four cards are only ~150px tall, so the band first came out at 311px: the villa
+was behind it for a third of a screen, and — because the band never covered the
+viewport — `--dc` topped out at 0.41, which left the CTA underneath it lit at
+0.59 opacity and still in the tab order. `min-height:100dvh` fixes the beat and
+the hand-over together.
+
+**`--dc` is how far the arrival has covered the pin**, 0 below the fold to 1
+when it fills the screen. The CTA lives in the pin, so without it the button
+would sit behind the panels, progressively hidden but still tabbable — a
+control a keyboard can reach and an eye cannot find. `.dp-covered` (dc > 0.92)
+takes it out of the tab order with `visibility:hidden`, and takes the canvas
+out of the compositor the same way. **`visibility`, not `display`** — display
+would drop the backing store and force a re-upload on the way back up.
+
+`--dc` has to be republished from `kick()` as well as from the lerp, because
+past `--dp` of 1 the frame index stops changing, the lerp settles and the rAF
+stops — but the arrival is still moving.
+
+**The scrim on `.ways` does two jobs.** It carries the band from the villa's own
+darkness down to solid ink, so the four glass panels always have ground to read
+against wherever the frame happens to be behind them; and by the band's foot the
+page IS ink, so `#ethos` below continues with no seam and needs no treatment of
+its own.
+
+### The budget line that used to fail, and how it was closed
+
+Act II introduced 3–5 long tasks of 52–54ms in the arrival, against a budget of
+zero over 50ms, and the first attempt to attribute them failed — every element
+patched out moved the count around inside the noise, and an *unchanged*
+configuration measured 8 then 16 in the same run. That was recorded here as
+unresolvable in this harness.
+
+It was resolvable. The instrument was wrong, not the page: the probe averaged
+frames across a window that was mostly idle. Measuring only the frames whose
+`scrollY` falls inside the fall made the difference obvious immediately, and
+the cause was the custom-property write invalidating the arrival's subtree —
+see item 1 of the next section. **Long tasks are now zero on every profile.** If a
+measurement ever refuses to discriminate, suspect the window before concluding
+the thing is immeasurable.
+
+### The per-frame budget, and the four things that were spending it
+
+The descent shipped correct and then was profiled properly. At 4x CPU the fall
+was running at **29fps**; it now runs at **48fps**, and long tasks went from
+2-5 to **zero on every profile**. Nothing about how it looks changed. Four
+fixes, each with the measurement that justified it — and none of them were the
+thing that looked most expensive.
+
+**1. Write on the pin, not the section.** Every rule that reads `--dp`, `--dc`
+or the `dp-*` classes targets something inside `.hero-pin`. The SECTION also
+contains the arrival, so a custom property written there invalidated style for
+four backdrop-filtered glass cards on every frame of the fall. Attribution:
+patching the write out and **deleting the arrival outright produced the same
+number** — 20.9ms against 27.8ms — because the write's cost simply *was* the
+arrival's recalc. If a rule ever needs `--dp` from outside the pin, move the
+write back up and accept the budget, or give that rule its own variable.
+
+**2. Read, then write — never interleaved.** `publish()` wrote `--dp` and then
+called `cover()`, which reads `getBoundingClientRect`. That forces a
+synchronous layout: the browser has to flush the style it was just handed
+before it can answer the read. Once per frame, for the whole descent. Reads
+now happen in `measure()` and writes in `commit()`. This is the
+no-layout-thrash rule, and it was being broken by the file that quotes it.
+
+**3. The lerp was frame-rate dependent.** `held += d * 0.18` is per *frame*, so
+it converged twice as fast on a 120Hz display as on a 60Hz one — the scrub
+genuinely felt different depending on the monitor, and faster is not better
+here, it is just inconsistent. It is now `1 - exp(-dt / 85)`, which is the same
+curve at any refresh rate and reproduces the old 60Hz feel exactly.
+
+**4. The cue kept animating after it dissolved.** Three infinite animations and
+a `backdrop-filter`, ticking invisibly for the remaining 95% of the descent.
+`.dp-moved` takes it out of the box tree past `--dp` .05: 41.7ms -> 34.8ms
+desktop, 34.8 -> 27.8 mobile, for a thing nobody can see.
+
+Also: `.hero-canvas` gets `translateZ(0)`. Measured 34.8 -> 27.8ms per frame on
+a 390px viewport and neutral on desktop — the scrim and the type above it stop
+being repainted every time the frame index moves. A mobile win taken for free.
+
+**What was NOT the cost, having been checked:** `backdrop-filter` on the glass,
+the four-gradient scrim, the LQIP picture, and `drawImage` itself. Each was
+patched out and re-measured; none moved the number materially. The instinct
+that a full-screen `drawImage` must dominate is wrong here.
+
+**A note on the instrument.** The first attribution pass stopped discriminating
+the moment the descent got faster — it averaged every frame in a 1.4s window,
+most of which are idle at 13.9ms once the gesture ends, so every variant read
+identically. Filtering to frames whose `scrollY` is inside the fall is what
+makes the numbers mean anything. `compare.py` does that; `attribute.py` did
+not, and its later readings should be ignored.
+
+### Encode quality: measured, and deliberately left alone
+
+WebP quantises in 16x16 macroblocks, so its artefact is block structure in
+smooth fields, and this descent opens on nothing but a smooth field. Measured
+on the FILES as the step across block edges over the step within blocks
+(1.00 = none; the lossless master scores 1.22):
+
+| frame | blockiness | size |
+|---|---|---|
+| 13 | **22.7** | 4.4 KB |
+| 37 | 12.4 | 4.3 KB |
+| 97 | 5.8 | 10.9 KB |
+| 217 | 1.6 | 29.1 KB |
+
+Blocking is *inversely* correlated with size — the frames that band are flat
+cloud, and flat cloud is nearly free to store. So a quality ramp was built (96
+over the cloud tapering to 80 over the villa) and on the files it worked:
+22.7 -> 4.5 on the worst frame, for +47% of the ladder, 5.53MB -> 8.14MB.
+
+**Then the rendered page was measured, and it buys nothing:**
+
+| | grain on | grain off |
+|---|---|---|
+| flat q78 | **1.13** | 1.23 |
+| ramped | **1.13** | 1.23 |
+
+Identical. Two things destroy the block structure before it reaches an eye:
+the page's own `.grain` overlay — a fixed fractal-noise layer at opacity .045,
+which is real dither applied *after* the frame — and the canvas being
+CSS-upscaled to cover, so the 16px grid never lands on a 16px screen boundary.
+The flat encode already renders at the master's own score.
+
+**Do not raise the quality to fix banding without re-measuring the rendered
+page.** The files look bad and the page does not, and 2.6MB is the price of
+trusting the files. If `.grain` is ever removed from `index.html`, this becomes
+live again. Note also that mean absolute error is the WRONG metric here and was
+tried first: it moves 9.6% between q78 and q94 and would have talked you out of
+investigating at all, because it averages over the frame and the artefact is
+low-amplitude but spatially structured — which is exactly what an eye picks up
+and an average cannot see.
+
+### Smooth scroll (Lenis) — considered, not added
+
+The backlog lists it and the brief specifies it. It is not here, and the reason
+is that the scrub is already continuous: measured unthrottled, the frame index
+advances **1-2 frames per rendered frame, p95 of 2**, and the 85ms exponential
+already smooths the step a wheel notch produces. Lenis would be smoothing an
+already-smoothed signal, at the cost of a dependency, a whole-page scroll
+change and real risk to a `position:sticky` pin. Worth revisiting only if the
+page ever needs smoothing somewhere the descent is not.
+
+### Deviations from the brief, all deliberate
+
+| Brief | Here | Why |
+|---|---|---|
+| Vite, GSAP, Lenis | none | no build step exists and CLAUDE.md permits no dependency but Lenis. Sticky + one rAF does the job in 3.3KB gzip |
+| retire the Three.js hero | nothing to retire | there is no Three.js in this repo |
+| persist path choice in `sessionStorage` | no storage | the repo forbids browser storage, and with one path there is nothing to persist |
+| `--ember #FFA43C`, `--ice #7FD4E8`, Bodoni Moda, Space Grotesk | `--gold #FFB25A`, `--plinth #7FD9E8`, Instrument Serif/Sans | the brief's palette is a near-miss of the shipped one, which was sampled from this very render. Changing tokens on index.html alone would break the three-way agreement with `invest.html` and `css/elevated.css`. **Raise before adopting the brief's palette — it is a rebrand, not a hero swap** |
+| preserve EN/AR | nothing to preserve | the site is monolingual English. Its section 10 does not apply |
+| Act III horizontal portfolio | not built | this file explicitly rejects a horizontal-scroll collection. Needs a ruling before it is built |
+| start the scrub at frame 6 | starts at frame 1 | measured: frame 1 to 2 has the LARGEST luma delta in the opening (2.06). The cloud is already moving |
+| scroll cue disappears permanently | scrubbed with `--dp` | a cue that is missing when you are back at the start is just a missing cue, and a latch breaks the brief's own law 3 |
+| a thin 1px `--ice` hairline in the lower centre | a 54px amber mark, dead centre, in the WhatsApp chip's treatment | client direction. The chip's amber is the site's existing "this is a control" signal, and dead centre is where the frame is emptiest at rest |
+| headline present and legible at frame 0 (5.4, mitigation 1) | **the page lands on cloud and the cue alone; the wording arrives on the first inch of the fall** | client direction, and the same risk answered a different way. 5.4 keeps type on screen so the emptiness reads as intentional; a lit, moving mark says *scroll* outright where type only implies it. If this is ever reverted, restore the `.dp-live` gate reasoning with it |
+| `100dvh` everywhere | `dvh` on the pin, `vh` on the runway | see the pin note above |
+
+### Measured
+
+Budget from the brief's section 8, on its own 4x-CPU + Fast-3G profile:
+
+| | budget | desktop | mid-tier android |
+|---|---|---|---|
+| LCP | <= 2.0s | ~110ms | **2104–2124ms** — over; see the first-paint note above |
+| CLS | <= 0.02 | 0.0000 | **0.0000** |
+| long tasks in a full scrub | zero | **0** | **0** |
+| JS, gzip, all of index.html | <= 160KB | **54KB** | |
+| frames before interactive | <= 41 | **1** (the rest wait for idle) | |
+
+Scrub frame times, isolated, 4x throttled: p50 7.0ms, p95 20.8ms, max 27.7ms,
+zero long tasks. Reversibility exact — the same scroll position gives the same
+frame scrubbing down and back up, to within the lerp's own epsilon. Nothing
+clipped and no horizontal overflow at 1920/1440/1366/1280/1024/834/430/390/360.
+Keyboard: the skip link is the first focusable element, focus is never left off
+screen, and focusing a `.ways` control from the top of the page scrolls to it —
+the pin does not trap it.
+
+The probes live in the job tmp: `lab_profile.py` (isolation), `verify_descent.py`
+(in-page), `fit.py` (clipping at nine sizes), `perf.py` (budget), `a11y.py`
+(keyboard). **Four separate false failures in this work were bugs in those
+probes, not in the page** — a settle time shorter than the scrubber's own
+smoothing, a measurement taken before `scrollTo` had applied, elements measured
+against a box they are deliberately outside of, and an entrance offset measured
+at the moment it is invisible. Measure at the moment the thing is meant to be
+on screen.
+
 ### The hero panels — all four are interactive now (2026-08-22)
 
-The four panels on the right of the hero used to be two readouts and two buttons. They are
-four controls now, and the two that changed did so in the two different ways this site
-already distinguishes between:
+**They no longer live in the hero.** Pinning the hero for the descent (see the
+section above) made 100dvh a hard ceiling and they did not fit at seven of nine
+measured viewports, so they moved to `.ways` directly below it. Everything in
+this section still holds — same controls, same affordances, same ids — only the
+container changed. `.hero-stats` is now `.ways-grid`, a four-column grid that
+goes two-up below 980px and one-up below 720px.
+
+The four panels used to be two readouts and two buttons. They are four controls
+now, and the two that changed did so in the two different ways this site already
+distinguishes between:
 
 | Panel | What it does | Affordance |
 |---|---|---|
@@ -1106,69 +2259,172 @@ quoted back as fact for years.
 spine through the Circles are the whole of the claim. Node radius scales with stock, so
 Abdoun is visibly two thirds of the book.
 
-### `room.html` — the scroll-to-furnish room
+### `room.html` — the scroll-to-furnish room  (rebuilt 2026-08-25)
 
-The site's second and larger scroll set-piece: a 460vh pin in which an empty one-point
-perspective interior furnishes itself over nine pieces while the sun crosses the floor and
-hands the room over to a lamp. Reached from the `.fab` glass pill on `index.html` (bottom
-left) and from the footers. Files: `room.html`, `css/room.css`, `js/room.js`.
+An empty bedroom furnishes itself as you scroll, the sun leaves the window,
+and then the room stands finished **and unlit** until you press a switch.
+Reached from the `.fab` glass pill on `index.html` and from the footers.
+Files: `room.html`, `css/room.css`, `js/room-scrub.js`,
+`scripts/build-room-frames.py`, `assets/room/`.
 
-**Nothing in it is placed by eye, and that is the point.** Two formulas at the top of
-`css/room.css` generate every coordinate: a depth projection `x(x0,y) = 880 + (x0−880)·(y−470)/229`
-and a height rule `top_y = yf − 1.8865·h·(yf−470)`. The back wall is the frame scaled by
-k=0.432 about the vanishing point (880, 470), which is why the floor grid's two outermost
-orthogonals land exactly on the frame's bottom corners — the construction checking itself.
-**Every receding edge points at (880, 470). One that does not is a bug, not a style choice.**
+**It was a drawing until this date and is now a render**, and the whole page
+turned over with it: `js/room.js` is deleted, 390 lines of SVG came out of the
+markup, and 73 of the stylesheet's 141 rules matched nothing afterwards and
+went too. What follows replaces the old section entirely — none of the
+one-point-perspective construction, the nine SVG objects or the `getBBox`
+trap applies any more.
 
-Five things that will go wrong the same way again:
+#### The ladder is one sequence with two halves that behave nothing alike
 
-1. **`.ln` is taken.** It is `elevated.css`'s per-line headline reveal and ships with
-   `opacity:0`. Used for the room's line-work it made every line in the drawing invisible and
-   the room rendered as flat silhouettes — the same class of bug as `.win` on `invest.html`.
-   The room's line class is `.rln`. **Check any new class on this page against the shared
-   sheets before using it.**
-2. **`osc(t,n,d)` is 1 at t=0, not 0.** It is a *decaying* oscillator and only ever belongs
-   after a landing. Applied across a whole span it parks the piece at its amplitude from the
-   first frame — which is exactly what left the plant pot faintly visible over an empty plot.
-3. **The reading panel takes the LATEST-started live piece** — the inverse of `invest.js`,
-   which takes the first because the top slab is the interesting one when a building goes up.
-   When a room fills, the newest and nearest thing is. Copy invest's line verbatim and the
-   panel talks about the rug while the picture is visibly swinging.
-4. **`getBBox()` on a transformed group returns the untransformed box**, which is what makes
-   the nine hit targets measurable — but they are measured once with every piece at `--p:1`
-   and then restored. Measured mid-arrival all nine land somewhere wrong, and because they
-   are invisible it reads as a mysterious offset rather than a measurement bug.
-5. **There is deliberately no `fit()`.** `viewBox` + `preserveAspectRatio` does declaratively
-   everything `invest.js`'s resize-measuring pass does imperatively. Do not helpfully re-add
-   one; there is nothing here for it to measure, and a comment in `room.js` says so.
+    ladder   1 .. 109    the furnishing. A pure function of scroll.
+    ladder 109 .. 124    the cove lighting coming up. NOT a function of
+                         scroll — it is PLAYED, once, on a button.
 
-**No `filter` anywhere on the page** — not animated, not static, not on the shadows. A static
-filter inside a scaling camera re-rasters its whole region every frame the camera moves.
-Every glow, bloom, pool and shadow is a gradient on a rect or an ellipse. (`clipPath` is
-fine and is used once, to keep the sun and the skyline inside the window aperture.)
+Between them the pin holds a beat of darkness with nothing moving. The runway
+is split at `FURN = 0.78` in `js/room-scrub.js`, and `.room{height:560vh}` is
+the other half of that one decision — 22% of a 460vh pin is very nearly one
+viewport of scrolling in the dark. **Change either and check the other.**
 
-Three deliberate exceptions and placements, decided once:
+**Those two frame numbers are measured, not chosen.** `roomanalyse.py` (job
+tmp) reads a ceiling strip clear of the window on all 361 source frames: it
+sits flat at ~86 from frame 199 to 245 while the room finishes, then climbs to
+119 by 300 as the cove lights come on, steepest at 256. 240 is the last frame
+of the flat part — the room complete with the lighting still off — and past
+300 nothing changes. The source does the lighting; this page does not fake it
+with a yellow filter.
 
-- **The pointer parallax is the one motion that is NOT a function of p, on purpose** — a
-  pointer is not a scrollbar. `room.js` springs `--par-x/--par-y` a few px toward the cursor
-  on its own small rAF (gated `hover:fine`, dead under reduced motion, stops when settled),
-  and the term rides the same transform chain as the dolly so the hit targets can never
-  drift off the drawing.
-- **The vignette (`#vig`) is screen-space, outside `#cam`.** Scaled with the dolly it would
-  read as the room darkening at its own edges rather than the frame having depth.
-- **The dust (`.dm`) and the fab's idle animations are CSS keyframes, not p-driven** — they
-  are ambience, not choreography, and both die under reduced motion.
+**Sampling is not uniform, and that is the whole size story.** A quality sweep
+(`roomq.py`) found the curve almost flat — the worst 8x8 block error moves from
+6 to 8 between q=80 and q=64, for 32% of the bytes — so quality is not the
+lever. Frame count is, and a third of the source is frames where nothing moves:
 
-The window's mullion/sky group also carries curtains, a skirting/cornice pair (`#trims`,
-both derived from the height rule at h=.04 and h=.96), a clipped skyline + travelling sun,
-and the floor pool translates with `--pool-x` so the patch of light crosses the room with
-the sun that casts it.
+    source   0..198  step 2   the arrivals
+    source 200..240  step 5   the settle (measured change per frame < 1.0)
+    source 244..300  step 4   the lights — a pure luminance ramp, and
+                              room-scrub.js blends adjacent frames as it
+                              plays, so few frames here cost no smoothness
 
-**Honesty.** The room is a drawing and the page says so three times — the title block, the
-note under `#offer`, and the line the page exists to earn: *the room is a drawing, the
-properties are real, we do not sell the sofa — we find the room.* Lumina does not supply,
-sell or specify furniture. If a rewrite ever softens that into "Lumina furnishes homes" it is
-a regression, because it is not true and it is not the business.
+161 uniform frames at q=80 was 8.9MB. This is **124 at q=76: 5.3MB at 1280 and
+2.0MB at 720.**
+
+#### The sun goes down in CSS, and the lights come on in the footage
+
+Five overlay layers, driven by three custom properties this file writes —
+`--rp` (the furnishing), `--dk` (the dark beat), `--lit` (the switch). Every
+layer is a pure function of those, which is what makes the whole thing
+reversible. A `filter` on the canvas would be a second full-frame pass on
+every painted frame; five alpha-composited layers are one composite each and
+can each move on their own curve.
+
+`.rm-open` is the one that is easy to think is decoration. **The render opens
+on an empty room in full afternoon light** — mean luma 172, the wall behind
+the headline nearer 200 — and the intro's white type measured **1.41:1**
+against a 3.0 floor. A local pool on `.room-intro` was tried first and was not
+enough: at `rgba(4,6,11,.80)` it only reaches that alpha at its centre, and a
+headline is wide, so most of the type sits in the falloff. Measured after the
+local pool: still 1.41:1. `.rm-open` is a full-frame, left-biased scrim that
+lifts as the first plank lands. **5.74 / 6.20 / 9.46 / 12.54:1** after.
+
+The dusk layer was `rgba(96,116,168)` at .72 and turned the whole room violet
+over walnut and brass. Dusk takes the colour out of a warm interior before it
+takes the light out, so it is most of the way to neutral now and the
+*darkening* is the night layer's job.
+
+#### The switch
+
+A real `<button>` in the document from the start — in the accessibility tree
+before it is visible, and **out of the tab order until it is**, because a
+control you cannot see is a trap for anyone tabbing. It arms at `--dk > 0.42`,
+not at the end of the furnishing: an interaction offered while the page is
+still settling gets pressed by accident and then it was not a decision.
+
+Measured on the pixels, not on a class: pressing it lifts the ceiling strip
+from **36 to 112** and the room from 40 to 108.
+
+Three things in it are load-bearing:
+
+1. **The fade is asymmetric — 340ms on, 110ms off.** Coming on is the moment
+   the page exists for. Going off happens because the reader scrolled back
+   into the furnishing, and while `lit > 0` the canvas is painting the LIT end
+   of the ladder — so a slow fade means watching a finished, lit room while
+   scrubbing backwards through a half-built one. At 340ms both ways it was
+   still 0.126 a second after the scroll had settled.
+2. **The lights-out test is on `p` against `FURN` with a margin, not on `rp`
+   against 1.** `rp` is `p/FURN` clamped, so `rp < 0.995` is `p < 0.776` —
+   three thousandths of the runway from the boundary, which the lerp's own
+   settling can sit inside. And because `litTick` calls `setScene`, that made
+   a loop: throw the switch with the scroll settled a hair short and the next
+   lit frame reset it.
+3. **`setScene` is called from the switch's own loop.** It otherwise only runs
+   off the scroll loop, and throwing a switch is not a scroll — the title
+   block read UNLIT with the room lit.
+
+#### The phone gets the pin back, and that reverses a considered decision
+
+Below 861px this page had **no pin, no scroll drive and no scroll listener at
+all**. That was a deliberate revert on 2026-08-12, because a scrubbed mobile
+version "ran laggy on a real phone even though CDP touch-emulation testing
+showed nothing wrong".
+
+**That reasoning does not carry to this implementation, and the difference is
+not an opinion.** What was laggy was an SVG scene graph — dozens of animated
+groups inside a scaling camera, all re-rastering as the camera moved. What
+runs now is one `drawImage` of a decoded WebP into a canvas that never
+resizes, which is what `js/hero-descent.js` already does on a phone across 152
+frames. The phone ladder is 720px and 2.0MB.
+
+So the pin is back on a **420vh** runway, with the reading panel moved to the
+top (below the skip pill, which it landed under at 390) and the rail dropped —
+ten ticks down the side of a 390px screen is a column nobody can read.
+
+**Still worth saying out loud: this is verified under CDP touch emulation, and
+the last time that was the evidence it was not enough.** Look at it on a real
+handset before calling it done.
+
+#### The copy had to change with the noun
+
+The drawing was a living room — rug, sofa, table, chair, credenza, picture,
+arc lamp, plant, side table. The render is a bedroom. A reading panel naming a
+sofa while a bed lands is worse than no reading panel, so the `<ol>` was
+rewritten and its order is **read off the ladder**, not invented: planks at 8,
+fluting at 36, pendants hung by 43, niches lit at 50, mirror at 57, bed at 64,
+bench at 78, rug at 85, and nothing but the sun going down after 92. `STAGES`
+in `js/room-scrub.js` is those frames as a fraction of the scrub, and the list
+is indexed by stage — **reorder one and you must reorder both.**
+
+**And the page called itself a drawing in seven places.** Every one now says
+render. The undertaking underneath did not change and must not: Lumina is an
+advisory, does not supply, sell or specify furniture, and nothing in that room
+is for sale. Getting this wrong in the other direction would be worse — a
+render passed off as a photograph of a property is exactly what the note under
+`#offer` exists to prevent, which is why it says **not a photograph of a
+property** in bold and the reading panel's spec line reads `RENDER · NOT A
+LISTING`.
+
+#### Deleting 73 rules safely
+
+`deadcss.py` (job tmp) asks the browser which selectors match nothing, at both
+widths, **with every runtime class forced on** — `.rm-live`, `.room-static`,
+`.reading`, `.armed`, `.on`, the rail's `data-on` states — because a rule that
+only applies mid-sequence is not dead. Three of its 76 were false positives:
+`.rm-btn:active` and `.rm-btn:focus-visible` are pseudo-CLASSES, and
+`querySelector(':active')` is null unless something is being pressed at that
+instant.
+
+A rule matching nothing is a claim. The evidence is `roomshots.py`: ten frames
+before the deletion and ten after, every animation paused and the freeze
+proved with a control pair. **14,464 pixels of 13 million differ, worst
+channel delta 8/255** — noise, not structure.
+
+#### Two probe bugs in this work, both of which read as page defects
+
+- **`Input.dispatchKeyEvent` without `text`.** CDP delivers a keydown the
+  browser does not treat as an activation, so Enter on a focused `<button>`
+  fires no click at all. It read as the page ignoring the keyboard. Count the
+  click events, do not infer from the resulting state.
+- **A visual A/B on a page that is still moving.** The first glow-filter diff
+  reported 174/255 over 20% of the screen for a half-pixel blur. Freeze every
+  animation and prove the freeze with a control pair.
 
 ### `lumina-studio.html` — the fourth service, and the only B2B one
 

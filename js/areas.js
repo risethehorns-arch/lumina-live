@@ -19,7 +19,7 @@
 
   /* Relative, not root-absolute: a GitHub Pages project deploy serves
      this from /lumina/, where a leading slash 404s. */
-  fetch('data/lumina-demo-leads.json?v=2026-08-22')
+  fetch('data/lumina-demo-leads.json?v=2026-08-25b')
     .then(r => {
       if (!r.ok) throw new Error('HTTP ' + r.status);
       return r.json();

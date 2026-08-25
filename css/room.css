@@ -81,7 +81,13 @@
    ========================================================================== */
 
 /* ── the stage ────────────────────────────────────────────────────────── */
-.room{position:relative; height:460vh}
+/* 560vh, not 460. js/room-scrub.js splits the runway at FURN = 0.78: the
+   furnishing takes the first 78% and the last 22% is the beat of darkness
+   before the switch arms. At 560vh the pin runs 460vh, so that beat is very
+   nearly exactly one viewport of scrolling — which is what "one more scroll
+   and then a decision" has to be for it to read as a pause rather than a
+   stall. Change either number and check the other. */
+.room{position:relative; height:560vh}
 
 /* grid-template-rows + align-items:stretch, NOT place-items:center. With
    an auto row and a centred item the row is content-sized, .room-stage's
@@ -92,247 +98,23 @@
   position:sticky; top:0; height:100vh; height:100svh; overflow:clip;
   display:grid; grid-template-rows:minmax(0,1fr); align-items:stretch; justify-items:center;
 }
-.room-pin .bp-grid{
-  opacity:.3; animation-duration:140s;
-  /* the ambient field moves a third of the camera's distance, so the
-     background has depth without ever asking for attention */
-  translate:0 calc(var(--cam-y,0px) * -.34);
-}
+
 .room-pin::after{
   content:""; position:absolute; inset:auto 0 0; height:11vh; z-index:6;
   pointer-events:none; background:linear-gradient(180deg,transparent,var(--ink));
 }
 .room-stage{position:relative; z-index:2; width:100%; height:100%}
 
-#roomSvg{width:100%; height:100%; display:block}
-
-/* ── the camera ───────────────────────────────────────────────────────────
-   In one-point perspective, walking forward IS scaling the scene about the
-   vanishing point — so a single scale() with its origin at VP produces a
-   geometrically correct walk into the room, and the perspective stays
-   honest the whole way. One transform on one group.
-
-   The explicit triple-translate rather than transform-origin: SVG origin
-   handling needs transform-box and has been inconsistent across Safari
-   versions, and this composition needs no transform-box at all. */
-#cam,.obj-layer{
-  /* --par-x/y is the pointer parallax, spring-written by its own small
-     rAF in room.js. It rides the same chain so the hit targets can
-     never drift off the drawing, and it is the one value here that is
-     NOT a function of scroll — a pointer is not a scrollbar, and easing
-     it is what makes the room feel inhabited rather than strapped on. */
-  transform:
-    translate(calc(var(--cam-x,0px) + var(--par-x,0px)),calc(var(--cam-y,0px) + var(--par-y,0px)))
-    translate(880px,470px) scale(var(--cam-z,1)) translate(-880px,-470px);
-  will-change:transform;
-}
-/* .obj-layer carries the IDENTICAL transform on the identical frame, or
-   the invisible hit targets silently drift off the objects as the camera
-   dollies in. Its px are CSS px against a 1600×1000 box, which is why it
-   is sized and positioned in % of the stage below. */
-
-/* ── shell ──────────────────────────────────────────────────────────────── */
-#shell{
-  transform:translate(880px,470px) scale(var(--draw,1)) translate(-880px,-470px);
-  opacity:var(--draw-o,0);
-}
-/* NOT .ln — that class belongs to elevated.css's per-line headline
-   reveal and ships with opacity:0, so every line in this room rendered
-   invisible and the drawing came out as flat silhouettes. Exactly the
-   class of bug CLAUDE.md records for .win on invest.html. Check any new
-   class on this page against the shared sheets before using it.
-
-   This is a DRAWING, and the line is the subject. The first cut used
-   the page tokens straight (--draft-lt at 1.2px) and the furniture
-   disappeared into the walls — near-black line-work on near-black fill
-   reads as nothing at all on a screen that is not in a dark room.
-   These are deliberately brighter than the tokens elsewhere on the
-   site, and the three weights ARE the depth cue. */
-.rln{fill:none; stroke:rgba(206,232,248,.92); stroke-width:1.9}
-.rln.thin{stroke:rgba(186,216,236,.66); stroke-width:1.4}
-.rln.hair{stroke:rgba(170,204,224,.36); stroke-width:1.1}
-.svg-note{fill:var(--draft-lt); font-family:var(--sans); font-size:15px; letter-spacing:2px}
-/* every stroked path, without exception — without it the dolly thickens
-   every line as you walk in and the drafting crispness goes */
-/* .ln takes its stroke from CSS and so has no stroke ATTRIBUTE — an
-   [stroke] selector alone misses every line in the room. */
-#roomSvg [stroke],.rln,.rim{vector-effect:non-scaling-stroke}
-
-/* the fills only have to separate the objects from the wall, not
-   describe them — the line does that. But they must separate. */
-.fill-a{fill:#20303F}
-.fill-b{fill:#18242F}
-.rug-f{fill:#1A2836}
-.rug-roll{fill:#1B2735; stroke:var(--draft); stroke-width:1.2}
-
-/* the warm rim every object carries. It is the whole reason the room
-   changes character at ignition rather than just getting a glow on top:
-   each object is individually re-lit. */
-.rim{
-  fill:none; stroke:var(--gold-lt); stroke-width:1.6;
-  opacity:calc(var(--lamp,0) * .55 + var(--warm,0) * .18);
-}
-#bulb{fill:var(--gold-lt); opacity:var(--lamp,0)}
-#city circle{fill:var(--gold-lt); opacity:.6}
-
-/* ── the nine grammars ────────────────────────────────────────────────────
-   Each piece is nested, because transforms do not compose on one element —
-   the same law the float stack obeys in elevated.css. The outer <g> takes
-   the arrival, .obj-alt takes the second driver, .obj-sub takes per-part
-   motion.
-
-   --p may overshoot past 1: the overshoot is baked into the eased value
-   the script writes, so a single property carries the landing AND the
-   bounce, and CSS never has to know a bounce happened. */
-.obj{opacity:var(--o,1)}
-.obj[data-live="1"]{will-change:transform,opacity}
-
-/* 1 RUG — scaleY from the FAR edge, so it unrolls toward the reader */
-.obj[data-i="1"]{
-  transform:translate(830px,760px) scaleY(var(--p)) translate(-830px,-760px);
-  opacity:calc(var(--p) * 4);
-}
-.obj[data-i="1"] .obj-alt{
-  transform:translate(279px,900px) rotate(var(--yaw,0deg)) translate(-279px,-900px);
-}
-.rug-roll{opacity:calc((1 - var(--p,0)) * 5 - .1)}
-.rug-fringe{opacity:calc(var(--p,0) * 6 - 5)}
-
-/* 2 SOFA — out of the left wall, with the overshoot inside --p */
-.obj[data-i="2"]{
-  transform:
-    translateX(calc((1 - var(--p)) * -340px))
-    translate(620px,700px)
-    scale(calc(.94 + var(--p) * .06))
-    rotate(calc((1 - var(--p)) * -1.4deg))
-    translate(-620px,-700px);
-  opacity:calc(var(--p) * 5);
-}
-
-/* 3 COFFEE TABLE — the legs finish BEFORE touchdown. That is the joke. */
-.obj[data-i="3"]{
-  transform:translateY(calc((1 - var(--p)) * -260px));
-  opacity:calc(var(--p) * 6);
-}
-.leg{transform-box:view-box; transform-origin:var(--o); transform:rotate(calc((1 - var(--l,0)) * -34deg))}
-
-/* 4 ARMCHAIR — outer swings about a pivot on the floor 300 units to its
-   left; inner counter-rotates by the same angle so the chair stays
-   upright while its POSITION travels the arc. */
-.obj[data-i="4"]{
-  transform:translate(813px,880px) rotate(calc((1 - var(--p)) * -26deg)) translate(-813px,-880px);
-  opacity:calc(var(--p) * 5);
-}
-.obj[data-i="4"] .obj-alt{
-  transform:translate(1113px,768px) rotate(calc((1 - var(--p)) * 26deg)) scale(calc(.90 + var(--p) * .10)) translate(-1113px,-768px);
-}
-
-/* 5 CREDENZA — scaleX from its left end. The drawer fronts do NOT scale
-   with it; each appears as the leading edge reaches its x. opacity clamps
-   its own input, so four thresholds cost no extra writes. */
-.obj[data-i="5"]{
-  transform:translate(900px,640px) scaleX(var(--p)) translate(-900px,-640px);
-  opacity:calc(var(--p) * 8);
-}
-.obj[data-i="5"] .dr[data-d="0"]{opacity:calc((var(--p) - .25) * 6)}
-.obj[data-i="5"] .dr[data-d="1"]{opacity:calc((var(--p) - .45) * 6)}
-.obj[data-i="5"] .dr[data-d="2"]{opacity:calc((var(--p) - .65) * 6)}
-.obj[data-i="5"] .dr[data-d="3"]{opacity:calc((var(--p) - .85) * 6)}
-.obj[data-i="5"] .top-things{opacity:calc((var(--p) - .9) * 8)}
-
-/* 6 PICTURE — falls the last 60 units onto the hook, then swings level
-   about the hook itself. Still moving after it has arrived, which is why
-   the eye tracks it longest. */
-.obj[data-i="6"]{
-  transform:translateY(calc((1 - var(--p)) * -60px));
-  opacity:calc(var(--p) * 6);
-}
-.obj[data-i="6"] .obj-alt{
-  transform:translate(690px,316px) rotate(var(--pend,0deg)) translate(-690px,-316px);
-}
-
-/* 7 ARC LAMP — telescopes out of its own base, arc unfurling as it grows */
-.obj[data-i="7"]{
-  transform:translate(1434px,940px) scaleY(calc(.12 + var(--p) * .88)) translate(-1434px,-940px);
-  opacity:calc(var(--p) * 6);
-}
-.obj[data-i="7"] .obj-sub{
-  transform:translate(1180px,408px) rotate(calc((1 - var(--p)) * -14deg)) translate(-1180px,-408px);
-}
-#cone{opacity:calc(var(--lamp,0) * .3); transform:translate(1180px,432px) scaleY(var(--lamp,0)) translate(-1180px,-432px)}
-
-/* 8 PLANT — pot, then seven leaves from their own stem bases */
-.obj[data-i="8"]{
-  transform:translate(324px,905px) scale(var(--p)) translate(-324px,-905px);
-  opacity:calc(var(--p) * 6);
-}
-.lf{
-  transform-box:view-box; transform-origin:var(--o);
-  transform:rotate(calc((1 - var(--f,0)) * -18deg)) scale(calc(.04 + var(--f,0) * .96));
-  opacity:calc(var(--f,0) * 4);
-}
-/* Two of the seven keep moving after everything has landed. A finished
-   BUILDING is static and reads as done; a finished ROOM should look lived
-   in — this is the whole difference, and it is two keyframes. */
-.room-stage.armed .lf[data-sway="a"]{animation:leafSway 14s var(--ease) infinite}
-.room-stage.armed .lf[data-sway="b"]{animation:leafSway 17s var(--ease) -6s infinite}
 @keyframes leafSway{
   0%,100%{transform:rotate(-1.1deg) scale(1)}
   50%{transform:rotate(1.1deg) scale(1)}
 }
 
-/* 9 SIDE TABLE — rises out of the floor. Small, quick, unremarkable on
-   purpose: the room needs one arrival that does not ask for attention. */
-.obj[data-i="9"]{
-  transform:translateY(calc((1 - var(--p)) * 90px));
-  opacity:calc(var(--p) * 6);
-}
-#lamp2Glow{opacity:calc(var(--lamp2,0) * .8)}
-
-/* ── light ──────────────────────────────────────────────────────────────── */
-#solids{opacity:var(--solid,0)}
-#win{opacity:var(--win,0)}
-#trims{opacity:calc(var(--solid,0) * .85)}
-#curt .fill-b{fill:#121B27}
-/* the sun crosses the aperture as --sun runs; visible early, gone by
-   midday, clipped so it can never paint over the wall */
-#sunDisc,#sunGlow{
-  transform:translate(calc(var(--sun,0) * 195px),calc(var(--sun,0) * 60px));
-  opacity:calc(var(--win,0) * (1 - abs(var(--sun,0) - .22) * 3.2));
-}
-#skyl{fill:#0A121C; opacity:calc(var(--win,0) * .9)}
-/* dust: five slow uncorrelated drifts, only alive while the lamp is */
-#dust{opacity:calc(var(--lamp,0) * .5)}
-.dm{
-  fill:var(--gold-lt);
-  animation:dustDrift calc(8s + var(--i,0) * 2.7s) var(--ease) calc(var(--i,0) * -3.3s) infinite;
-}
 @keyframes dustDrift{
   0%,100%{transform:translate(0,0)}
   33%{transform:translate(calc(4px + var(--i,0) * 1px),-26px)}
   66%{transform:translate(calc(-5px + var(--i,0) * 1px),-11px)}
 }
-#warmWash{opacity:calc(var(--lamp,0) * .07)}
-#vig{opacity:.6; pointer-events:none}
-/* four skies, crossfaded on opacity. --sun 0→1 walks the day. */
-.sky[data-sky="0"]{opacity:calc(1 - var(--sun,0) * 3.4)}
-.sky[data-sky="1"]{opacity:calc(1 - abs(var(--sun,0) - .38) * 4)}
-.sky[data-sky="2"]{opacity:calc(1 - abs(var(--sun,0) - .76) * 4.6)}
-.sky[data-sky="3"]{opacity:calc((var(--sun,0) - .84) * 6)}
-#plan{opacity:calc(var(--plan,0) - var(--warm,0) * .3)}
-#ghosts .gh{opacity:calc((1 - var(--gp,0)) * .55 * var(--plan,0) * 2)}
-#survey{opacity:var(--survey,0)}
-#haze{opacity:calc(var(--haze,0) * .1)}
-#cool{opacity:calc(1 - var(--warm,0))}
-/* the patch of sun on the floor travels with the sun that casts it */
-#pool{
-  opacity:calc(var(--pool,0) * .85);
-  transform:translateX(var(--pool-x,0px));
-}
-#city{opacity:calc(var(--city,0) * .7)}
-#bloomLamp{opacity:calc(var(--lamp,0) * .5)}
-#bloomFloor{opacity:calc(var(--lamp,0) * .34)}
-.sh{opacity:calc(var(--sp,0) * .8)}
 
 /* ── chrome ─────────────────────────────────────────────────────────────── */
 .room-skip{
@@ -470,16 +252,6 @@
   clip-path:inset(50%); overflow:hidden; white-space:nowrap;
 }
 
-/* nine transparent buttons over the pieces, on the same camera transform */
-.obj-layer{position:absolute; inset:0; z-index:4; pointer-events:none}
-.room-stage.armed .obj-layer{pointer-events:auto}
-.obj-hit{
-  position:absolute; padding:0; border:0; background:none; border-radius:6px;
-  opacity:0; pointer-events:auto;
-}
-.room-stage.armed .obj-hit{opacity:1; cursor:pointer}
-.obj-hit:focus-visible{outline:2px solid var(--gold-lt); outline-offset:3px}
-
 /* ── responsive ───────────────────────────────────────────────────────────
    Below 861px — invest's breakpoint, not a new one — there is no pin, no
    scroll driving and NO SCROLL LISTENER BOUND AT ALL. The section becomes
@@ -503,32 +275,79 @@
   .room-read{left:clamp(56px,6vw,80px); width:min(340px,42vw)}
 }
 @media (max-width:860px){
-  /* Reverted (2026-08-12) from a pinned/scrubbed mobile version back to
-     this flat fallback — it ran laggy on a real phone even though CDP
-     touch-emulation testing during that work showed nothing wrong.
-     Below 861px — invest's breakpoint, not a new one — there is no
-     pin, no scroll driving and NO SCROLL LISTENER BOUND AT ALL. The
-     section becomes an ordinary revealed diagram of the finished room
-     with the copy under it. position:relative and not static, because
-     .bp-grid inside is absolute at inset:-20% and left to resolve
-     against .room it hangs off both edges and scrolls the page
-     sideways — a bug this codebase has already shipped twice. */
-  .room{height:auto}
+  /* THE PIN IS BACK ON PHONES, 2026-08-25 — read the reasoning before
+     reverting it again.
+
+     This block used to disable the pin outright: .room{height:auto},
+     .room-pin{position:relative}, no scroll listener bound at all. That was
+     a considered revert on 2026-08-12, because a scrubbed mobile version of
+     the SVG scheme ran laggy on a real handset while CDP touch emulation
+     showed nothing wrong.
+
+     What was laggy there was an SVG scene graph — dozens of animated groups
+     inside a scaling camera, all of them re-rastering as the camera moved.
+     What runs here is one drawImage of a decoded WebP into a canvas that
+     never resizes, which is what js/hero-descent.js already does on a phone
+     across 152 frames. Different cost, different answer.
+
+     The runway is shorter than the desktop's 560vh, because four and a bit
+     viewports is a lot of thumb; and the furniture is rearranged around a
+     16:9 frame rather than beside it. */
+  .room{height:420vh}
   .room-pin{
-    position:relative; height:auto; overflow:clip;
-    padding:clamp(96px,15vh,130px) var(--gutter) clamp(30px,6vh,50px);
-    grid-template-rows:none; gap:26px;
+    position:sticky; top:0; height:100vh; height:100svh; overflow:clip;
+    padding:0; grid-template-rows:minmax(0,1fr); align-items:stretch;
   }
-  .room-pin::after{display:none}
-  .room-stage{height:auto; display:grid; gap:24px}
-  #roomSvg{height:auto; aspect-ratio:1120/800; border-radius:var(--r-lg)}
-  .room-intro{position:static; transform:none; opacity:1; filter:none; width:100%; order:-1}
-  .build-cue{display:none}
-  .room-rail,.room-skip{display:none}
+  .room-stage{height:100%; display:block}
+
+  /* the copy sits ON the frame, as it does at every other width */
+  .room-intro{
+    position:absolute; left:clamp(18px,6vw,30px); right:clamp(18px,6vw,30px);
+    top:46%; width:auto; max-width:none;
+    transform:translate3d(0,calc(-50% + var(--intro-y,0px)),0);
+  }
+  .room-intro h1{font-size:clamp(1.9rem,7.4vw,2.6rem)}
+  .room-intro .lede{max-width:none; font-size:.95rem}
+  .build-cue{display:block}
+
+  /* Reading panel to the TOP, switch at the foot — they are the only two
+     overlays and they must not meet. The bar is a scrim now, not a box, so
+     the panel can sit under it without a line between them. */
+  /* BELOW the skip pill, not beside it. .room-skip is absolute at
+     top:clamp(86px,11vh,120px) and about 34px tall, and at 390 the panel is
+     full width — so anything starting at the same height lands underneath
+     it. They stack. */
   .room-read{
-    position:static; width:100%; opacity:1; transform:none; pointer-events:auto;
-    background:linear-gradient(155deg,rgba(29,38,50,.4),rgba(11,16,24,.5));
+    position:absolute; left:clamp(14px,4vw,22px); right:clamp(14px,4vw,22px);
+    top:clamp(132px,19vh,176px); bottom:auto; width:auto; max-width:none;
+    padding:14px 16px; border-radius:16px;
+    /* THE GROUND FOLLOWS --lit. On a phone this panel sits over the middle of
+       the frame, and once the cove lighting is up that is a bright ceiling —
+       every line in here measured 1.19 to 3.39:1 against a 4.5 floor, on a
+       ground whose top stop is rgba(255,255,255,.07). Unlit it had 6.8 to
+       12.7:1 of headroom, so the fix is not a heavier panel everywhere: it is
+       a panel that closes as the room opens. */
+    /* TWO layers, and the order matters. Fading the diagonal's stops was
+       tried first and moved the tag from 1.19 to 1.29:1 — because a 150deg
+       gradient is weakest at its TOP-LEFT corner, which is exactly where
+       #readTag sits. A uniform sheet that comes up with --lit does not care
+       where the type is. */
+    background:
+      linear-gradient(rgba(4,7,12,calc(var(--lit,0) * .88)),
+                      rgba(4,7,12,calc(var(--lit,0) * .88))),
+      linear-gradient(150deg,rgba(255,255,255,.07),rgba(6,9,15,.72));
+    -webkit-backdrop-filter:blur(14px) saturate(125%);
+    backdrop-filter:blur(14px) saturate(125%);
+    border:1px solid rgba(255,255,255,.14);
   }
+  .room-read h2{font-size:1.06rem}
+  .room-read #readLight{font-size:.8rem; min-height:0}
+
+  /* Ten ticks down the side of a 390px screen is a column nobody can read,
+     and the labels are already display:none below 1200. The count stays —
+     it is the only thing in the rail that was doing any work here. */
+  .room-rail{display:none}
+  .room-skip{display:inline-flex}
   .obj-layer{display:none}
 }
 
@@ -545,4 +364,226 @@
   .build-cue,.room-rail,.room-skip,.obj-layer{display:none}
   .room-read{position:static; width:100%; opacity:1; transform:none; pointer-events:auto}
   .lf,#cam,.obj-layer,.dm{animation:none}
+}
+
+
+/* ══ THE PHOTOREAL STAGE ═══════════════════════════════════════════════════
+   Replaces the drawn scheme, 2026-08-25. js/room-scrub.js paints a WebP
+   ladder into the canvas and writes three numbers here:
+
+     --rp    0..1  the furnishing
+     --dk    0..1  the beat of darkness after it
+     --lit   0..1  the switch
+
+   Everything below is a pure function of those three, which is the whole
+   reason scrolling back up undoes it exactly. Nothing here holds a timer. */
+
+.rm-frame{position:absolute; inset:0; z-index:1; overflow:clip; background:#080B11}
+.rm-still,.rm-still img,.rm-canvas{
+  position:absolute; inset:0; width:100%; height:100%; display:block;
+  /* object-fit works on a canvas — it is a replaced element — so the frame
+     covers any pin shape without a wrapper doing the arithmetic. */
+  object-fit:cover;
+}
+/* The 2d context is alpha:false, so before its first draw the canvas is an
+   opaque black rectangle. It stays out of the way until it has a frame, and
+   the markup's <img> holds the picture until then. */
+.rm-canvas{opacity:0; transition:opacity .45s var(--ease); transform:translateZ(0)}
+.rm-canvas.on{opacity:1}
+
+.rm-grade{position:absolute; inset:0; z-index:2; pointer-events:none}
+.rm-grade i{position:absolute; inset:0; display:block}
+
+/* 1 — THE LOW SUN. Screen-blended warmth from the window wall, which is on
+   the left of this camera. A triangle rather than a ramp: it builds as the
+   sun drops toward the ridge and goes with it. min() of two clamps is how
+   you multiply two envelopes when the property takes one number. */
+.rm-gold{
+  mix-blend-mode:screen;
+  background:
+    radial-gradient(58% 96% at 4% 44%,rgba(255,196,116,.60),rgba(255,150,70,.20) 42%,transparent 72%),
+    radial-gradient(38% 44% at 22% 66%,rgba(255,170,90,.22),transparent 68%);
+  opacity:min(
+    clamp(0,calc((var(--rp,0) - .10) * 3.4),1),
+    clamp(0,calc((.94 - var(--rp,0)) * 3.6),1));
+}
+
+/* 2 — DUSK. Multiply, so it takes the room down by absorbing rather than
+   painting grey over it — the difference between evening and a scrim. */
+.rm-dusk{
+  mix-blend-mode:multiply;
+  /* Was rgba(96,116,168) at .72, which over walnut and brass turned the
+     whole room violet — a filter, not an evening. Dusk takes the colour
+     OUT of a warm interior before it takes the light out, so this is
+     most of the way to neutral and the darkening is the night layer's
+     job, not this one's. */
+  background:linear-gradient(196deg,
+    rgba(126,132,152,1) 0%,rgba(78,82,102,1) 40%,rgba(44,46,62,1) 100%);
+  opacity:calc(clamp(0,calc((var(--rp,0) - .46) * 2.1),1) * .60 * (1 - var(--lit,0)));
+}
+
+/* 3 — NIGHT. Flat, and the only layer that keeps going through the dark
+   beat. This is what makes the finished room read as unlit rather than
+   merely photographed at dusk. */
+.rm-night{
+  background:radial-gradient(120% 120% at 50% 46%,rgba(6,9,15,.86),rgba(3,5,9,1) 78%);
+  opacity:calc((clamp(0,calc((var(--rp,0) - .80) * 4.4),1) * .30
+                + var(--dk,0) * .34) * (1 - var(--lit,0)));
+}
+
+/* 4 — the frame having depth, rather than the room darkening at its own
+   edges. Screen-space and outside everything else, deliberately. */
+.rm-vig{
+  background:radial-gradient(78% 74% at 50% 48%,transparent 42%,rgba(3,5,9,.72) 100%);
+  opacity:calc(.34 + var(--rp,0) * .30 + var(--dk,0) * .22 - var(--lit,0) * .28);
+}
+
+/* 5 — THE COVE COMING ON. The ladder does the real work: frames 109..124 are
+   the source's own lights rising, so what is underneath this is a genuinely
+   lit render, not a photograph with a yellow filter. This only adds the
+   bloom around it — the spill the camera would have caught and a WebP at
+   q=76 will not hold. Screen, and gone the moment the lights are. */
+.rm-bloom{
+  mix-blend-mode:screen;
+  background:
+    linear-gradient(180deg,rgba(255,206,138,.50),rgba(255,186,110,.16) 16%,transparent 34%),
+    radial-gradient(52% 26% at 50% 4%,rgba(255,214,150,.46),transparent 72%),
+    radial-gradient(30% 38% at 84% 40%,rgba(255,186,110,.22),transparent 70%),
+    radial-gradient(26% 34% at 18% 44%,rgba(255,196,124,.20),transparent 72%);
+  opacity:calc(var(--lit,0) * .9);
+}
+/* the half-second where it is brighter than it settles at — a filament
+   coming up to temperature, not a checkbox */
+.rm-live .rm-bloom{transition:filter .9s var(--ease)}
+.rm-live.rm-flash .rm-bloom{filter:brightness(1.5) saturate(1.15)}
+
+/* ── THE SWITCH ──────────────────────────────────────────────────────────
+   In the document from the start so it is in the accessibility tree before
+   it is visible, and out of the tab order until it is — a control you cannot
+   see is a trap for anyone tabbing. js/room-scrub.js arms it only once the
+   room has been dark for a beat. */
+.rm-switch{
+  position:absolute; left:50%; bottom:clamp(70px,13vh,150px); z-index:7;
+  transform:translate3d(-50%,18px,0);
+  display:grid; justify-items:center; gap:14px; text-align:center;
+  opacity:0; pointer-events:none;
+  transition:opacity .7s var(--ease),transform .8s var(--ease);
+}
+.rm-switch.armed{opacity:1; transform:translate3d(-50%,0,0); pointer-events:auto}
+.rm-switch-cue{
+  margin:0; font-size:.66rem; letter-spacing:.2em; text-transform:uppercase;
+  color:var(--c-52); transition:opacity .5s var(--ease);
+}
+.rm-switch.on .rm-switch-cue{opacity:0}
+
+.rm-btn{
+  position:relative; display:inline-flex; align-items:center; gap:14px;
+  padding:15px 30px 15px 22px; border-radius:999px; cursor:pointer;
+  font:inherit; font-size:.94rem; letter-spacing:.01em; color:var(--cream);
+  border:1px solid rgba(255,255,255,.22);
+  background:linear-gradient(150deg,rgba(255,255,255,.10),rgba(8,12,20,.62));
+  -webkit-backdrop-filter:blur(16px) saturate(130%);
+  backdrop-filter:blur(16px) saturate(130%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.26);
+  transition:border-color .45s var(--ease),background-color .45s var(--ease),
+             transform .45s var(--ease),color .45s var(--ease);
+}
+.rm-btn-dot{
+  width:11px; height:11px; border-radius:50%; flex:none;
+  background:rgba(247,242,233,.30);
+  box-shadow:0 0 0 1px rgba(255,255,255,.16) inset;
+  transition:background-color .5s var(--ease),box-shadow .5s var(--ease);
+}
+/* the pulse is the affordance: the one thing on a dark screen that is
+   moving is the thing to press */
+.rm-switch.armed .rm-btn-ring{
+  content:""; position:absolute; inset:-1px; border-radius:inherit;
+  border:1px solid rgba(255,196,124,.55); opacity:0;
+  animation:rmPulse 2.6s var(--ease) infinite;
+}
+@keyframes rmPulse{
+  0%{opacity:0; transform:scale(1)}
+  36%{opacity:.8}
+  100%{opacity:0; transform:scale(1.11)}
+}
+@media (hover:hover) and (pointer:fine){
+  .rm-btn:hover{
+    border-color:rgba(255,200,130,.7);
+    background:linear-gradient(150deg,rgba(255,200,130,.16),rgba(8,12,20,.6));
+    transform:translateY(-2px);
+  }
+}
+.rm-btn:active{transform:translateY(0) scale(.99)}
+.rm-btn:focus-visible{outline:2px solid var(--gold-lt); outline-offset:4px}
+
+/* thrown */
+.rm-switch.on .rm-btn{
+  border-color:rgba(255,200,130,.72);
+  /* the lit room behind it is bright, so the thrown state needs MORE ground
+     than the unlit one, not less — the label measured 3.28:1 on a phone, and
+     a diagonal alone does not fix it because the label crosses the whole
+     button. A flat sheet under the warm gradient does. */
+  background:
+    linear-gradient(rgba(14,9,4,.80),rgba(14,9,4,.80)),
+    linear-gradient(150deg,rgba(255,206,140,.26),rgba(30,20,10,.5));
+  color:#FFF3DF;
+}
+.rm-switch.on .rm-btn-dot{
+  background:var(--gold-lt);
+  box-shadow:0 0 12px 2px rgba(255,214,150,.9),0 0 26px rgba(255,178,90,.6);
+}
+.rm-switch.on .rm-btn-ring{animation:none; opacity:0}
+
+/* ── reduced motion: the room arrives finished ───────────────────────────
+   The pin collapses, the canvas is removed and the markup's <img> is the
+   whole stage. The switch still works — it swaps one still for the other —
+   because offering the interaction only to the fast path would make it
+   decoration. */
+.room-static{height:auto}
+.room-static .room-pin{position:static; height:auto; min-height:100svh}
+.room-static .rm-grade{display:none}
+.room-static .rm-switch{opacity:1; transform:translate3d(-50%,0,0); pointer-events:auto}
+
+@media (prefers-reduced-motion:reduce){
+  .rm-btn-ring{animation:none !important}
+  .rm-canvas,.rm-switch,.rm-btn{transition-duration:.01ms !important}
+}
+
+/* ── phones ──────────────────────────────────────────────────────────────
+   The scrub stays — 124 frames at 720px is 2.0MB and the hero already
+   proved a ladder scrubs on a phone. What changes is that the copy has
+   nowhere to sit beside a 16:9 frame, so the reading panel goes under it
+   and the switch comes up off the fold. */
+@media (max-width:760px){
+  .rm-switch{bottom:clamp(88px,16vh,150px)}
+  .rm-btn{padding:14px 22px 14px 18px; font-size:.88rem}
+  .rm-switch-cue{font-size:.68rem; letter-spacing:.14em}
+  .rm-vig{opacity:calc(.28 + var(--rp,0) * .26 + var(--dk,0) * .2 - var(--lit,0) * .24)}
+}
+
+/* ── 0 — THE OPENING SCRIM ───────────────────────────────────────────────
+   The drawing this replaced opened on near-black line-work and the intro
+   needed nothing behind it. The render opens on an empty room in FULL
+   AFTERNOON LIGHT — the frame's mean luma is 172 and the wall behind the
+   headline is nearer 200 — so white type on it measured 1.4:1 against a 3.0
+   floor, and the lede 1.36:1 against 4.5.
+
+   A local pool on .room-intro was tried first and is not enough: at
+   rgba(4,6,11,.80) it only reaches that alpha at its centre, and a headline
+   is wide, so most of the type sits in the falloff. Measured after: still
+   1.41:1.
+
+   This is a full-frame layer instead, biased to the left where the copy is,
+   and it is a pure function of --rp like everything else in this stack — so
+   it lifts as the first plank lands and the room takes over. */
+.rm-open{
+  background:linear-gradient(101deg,
+    rgba(3,5,9,.94) 0%,rgba(3,5,9,.88) 22%,rgba(4,6,11,.62) 44%,
+    rgba(4,6,11,.26) 66%,rgba(4,6,11,.06) 84%,transparent 100%);
+  opacity:clamp(0,calc((.17 - var(--rp,0)) * 6.4),1);
+}
+/* On a phone the copy is centred over the whole frame, so the bias goes. */
+@media (max-width:900px){
+  .rm-open{background:linear-gradient(180deg,
+    rgba(3,5,9,.90) 0%,rgba(3,5,9,.86) 46%,rgba(4,6,11,.66) 74%,rgba(4,6,11,.42) 100%)}
 }

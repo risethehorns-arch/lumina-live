@@ -221,9 +221,19 @@ def main():
             desc=esc(describe(rec)),
         ), encoding='utf-8')
 
+    # ONLY files this script owns. The sweep used to glob every *.jpg in
+    # assets/og/ and unlink anything whose stem was not a listing id — which
+    # on 2026-08-25 deleted assets/og/home.jpg, the LANDING PAGE's own share
+    # card, written by scripts/build-hero-frames.py and named in index.html's
+    # og:image and twitter:image. The deploy stayed green and the landing
+    # page's preview was a 404 until someone shared a link.
+    #
+    # Every file this script writes is named after a record id, and every
+    # record id starts with "lumina-". Anything else in these directories
+    # belongs to something else and is not this script's to remove.
     stale = 0
     for d, suffix in ((CARDS, '.html'), (OGDIR, '.jpg')):
-        for f in d.glob('*' + suffix):
+        for f in d.glob('lumina-*' + suffix):
             if f.stem not in live:
                 f.unlink()
                 stale += 1
