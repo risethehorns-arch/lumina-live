@@ -2064,6 +2064,88 @@ weather that is not true. `--sun` is `#FFC64D`, and **both icon sets draw from i
 artwork cannot drift. The fallback in the `var()` is what keeps the icons right on any page
 that does not define the token.
 
+### The temperature card retries, remembers, and heals (2026-08-29)
+
+**Reported:** the card showed `—°C` "from time to time, not constantly", on desktop *and*
+phone; a refresh or two fixed it; and **the sheet behind it always had the temperature even
+when the card did not.** That last clause is the whole diagnosis, and it was in the report
+before any code was read.
+
+**It is not the API and it is not us. It is the route.** Ten connections per host from this
+machine, `curl -w`:
+
+| host | ok | failed |
+|---|---|---|
+| `www.lumina-jo.com` | 10 | 0 |
+| `cloudflare.com` | 10 | 0 |
+| `api.github.com` | 5 | **5** |
+| `api.open-meteo.com` | 5 | **5** |
+
+The failures are not HTTP errors and not DNS: `time_namelookup` stays at 3ms while
+`time_connect` never gets off `0.000000`, and the socket then hangs for **12–21 seconds**
+before anything gives up. `api.open-meteo.com` is a single A record on Hetzner, so it is not
+an IPv6 fallback either — `curl -4` fails at the same rate. **This is the same signature the
+git pushes in this project hit against `github.com:443`** ("~3 in 5 connections fail to
+establish; throughput fine once connected"). Everything served through Cloudflare is
+untouched, which is why the site itself never shows a symptom and only the third-party call
+does.
+
+**So the defect on our side was the shape of the request, not the request.** `paintWeather`
+fired **one** fetch with a nine-second abort and **no retry**. One dropped SYN killed the card
+for the entire visit. Meanwhile `weather-map.js` sets `painted = false` in its `catch`, so
+every click on the sheet is another attempt — **the sheet was retrying by accident and the
+card never did.** That asymmetry is exactly what was reported.
+
+**Three things changed, in `js/hero-panels.js`:**
+
+1. **Three attempts at 4.5s, not one at 9s.** Aborting a stalled connect early and redialling
+   beats waiting on a socket that is not coming back — a fresh connection lands in ~340ms when
+   it lands. At the measured 50% this moves the card from failing 1-in-2 to **1-in-8**.
+2. **A 90-minute `localStorage` cache** (`lumina.wx`), painted only when all three attempts
+   fail. **This does not break the never-invent rule** — a real reading taken forty minutes ago
+   is not an invented one, and *the TTL is where that line sits*: past ninety minutes the cache
+   is dropped and the panel goes back to naming the city. The time the reading was taken goes
+   into the `aria-label`, **not onto the face of the card** — it is narrow and was deliberately
+   cut back on phones.
+3. **It heals without a reload.** `visibilitychange` and `online` retry a card that is not
+   live, behind a **20s** floor so a burst of tab-switching is not a burst of requests. Both
+   stand down permanently once a live reading lands. And `weather-map.js` calls
+   `Lumina.weather.retry()` after a successful render: **a sheet that just answered is proof
+   the route is open this second**, which is the best moment to redial. It refetches the
+   card's own central-Amman point rather than borrowing a district's — the entire premise of
+   the sheet is that the districts differ, so substituting one would contradict it.
+
+   **The sheet's retry deliberately forces past the floor** (`wxRetry(true)`). A visitor who
+   loads the page, sees a dash and opens the sheet is almost certainly inside 20 seconds, and
+   that click is the exact case in the bug report. It cannot become a request storm because a
+   person has to click it. Everything else passes no argument — and note that
+   `addEventListener('online', wxRetry)` would hand the **Event** in as `force`, which is
+   truthy; the listener wraps it (`() => wxRetry()`) for that reason.
+
+**Four harness lessons from `wxprobe.py`, all of which first read as site bugs:**
+
+- **Do not `await` the CDP `Fetch.requestPaused` handler inside the socket read loop.** The
+  handler sends a command and waits for a reply only that loop can deliver, so awaiting it
+  parks the reader inside the thing that needs the reader. `asyncio.ensure_future` it.
+- **Scope `Fetch.enable` to the endpoint.** `urlPattern: '*'` round-trips every hero frame
+  through the handler and turns a 90-second probe into a ten-minute one.
+- **Reset `stall` between cases.** It was left set after the stall case, so every heal case
+  after it ran against an interceptor that answered nothing.
+- **Fulfil the success case with a canned body rather than letting it hit the wire.** Testing
+  the retry ladder against the very flakiness it exists to survive means all three attempts
+  genuinely fail about 1 run in 8, and the probe reports a correct card as broken.
+- And `sys.stdout = TextIOWrapper(...)` **re-buffers stdout and defeats `-u`** — pass
+  `line_buffering=True` or the probe looks hung for its whole run.
+
+**The intermittency is why this was tested with CDP `Fetch` interception rather than by
+reloading and hoping** (`wxprobe.py`, job tmp). Failing the Open-Meteo request a chosen number
+of times makes each path deterministic: healthy, one drop, two drops, route-down-with-cache,
+route-down-without-cache, a socket that never answers, and dead-then-recovered. **Assert on the
+text in the card, not on internal state** — the bug was always about what the visitor sees.
+
+**Do not "fix" this by widening the timeout again.** Nine seconds of nothing was strictly worse
+than 4.5 and a redial; the connection that is going to work, works immediately.
+
 ### The weather map (`#wxs`, `js/weather-map.js`)
 
 **Why it is a map.** One temperature for a city built on hills is the least interesting true

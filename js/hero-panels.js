@@ -87,20 +87,76 @@
     return null;
   };
 
-  const paintWeather = () => {
-    const panel = document.getElementById('wx');
-    if (!panel) return;
+  /* ==========================================================
+     WHY THIS RETRIES, REMEMBERS, AND HEALS ITSELF
 
-    const tempEl = panel.querySelector('[data-wx-temp]');
-    const iconEl = panel.querySelector('[data-wx-icon]');
-    const descEl = panel.querySelector('[data-wx-desc]');
+     Measured 2026-08-29 from this network, ten connections a host:
 
-    /* Nine seconds, then give up. A hero panel must never be the reason
-       the page feels slow. */
+       www.lumina-jo.com     10 ok   0 failed
+       cloudflare.com        10 ok   0 failed
+       api.github.com         5 ok   5 failed
+       api.open-meteo.com     5 ok   5 failed
+
+     Those failures are not HTTP errors and not DNS. time_namelookup
+     stays at 3ms and time_connect never gets off 0.000000 — the TCP
+     connection simply never establishes, and the socket then sits there
+     for twelve to twenty-one seconds before anything gives up. It is the
+     same signature the git pushes in this project hit against
+     github.com:443, so it is the route out of here, not the API, and
+     nothing on the page served through Cloudflare ever shows it.
+
+     That is survivable. A second connection is a fresh coin flip and
+     lands in ~340ms when it lands. What was NOT survivable was the old
+     shape of this function: one request, a nine-second abort, no retry.
+     A single dropped SYN killed the card for the whole visit.
+
+     The district sheet in weather-map.js never looked broken for the
+     same reason inverted — it sets `painted = false` when it fails, so
+     every click is another attempt. That asymmetry is the whole of the
+     reported bug: the sheet retried by accident and the card never did.
+
+     So: three attempts at 4.5s rather than one at 9s. Aborting a stalled
+     connect early and redialling beats waiting on a socket that is not
+     coming back. At the measured 50% that moves the card from failing
+     1-in-2 to 1-in-8, and the cache below covers most of the remainder.
+     ========================================================== */
+
+  const WX_KEY = 'lumina.wx';
+  const WX_TTL = 90 * 60 * 1000;
+  const WX_BACKOFF = [0, 900, 2400];
+  const WX_TIMEOUT = 4500;
+  const WX_FLOOR = 20 * 1000;
+
+  /* Showing a real reading taken forty minutes ago is not the same as
+     inventing one, and the rule in this file is about invention. The TTL
+     is where that line sits: past ninety minutes the cache is dropped
+     and the panel goes back to naming the city, which is true whatever
+     the weather. When the reading was taken goes into the accessible
+     label, not onto the face — the card is narrow and was just cut back
+     for exactly that reason. */
+  const wxStore = (t, code) => {
+    try {
+      localStorage.setItem(WX_KEY, JSON.stringify({ t: t, code: code, at: Date.now() }));
+    } catch (e) { /* private mode or quota — the live path is unaffected */ }
+  };
+
+  const wxRecall = () => {
+    try {
+      const v = JSON.parse(localStorage.getItem(WX_KEY) || 'null');
+      if (!v || typeof v.t !== 'number' || !isFinite(v.t)) return null;
+      const age = Date.now() - v.at;
+      return (age >= 0 && age < WX_TTL) ? v : null;
+    } catch (e) { return null; }
+  };
+
+  /* One attempt. Resolves to a reading or throws — the retry ladder is
+     the caller's business. */
+  const wxFetch = () => {
     const ctl = typeof AbortController === 'function' ? new AbortController() : null;
-    const timer = setTimeout(() => ctl && ctl.abort(), 9000);
-
-    fetch(ENDPOINT, ctl ? { signal: ctl.signal } : undefined)
+    const timer = setTimeout(() => { if (ctl) ctl.abort(); }, WX_TIMEOUT);
+    const done = v => { clearTimeout(timer); return v; };
+    const blew = e => { clearTimeout(timer); throw e; };
+    return fetch(ENDPOINT, ctl ? { signal: ctl.signal } : undefined)
       .then(r => {
         if (!r.ok) throw new Error('HTTP ' + r.status);
         return r.json();
@@ -109,36 +165,104 @@
         const cur = data && data.current;
         const t = cur && cur.temperature_2m;
         if (typeof t !== 'number' || !isFinite(t)) throw new Error('no temperature in response');
-
-        const cond = conditionFor(cur.weather_code);
-        tempEl.textContent = String(Math.round(t));
-
-        if (cond) {
-          iconEl.innerHTML = ICONS[cond.icon] || '';
-          descEl.textContent = cond.label + ' in Amman';
-        } else {
-          descEl.textContent = 'Amman';
-        }
-
-        /* Values first, then the class. .wx-live is what fades the
-           reading and the icon up (see .wx .wx-read in index.html), and
-           the forced reflow is what gives that transition a start value
-           — the icon in particular only exists as of the line above, so
-           without it the whole panel would still arrive in one frame.
-           Same reason the commission sheet reads offsetWidth below, and
-           not a rAF pair: rAF is throttled to a standstill in a
-           backgrounded tab. */
-        void panel.offsetWidth;
-        panel.classList.add('wx-live');
+        return { t: t, code: cur.weather_code };
       })
-      .catch(err => {
-        /* Never invent a temperature. The panel falls back to naming the
-           city and nothing else, which is true whatever the weather. */
-        console.warn('Lumina: weather unavailable —', err.message);
+      .then(done, blew);
+  };
+
+  let wxLive = false;
+  let wxBusy = false;
+  let wxLastTry = 0;
+
+  const paintWeather = () => {
+    const panel = document.getElementById('wx');
+    if (!panel || wxLive || wxBusy) return;
+    wxBusy = true;
+    wxLastTry = Date.now();
+
+    const tempEl = panel.querySelector('[data-wx-temp]');
+    const iconEl = panel.querySelector('[data-wx-icon]');
+    const descEl = panel.querySelector('[data-wx-desc]');
+
+    const draw = (t, code, takenAt) => {
+      const cond = conditionFor(code);
+      tempEl.textContent = String(Math.round(t));
+      if (cond) {
+        iconEl.innerHTML = ICONS[cond.icon] || '';
+        descEl.textContent = cond.label + ' in Amman';
+      } else {
+        descEl.textContent = 'Amman';
+      }
+      let read = Math.round(t) + ' degrees in Amman';
+      if (cond) read += ', ' + cond.label.toLowerCase();
+      if (takenAt) {
+        try {
+          read += ', last read at ' + new Date(takenAt)
+            .toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        } catch (e) { /* toLocaleTimeString options are old enough to trust */ }
+      }
+      panel.setAttribute('aria-label', read + '. Opens the district map.');
+      panel.classList.remove('wx-dead');
+
+      /* Values first, then the class. .wx-live is what fades the reading
+         and the icon up (see .wx .wx-read in index.html), and the forced
+         reflow is what gives that transition a start value — the icon in
+         particular only exists as of the lines above, so without it the
+         whole panel would arrive in one frame. Same reason the
+         commission sheet reads offsetWidth below, and not a rAF pair:
+         rAF is throttled to a standstill in a backgrounded tab. */
+      void panel.offsetWidth;
+      panel.classList.add('wx-live');
+    };
+
+    const attempt = i => wxFetch().then(
+      v => {
+        wxLive = true;
+        wxBusy = false;
+        wxStore(v.t, v.code);
+        panel.classList.remove('wx-cached');
+        draw(v.t, v.code, null);
+      },
+      err => {
+        if (i + 1 < WX_BACKOFF.length) {
+          return new Promise(res => setTimeout(res, WX_BACKOFF[i + 1]))
+            .then(() => attempt(i + 1));
+        }
+        wxBusy = false;
+        console.warn('Lumina: weather unavailable after ' + WX_BACKOFF.length +
+                     ' attempts —', err.message);
+
+        const cached = wxRecall();
+        if (cached) {
+          panel.classList.add('wx-cached');
+          draw(cached.t, cached.code, cached.at);
+          return;
+        }
+        /* Never invent a temperature. With nothing live and nothing
+           recent enough to stand behind, the panel falls back to naming
+           the city and nothing else. */
         panel.classList.add('wx-dead');
         descEl.textContent = 'Amman, Jordan';
-      })
-      .then(() => clearTimeout(timer));
+      }
+    );
+
+    attempt(0);
+  };
+
+  /* "Come back later and it is fine" should not need a reload. If the
+     first paint fell back to the cache or to the city name, try again
+     when the tab returns to the front and when the browser says the
+     connection is back. Both are user-shaped moments — neither polls,
+     both stand down for good once a live reading lands, and the floor
+     keeps a burst of tab-switching from becoming a burst of requests. */
+  const wxRetry = force => {
+    if (wxLive || wxBusy) return;
+    /* `force` is for the district sheet only. A sheet that just answered
+       is proof the route is open this second, and the click behind it is
+       a person — neither of which the ambient floor should be second
+       guessing. Everything else waits out WX_FLOOR. */
+    if (!force && Date.now() - wxLastTry < WX_FLOOR) return;
+    paintWeather();
   };
 
   /* ==========================================================
@@ -223,9 +347,21 @@
      for cards that arrive after it has run. */
   window.Lumina = window.Lumina || {};
   window.Lumina.initSheet = initSheet;
+  /* weather-map.js calls this when the district sheet loads. A sheet
+     that just answered is live proof the route out is open right now,
+     which is the best possible moment to redial the card. */
+  window.Lumina.weather = { retry: () => wxRetry(true) };
 
   const boot = () => {
     paintWeather();
+    /* areas.html loads this file for its sheets and carries no card, so
+       the self-heal listeners are scoped to the page that has one. */
+    if (document.getElementById('wx')) {
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') wxRetry();
+      });
+      window.addEventListener('online', () => wxRetry());
+    }
     initSheet('cmOpen', 'cmx');
     initSheet('qzOpen', 'qz');
     /* The weather panel is its own opener — it already carries id="wx"

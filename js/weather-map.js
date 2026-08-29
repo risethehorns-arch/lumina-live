@@ -377,6 +377,14 @@
           };
         });
         render(rows);
+        /* The sheet answering proves the route to the API is open this
+           second. If the card lost its own coin flip on load, this is
+           the moment to let it try again — it fetches its own central
+           reading rather than borrowing a district's, because the whole
+           point of this sheet is that the districts differ. */
+        try {
+          if (window.Lumina && window.Lumina.weather) window.Lumina.weather.retry();
+        } catch (e) { /* the sheet is not the card's keeper */ }
       })
       .catch(err => {
         console.warn('Lumina: district weather unavailable —', err.message);
